@@ -20,14 +20,7 @@ public sealed class GameWindow() : EditorWindow( "Editor - Game" )
 		_unlitRenderPipeline.Render();
 		base.OnRender( deltaTime );
 	}
-
-	protected override void OnImGuiDraw()
-	{
-		ImGui.Begin( "Hello World" );
-		ImGui.ShowDemoWindow();
-		ImGui.End();
-	}
-
+	
 	protected override void OnSkiaDraw( SKCanvas canvas, Vector2D<int> size )
 	{
 		using var backgroundPaint = new SKPaint();
@@ -39,5 +32,12 @@ public sealed class GameWindow() : EditorWindow( "Editor - Game" )
 
 		canvas.DrawRect( new SKRect( 0, 0, size.X, size.Y ), backgroundPaint );
 		canvas.DrawCircle( size.X / 2f, size.Y / 2f, Math.Min( size.X, size.Y ) / 4f, accentPaint );
+	}
+
+	protected override void OnImGuiDraw()
+	{
+		ImGui.Begin( "Hello World" );
+		ImGui.ShowDemoWindow();
+		ImGui.End();
 	}
 }
