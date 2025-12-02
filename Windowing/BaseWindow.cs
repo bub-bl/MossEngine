@@ -111,6 +111,7 @@ public abstract unsafe partial class BaseWindow( string title ) : IDisposable
 		if ( hasSkiaOverlay )
 		{
 			var textureView = _skiaRenderer.TextureView;
+			
 			if ( textureView != _skiaTextureView || _skiaTextureId == IntPtr.Zero )
 			{
 				_skiaTextureId = _imGuiController.RegisterTexture( textureView );
@@ -125,8 +126,8 @@ public abstract unsafe partial class BaseWindow( string title ) : IDisposable
 		}
 
 		_imGuiController.Update( (float)deltaTime );
-		OnImGuiDraw();
 		RenderSkiaOverlay();
+		OnImGuiDraw();
 		_imGuiController.Render( RenderPassEncoder );
 	}
 

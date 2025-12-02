@@ -1,5 +1,3 @@
-using System.Net;
-using ImGuiNET;
 using Silk.NET.Maths;
 using Silk.NET.WebGPU;
 using Silk.NET.Windowing;
@@ -74,9 +72,6 @@ public abstract unsafe partial class BaseWindow
 
 		_surfaceTextureView = WebGpu.Wgpu.TextureCreateView( _surfaceTexture.Texture, null );
 
-		// var framebufferSize = Window.FramebufferSize;
-		// _skiaRenderer.Render( _queue, _surfaceTexture.Texture, framebufferSize, OnSkiaDraw );
-
 		var colorAttachments = stackalloc RenderPassColorAttachment[1];
 		colorAttachments[0].View = _surfaceTextureView;
 		colorAttachments[0].LoadOp = LoadOp.Clear;
@@ -101,9 +96,6 @@ public abstract unsafe partial class BaseWindow
 		var commandBuffer = WebGpu.Wgpu.CommandEncoderFinish( _commandEncoder, null );
 
 		WebGpu.Wgpu.QueueSubmit( _queue, 1, &commandBuffer );
-
-		var framebufferSize = Window.FramebufferSize;
-		_skiaRenderer.Render( Device, _queue, framebufferSize, OnSkiaDraw );
 		
 		WebGpu.Wgpu.CommandEncoderRelease( _commandEncoder );
 		WebGpu.Wgpu.CommandBufferReference( commandBuffer );
