@@ -96,10 +96,10 @@ public abstract unsafe partial class BaseWindow
 		var commandBuffer = WebGpu.Wgpu.CommandEncoderFinish( _commandEncoder, null );
 
 		WebGpu.Wgpu.QueueSubmit( _queue, 1, &commandBuffer );
-		
+
 		WebGpu.Wgpu.CommandEncoderRelease( _commandEncoder );
 		WebGpu.Wgpu.CommandBufferReference( commandBuffer );
-		
+
 		WebGpu.Wgpu.SurfacePresent( _surface );
 		Window.SwapBuffers();
 	}

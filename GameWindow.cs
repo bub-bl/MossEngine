@@ -1,5 +1,4 @@
 using Game.Pipelines;
-using Game.Rendering;
 using ImGuiNET;
 using Silk.NET.Maths;
 using SkiaSharp;

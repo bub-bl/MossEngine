@@ -1,5 +1,4 @@
 using Game.Pipelines;
-using Game.Rendering;
 using ImGuiNET;
 using Silk.NET.Input;
 using Silk.NET.Maths;
@@ -18,8 +17,7 @@ public abstract unsafe partial class BaseWindow( string title ) : IDisposable
 	private SurfaceTexture _surfaceTexture;
 	private TextureView* _surfaceTextureView;
 	private ImGuiController _imGuiController = null!;
-	private readonly SkiaSurfaceRenderer _skiaRenderer = new();
-	private SkiaOverlayPipeline? _skiaOverlayPipeline;
+	private readonly SkiaRenderPipeline _skiaRenderPipeline = new();
 
 	public RenderPassEncoder* RenderPassEncoder { get; private set; }
 
@@ -95,8 +93,6 @@ public abstract unsafe partial class BaseWindow( string title ) : IDisposable
 		};
 
 		WebGpu.Wgpu.SurfaceConfigure( _surface, surfaceConfiguration );
-
-		_skiaOverlayPipeline ??= new SkiaOverlayPipeline( Device, SwapChainFormat );
 	}
 
 	protected virtual void OnInitialized()
@@ -106,14 +102,8 @@ public abstract unsafe partial class BaseWindow( string title ) : IDisposable
 	protected virtual void OnRender( double deltaTime )
 	{
 		var framebufferSize = Window.FramebufferSize;
-		var hasSkiaOverlay = _skiaRenderer.Render( Device, _queue, framebufferSize, OnSkiaDraw );
-
-		if ( hasSkiaOverlay )
-		{
-			var textureView = _skiaRenderer.TextureView;
-			_skiaOverlayPipeline?.Render( RenderPassEncoder, textureView );
-		}
-
+		_skiaRenderPipeline.RenderOverlay( Device, _queue, RenderPassEncoder, SwapChainFormat, framebufferSize, OnSkiaDraw );
+		
 		_imGuiController.Update( (float)deltaTime );
 		OnImGuiDraw();
 		_imGuiController.Render( RenderPassEncoder );
@@ -129,8 +119,7 @@ public abstract unsafe partial class BaseWindow( string title ) : IDisposable
 
 	public void Dispose()
 	{
-		_skiaOverlayPipeline?.Dispose();
-		_skiaRenderer.Dispose();
+		_skiaRenderPipeline.Dispose();
 		_imGuiController.Dispose();
 
 		Window.Load -= OnWindowLoad;
