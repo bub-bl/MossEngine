@@ -1,0 +1,135 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\bubbl\\Desktop\\Game\\Game.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\bubbl\\Desktop\\Game\\Game.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\bubbl\\Desktop\\Game\\Game.csproj",
+        "projectName": "Game",
+        "projectPath": "C:\\Users\\bubbl\\Desktop\\Game\\Game.csproj",
+        "packagesPath": "C:\\Users\\bubbl\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\bubbl\\Desktop\\Game\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\bubbl\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net10.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net10.0": {
+            "targetAlias": "net10.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "all"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "net10.0": {
+          "targetAlias": "net10.0",
+          "dependencies": {
+            "AngleSharp": {
+              "target": "Package",
+              "version": "[1.4.1-beta.505, )"
+            },
+            "AngleSharp.Css": {
+              "target": "Package",
+              "version": "[1.0.0-beta.164, )"
+            },
+            "ImGui.NET": {
+              "target": "Package",
+              "version": "[1.91.6.1, )"
+            },
+            "ImGui.NET.Docking": {
+              "target": "Package",
+              "version": "[1.75.0, )"
+            },
+            "JetBrains.Annotations": {
+              "target": "Package",
+              "version": "[2025.2.4, )"
+            },
+            "Silk.NET.Core": {
+              "target": "Package",
+              "version": "[2.22.0, )"
+            },
+            "Silk.NET.Input": {
+              "target": "Package",
+              "version": "[2.22.0, )"
+            },
+            "Silk.NET.WebGPU": {
+              "target": "Package",
+              "version": "[2.22.0, )"
+            },
+            "Silk.NET.WebGPU.Extensions.WGPU": {
+              "target": "Package",
+              "version": "[2.22.0, )"
+            },
+            "Silk.NET.WebGPU.Native.WGPU": {
+              "target": "Package",
+              "version": "[2.22.0, )"
+            },
+            "Silk.NET.Windowing": {
+              "target": "Package",
+              "version": "[2.22.0, )"
+            },
+            "SixLabors.ImageSharp": {
+              "target": "Package",
+              "version": "[3.1.12, )"
+            },
+            "SkiaSharp": {
+              "target": "Package",
+              "version": "[3.119.1, )"
+            },
+            "SkiaSharp.HarfBuzz": {
+              "target": "Package",
+              "version": "[3.119.1, )"
+            },
+            "SkiaSharp.NativeAssets.Win32": {
+              "target": "Package",
+              "version": "[3.119.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
