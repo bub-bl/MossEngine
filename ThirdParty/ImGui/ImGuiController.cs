@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Game;
@@ -96,6 +96,12 @@ public unsafe class ImGuiController : IDisposable
 		_viewsById[id] = (nint)bindGroup;
 
 		return bindGroup;
+	}
+
+	public IntPtr RegisterTexture( TextureView* view )
+	{
+		BindImGuiTextureView( view );
+		return (IntPtr)view;
 	}
 
 	private void Init()

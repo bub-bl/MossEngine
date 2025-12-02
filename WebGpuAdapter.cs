@@ -3,32 +3,6 @@ using Silk.NET.WebGPU;
 
 namespace Game;
 
-public sealed class CommandList : IDisposable
-{
-	private unsafe CommandEncoder* _commandBuffer;
-
-	public CommandList( WebGpuDevice device )
-	{
-		unsafe
-		{
-			_commandBuffer = WebGpu.Wgpu.DeviceCreateCommandEncoder( device, null );
-		}
-	}
-
-	public static unsafe implicit operator CommandEncoder*( CommandList commandList )
-	{
-		return commandList._commandBuffer;
-	}
-
-	public void Dispose()
-	{
-		unsafe
-		{
-			WebGpu.Wgpu.CommandEncoderRelease( _commandBuffer );
-		}
-	}
-}
-
 public sealed class WebGpuAdapter : IDisposable
 {
 	private unsafe Adapter* _adapter;

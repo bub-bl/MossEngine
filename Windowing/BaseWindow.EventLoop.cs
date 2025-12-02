@@ -74,6 +74,9 @@ public abstract unsafe partial class BaseWindow
 
 		_surfaceTextureView = WebGpu.Wgpu.TextureCreateView( _surfaceTexture.Texture, null );
 
+		// var framebufferSize = Window.FramebufferSize;
+		// _skiaRenderer.Render( _queue, _surfaceTexture.Texture, framebufferSize, OnSkiaDraw );
+
 		var colorAttachments = stackalloc RenderPassColorAttachment[1];
 		colorAttachments[0].View = _surfaceTextureView;
 		colorAttachments[0].LoadOp = LoadOp.Clear;
@@ -98,18 +101,15 @@ public abstract unsafe partial class BaseWindow
 		var commandBuffer = WebGpu.Wgpu.CommandEncoderFinish( _commandEncoder, null );
 
 		WebGpu.Wgpu.QueueSubmit( _queue, 1, &commandBuffer );
+
+		var framebufferSize = Window.FramebufferSize;
+		_skiaRenderer.Render( Device, _queue, framebufferSize, OnSkiaDraw );
+		
 		WebGpu.Wgpu.CommandEncoderRelease( _commandEncoder );
 		WebGpu.Wgpu.CommandBufferReference( commandBuffer );
-		// WebGpu.Wgpu.CommandBufferRelease( commandBuffer );
-
+		
 		WebGpu.Wgpu.SurfacePresent( _surface );
 		Window.SwapBuffers();
-
-		// WebGpu.Wgpu.TextureViewRelease( _surfaceTextureView );
-		// WebGpu.Wgpu.TextureRelease( _surfaceTexture.Texture );
-		// WebGpu.Wgpu.RenderPassEncoderRelease( RenderPassEncoder );
-		// WebGpu.Wgpu.CommandBufferRelease( commandBuffer );
-		// WebGpu.Wgpu.CommandEncoderRelease( _commandEncoder );
 	}
 
 	protected virtual void OnUpdate( double deltaTime )
@@ -137,7 +137,7 @@ public abstract unsafe partial class BaseWindow
 			Height = (uint)newSize.Y,
 			Format = SwapChainFormat,
 			PresentMode = PresentMode.Fifo,
-			Usage = TextureUsage.RenderAttachment,
+			Usage = TextureUsage.RenderAttachment | TextureUsage.CopyDst | TextureUsage.CopySrc
 		};
 
 		WebGpu.Wgpu.SurfaceConfigure( _surface, surfaceConfiguration );

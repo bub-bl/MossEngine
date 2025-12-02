@@ -1,5 +1,7 @@
 using Game.Pipelines;
 using ImGuiNET;
+using Silk.NET.Maths;
+using SkiaSharp;
 
 namespace Game;
 
@@ -24,5 +26,19 @@ public sealed class GameWindow() : EditorWindow( "Editor - Game" )
 		ImGui.Begin( "Hello World" );
 		ImGui.ShowDemoWindow();
 		ImGui.End();
+	}
+
+	protected override void OnSkiaDraw( SKCanvas canvas, Vector2D<int> size )
+	{
+		using var backgroundPaint = new SKPaint();
+		backgroundPaint.Color = SKColor.Empty;
+		// backgroundPaint.Color = new SKColor( 0x12, 0x12, 0x1F, 0xFF );
+
+		using var accentPaint = new SKPaint();
+		accentPaint.Color = new SKColor( 0xFF, 0x00, 0x00, 0xFF );
+		accentPaint.IsAntialias = true;
+
+		canvas.DrawRect( new SKRect( 0, 0, size.X, size.Y ), backgroundPaint );
+		canvas.DrawCircle( size.X / 2f, size.Y / 2f, Math.Min( size.X, size.Y ) / 4f, accentPaint );
 	}
 }
