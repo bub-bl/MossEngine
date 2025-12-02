@@ -1,4 +1,5 @@
 using Game.Pipelines;
+using Game.Rendering;
 using ImGuiNET;
 using Silk.NET.Maths;
 using SkiaSharp;
@@ -32,7 +33,6 @@ public sealed class GameWindow() : EditorWindow( "Editor - Game" )
 	{
 		using var backgroundPaint = new SKPaint();
 		backgroundPaint.Color = SKColor.Empty;
-		// backgroundPaint.Color = new SKColor( 0x12, 0x12, 0x1F, 0xFF );
 
 		using var accentPaint = new SKPaint();
 		accentPaint.Color = new SKColor( 0xFF, 0x00, 0x00, 0xFF );

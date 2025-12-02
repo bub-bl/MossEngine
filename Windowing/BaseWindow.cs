@@ -1,4 +1,4 @@
-using System.Numerics;
+using Game.Pipelines;
 using Game.Rendering;
 using ImGuiNET;
 using Silk.NET.Input;
@@ -19,9 +19,7 @@ public abstract unsafe partial class BaseWindow( string title ) : IDisposable
 	private TextureView* _surfaceTextureView;
 	private ImGuiController _imGuiController = null!;
 	private readonly SkiaSurfaceRenderer _skiaRenderer = new();
-	private TextureView* _skiaTextureView;
-	private IntPtr _skiaTextureId;
-	private Vector2 _skiaOverlaySize = Vector2.Zero;
+	private SkiaOverlayPipeline? _skiaOverlayPipeline;
 
 	public RenderPassEncoder* RenderPassEncoder { get; private set; }
 
@@ -97,6 +95,8 @@ public abstract unsafe partial class BaseWindow( string title ) : IDisposable
 		};
 
 		WebGpu.Wgpu.SurfaceConfigure( _surface, surfaceConfiguration );
+
+		_skiaOverlayPipeline ??= new SkiaOverlayPipeline( Device, SwapChainFormat );
 	}
 
 	protected virtual void OnInitialized()
@@ -111,22 +111,10 @@ public abstract unsafe partial class BaseWindow( string title ) : IDisposable
 		if ( hasSkiaOverlay )
 		{
 			var textureView = _skiaRenderer.TextureView;
-			
-			if ( textureView != _skiaTextureView || _skiaTextureId == IntPtr.Zero )
-			{
-				_skiaTextureId = _imGuiController.RegisterTexture( textureView );
-				_skiaTextureView = textureView;
-			}
-
-			_skiaOverlaySize = new Vector2( framebufferSize.X, framebufferSize.Y );
-		}
-		else
-		{
-			_skiaOverlaySize = Vector2.Zero;
+			_skiaOverlayPipeline?.Render( RenderPassEncoder, textureView );
 		}
 
 		_imGuiController.Update( (float)deltaTime );
-		RenderSkiaOverlay();
 		OnImGuiDraw();
 		_imGuiController.Render( RenderPassEncoder );
 	}
@@ -139,28 +127,9 @@ public abstract unsafe partial class BaseWindow( string title ) : IDisposable
 	{
 	}
 
-	private void RenderSkiaOverlay()
-	{
-		if ( _skiaTextureId == IntPtr.Zero || _skiaTextureView is null ) return;
-		if ( _skiaOverlaySize == Vector2.Zero ) return;
-
-		var io = ImGui.GetIO();
-		if ( io.DisplaySize.X <= 0 || io.DisplaySize.Y <= 0 ) return;
-
-		var viewport = ImGui.GetMainViewport();
-		var min = viewport.Pos;
-		var max = min + io.DisplaySize;
-		var uvMax = new Vector2(
-			MathF.Min( 1f, io.DisplaySize.X / Math.Max( 1f, _skiaOverlaySize.X ) ),
-			MathF.Min( 1f, io.DisplaySize.Y / Math.Max( 1f, _skiaOverlaySize.Y ) )
-		);
-
-		var drawList = ImGui.GetBackgroundDrawList();
-		drawList.AddImage( _skiaTextureId, min, max, Vector2.Zero, uvMax, 0xFFFFFFFF );
-	}
-
 	public void Dispose()
 	{
+		_skiaOverlayPipeline?.Dispose();
 		_skiaRenderer.Dispose();
 		_imGuiController.Dispose();
 
