@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/Engine/">
+    <Project Path="MossEngine.Razor/MossEngine.Razor.csproj" />
     <Project Path="MossEngine/MossEngine.csproj" />
   </Folder>
   <Folder Name="/Game/" />
