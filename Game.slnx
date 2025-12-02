@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/Engine/">
+    <Project Path="MossEngine/MossEngine.csproj" />
+  </Folder>
+  <Folder Name="/Game/" />
+  <Folder Name="/ThirdParty/" />
+  <Folder Name="/ThirdParty/Yoga/">
+    <Project Path="../../Documents/GitHub/YogaSharp/Yoga.Interop/Yoga.Interop.csproj" />
+    <Project Path="../../Documents/GitHub/YogaSharp/Yoga.Tests.Visual/Yoga.Tests.Visual.csproj" />
+    <Project Path="../../Documents/GitHub/YogaSharp/Yoga.Tests/Yoga.Tests.csproj" />
+    <Project Path="../../Documents/GitHub/YogaSharp/Yoga/Yoga.csproj" />
+  </Folder>
+</Solution>
