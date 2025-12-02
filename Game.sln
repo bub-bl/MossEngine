@@ -1,0 +1,59 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MossEngine", "MossEngine\MossEngine.csproj", "{EEE794D8-9177-4106-AAC7-CE23ECFB3996}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{5BFB0DDE-A545-41CF-8B67-E46F5A1FE031}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Game", "Game", "{28E0E8C4-EAB0-468F-9147-FBD676755AF4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ThirdParty", "ThirdParty", "{D99E9C6B-6F22-4C69-ABC4-14F4325B7EC7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yoga", "..\..\Documents\GitHub\YogaSharp\Yoga\Yoga.csproj", "{59DDF5E4-3639-4339-BAC9-B47B1E5F71B4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yoga.Interop", "..\..\Documents\GitHub\YogaSharp\Yoga.Interop\Yoga.Interop.csproj", "{A017935A-4AF9-48A4-9140-8E233BC3D21B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yoga.Tests", "..\..\Documents\GitHub\YogaSharp\Yoga.Tests\Yoga.Tests.csproj", "{472395EC-AE06-4D77-8841-97908AA8F29E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yoga.Tests.Visual", "..\..\Documents\GitHub\YogaSharp\Yoga.Tests.Visual\Yoga.Tests.Visual.csproj", "{124F5468-3214-467A-B4D0-EDD16C19816D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EEE794D8-9177-4106-AAC7-CE23ECFB3996}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEE794D8-9177-4106-AAC7-CE23ECFB3996}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEE794D8-9177-4106-AAC7-CE23ECFB3996}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEE794D8-9177-4106-AAC7-CE23ECFB3996}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59DDF5E4-3639-4339-BAC9-B47B1E5F71B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59DDF5E4-3639-4339-BAC9-B47B1E5F71B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59DDF5E4-3639-4339-BAC9-B47B1E5F71B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59DDF5E4-3639-4339-BAC9-B47B1E5F71B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A017935A-4AF9-48A4-9140-8E233BC3D21B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A017935A-4AF9-48A4-9140-8E233BC3D21B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A017935A-4AF9-48A4-9140-8E233BC3D21B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A017935A-4AF9-48A4-9140-8E233BC3D21B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{472395EC-AE06-4D77-8841-97908AA8F29E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{472395EC-AE06-4D77-8841-97908AA8F29E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{472395EC-AE06-4D77-8841-97908AA8F29E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{472395EC-AE06-4D77-8841-97908AA8F29E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{124F5468-3214-467A-B4D0-EDD16C19816D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{124F5468-3214-467A-B4D0-EDD16C19816D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{124F5468-3214-467A-B4D0-EDD16C19816D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{124F5468-3214-467A-B4D0-EDD16C19816D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EEE794D8-9177-4106-AAC7-CE23ECFB3996} = {5BFB0DDE-A545-41CF-8B67-E46F5A1FE031}
+		{59DDF5E4-3639-4339-BAC9-B47B1E5F71B4} = {D99E9C6B-6F22-4C69-ABC4-14F4325B7EC7}
+		{A017935A-4AF9-48A4-9140-8E233BC3D21B} = {D99E9C6B-6F22-4C69-ABC4-14F4325B7EC7}
+		{472395EC-AE06-4D77-8841-97908AA8F29E} = {D99E9C6B-6F22-4C69-ABC4-14F4325B7EC7}
+		{124F5468-3214-467A-B4D0-EDD16C19816D} = {D99E9C6B-6F22-4C69-ABC4-14F4325B7EC7}
+	EndGlobalSection
+EndGlobal
