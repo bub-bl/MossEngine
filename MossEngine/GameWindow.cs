@@ -20,7 +20,7 @@ public sealed class GameWindow() : EditorWindow( "Editor - Game" )
 		_unlitRenderPipeline.Render();
 		base.OnRender( deltaTime );
 	}
-	
+
 	protected override void OnSkiaDraw( SKCanvas canvas, Vector2D<int> size )
 	{
 		using var backgroundPaint = new SKPaint();

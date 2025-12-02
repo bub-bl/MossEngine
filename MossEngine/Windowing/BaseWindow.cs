@@ -103,7 +103,7 @@ public abstract unsafe partial class BaseWindow( string title ) : IDisposable
 	{
 		var framebufferSize = Window.FramebufferSize;
 		_skiaRenderPipeline.RenderOverlay( Device, _queue, RenderPassEncoder, SwapChainFormat, framebufferSize, OnSkiaDraw );
-		
+
 		_imGuiController.Update( (float)deltaTime );
 		OnImGuiDraw();
 		_imGuiController.Render( RenderPassEncoder );

@@ -18,7 +18,7 @@ public static class RazorProcessor
 
 		var engine = GetEngine();
 		var source = RazorSourceDocument.Create( text, filename );
-		
+
 		var code = engine.Process( source, FileKinds.Component, new List<RazorSourceDocument>(), new List<TagHelperDescriptor>() );
 		code.SetCodeGenerationOptions( RazorCodeGenerationOptions.Create( o => { } ) );
 
