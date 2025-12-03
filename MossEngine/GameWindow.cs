@@ -15,16 +15,7 @@ public sealed class GameWindow() : EditorWindow( "Editor - Game" )
 	{
 		_unlitRenderPipeline = new UnlitRenderPipeline( this );
 		_unlitRenderPipeline.Initialize();
-	}
-
-	protected override void OnRender( double deltaTime )
-	{
-		_unlitRenderPipeline.Render();
-		base.OnRender( deltaTime );
-	}
-
-	protected override void OnSkiaDraw( SKCanvas canvas, Vector2D<int> size )
-	{
+		
 		var rectangle = new Panel
 		{
 			Background = SKColors.Blue,
@@ -37,7 +28,16 @@ public sealed class GameWindow() : EditorWindow( "Editor - Game" )
 		RootPanel.AddChild( rectangle );
 
 		Console.WriteLine( $"RootPanel children count: {RootPanel.Children.Count}" );
+	}
 
+	protected override void OnRender( double deltaTime )
+	{
+		_unlitRenderPipeline.Render();
+		base.OnRender( deltaTime );
+	}
+
+	protected override void OnSkiaDraw( SKCanvas canvas, Vector2D<int> size )
+	{
 		// using var backgroundPaint = new SKPaint();
 		// backgroundPaint.Color = SKColor.Empty;
 		//
