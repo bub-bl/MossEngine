@@ -1,5 +1,6 @@
 using ImGuiNET;
 using MossEngine.Pipelines;
+using MossEngine.UI;
 using Silk.NET.Input;
 using Silk.NET.Maths;
 using Silk.NET.WebGPU;
@@ -19,8 +20,11 @@ public abstract unsafe partial class BaseWindow( string title ) : IDisposable
 	private ImGuiController _imGuiController = null!;
 	private readonly SkiaRenderPipeline _skiaRenderPipeline = new();
 
-	public RenderPassEncoder* RenderPassEncoder { get; private set; }
+	private RootPanelRenderer _rootPanelRenderer = null!;
 
+	public RootPanel RootPanel { get; private set; } = null!;
+
+	public RenderPassEncoder* RenderPassEncoder { get; private set; }
 	public WebGpuDevice Device { get; private set; } = null!;
 	public IWindow Window { get; private set; } = null!;
 
@@ -44,6 +48,9 @@ public abstract unsafe partial class BaseWindow( string title ) : IDisposable
 		InitializeWebGpu();
 		ConfigureSurface();
 		InitializeImGui();
+
+		RootPanel = new RootPanel( Window.Size.X, Window.Size.Y );
+		_rootPanelRenderer = new RootPanelRenderer( RootPanel );
 
 		Window.Load += OnWindowLoad;
 		Window.Update += OnWindowUpdate;
@@ -102,7 +109,9 @@ public abstract unsafe partial class BaseWindow( string title ) : IDisposable
 	protected virtual void OnRender( double deltaTime )
 	{
 		var framebufferSize = Window.FramebufferSize;
-		_skiaRenderPipeline.RenderOverlay( Device, _queue, RenderPassEncoder, SwapChainFormat, framebufferSize, OnSkiaDraw );
+
+		_skiaRenderPipeline.RenderOverlay( Device, _queue, RenderPassEncoder, SwapChainFormat, framebufferSize,
+			InternalOnSkiaDraw );
 
 		_imGuiController.Update( (float)deltaTime );
 		OnImGuiDraw();
@@ -111,6 +120,13 @@ public abstract unsafe partial class BaseWindow( string title ) : IDisposable
 
 	protected virtual void OnImGuiDraw()
 	{
+	}
+
+	private void InternalOnSkiaDraw( SKCanvas canvas, Vector2D<int> size )
+	{
+		_rootPanelRenderer.Render( canvas );
+		
+		OnSkiaDraw( canvas, size );
 	}
 
 	protected virtual void OnSkiaDraw( SKCanvas canvas, Vector2D<int> size )

@@ -11,6 +11,7 @@
     <ItemGroup>
         <PackageReference Include="AngleSharp" Version="1.4.1-beta.505"/>
         <PackageReference Include="AngleSharp.Css" Version="1.0.0-beta.164"/>
+<!--        <PackageReference Include="Facebook.Yoga" Version="1.5.0-pre1" />-->
         <PackageReference Include="ImGui.NET" Version="1.91.6.1"/>
         <PackageReference Include="ImGui.NET.Docking" Version="1.75.0"/>
         <PackageReference Include="JetBrains.Annotations" Version="2025.2.4"/>
@@ -44,7 +45,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\..\Documents\GitHub\YogaSharp\Yoga\Yoga.csproj"/>
+        <ProjectReference Include="..\..\..\Documents\GitHub\Yoga-CS\Yoga-CS\Yoga-CS.csproj" />
+        <ProjectReference Include="..\MossEngine.UI\MossEngine.UI.csproj" />
+<!--        <ProjectReference Include="..\..\..\Documents\GitHub\YogaSharp\Yoga\Yoga.csproj"/>-->
+<!--        <ProjectReference Include="..\MossEngine.UI\MossEngine.UI.csproj" />-->
     </ItemGroup>
 
 </Project>
