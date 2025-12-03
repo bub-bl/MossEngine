@@ -97,7 +97,7 @@ public unsafe partial class YogaNode : YogaObject<YogaNode>, IDisposable
 		set => YG.NodeSetIsReferenceBaseline( this, (byte)(value ? 1 : 0) );
 	}
 
-	public NodeList Children { get; }
+	public YogaNodeList Children { get; }
 
 	public DirtiedFunctionUnmanaged DirtiedFunc
 	{
@@ -162,13 +162,13 @@ public unsafe partial class YogaNode : YogaObject<YogaNode>, IDisposable
 
 	protected YogaNode( void* pointer ) : base( pointer )
 	{
-		Children = new NodeList( this );
+		Children = new YogaNodeList( this );
 	}
 
 	public YogaNode()
 	{
 		Pointer = YG.NodeNew();
-		Children = new NodeList( this );
+		Children = new YogaNodeList( this );
 		ObjectCache.Add( this, new WeakReference<YogaNode>( this ) );
 
 		SetDirtiedEvent();
@@ -178,7 +178,7 @@ public unsafe partial class YogaNode : YogaObject<YogaNode>, IDisposable
 	{
 		Pointer = YG.NodeNewWithConfig( config );
 
-		Children = new NodeList( this );
+		Children = new YogaNodeList( this );
 		ObjectCache.Add( this, new WeakReference<YogaNode>( this ) );
 
 		SetDirtiedEvent();

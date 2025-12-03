@@ -20,13 +20,27 @@ public sealed class GameWindow() : EditorWindow( "Editor - Game" )
 		{
 			Background = SKColors.Blue,
 			Foreground = SKColors.White,
-			Text = "Hello World",
+			// Text = "Hello World",
 			Size = new Vector2( 200, 200 ),
 			Position = new Vector2( 100, 100 ),
-			Padding = 20
+			BorderRadius = new Vector2( 40, 40 ),
+			// Padding = 20
 		};
+		
+		var text = new Panel
+		{
+			Text = "Hello World",
+			Background = SKColors.Green,
+			Foreground = SKColors.White,
+			// Size = new Vector2( 200, 200 ),
+			// Position = new Vector2( 100, 100 ), 
+			// BorderRadius = new Vector2( 40, 40 ),
+			// Padding = 20
+		};
+		
+		rectangle.AddChild( text );
+		
 		RootPanel.AddChild( rectangle );
-
 		Console.WriteLine( $"RootPanel children count: {RootPanel.Children.Count}" );
 	}
 

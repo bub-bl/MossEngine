@@ -3,10 +3,10 @@ using Yoga;
 
 namespace MossEngine.UI.Yoga;
 
-internal class NodeListEnumerator( NodeList nodeList ) : IEnumerator<YogaNode>
+internal class YogaNodeListEnumerator( YogaNodeList nodeList ) : IEnumerator<YogaNode>
 {
 	private int _cursor = -1;
-	private NodeList _nodeList = nodeList;
+	private YogaNodeList _nodeList = nodeList;
 
 	public YogaNode Current => _nodeList[_cursor];
 

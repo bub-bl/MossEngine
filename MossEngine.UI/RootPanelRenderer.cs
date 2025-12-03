@@ -14,6 +14,6 @@ public sealed class RootPanelRenderer( RootPanel root )
 		root.ComputeLayout();
 
 		// draw tree
-		root.Draw( canvas, 0, 0 );
+		root.Draw( canvas );
 	}
 }

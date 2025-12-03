@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 using MossEngine.UI.Yoga;
 using SkiaSharp;
 using YogaValue = MossEngine.UI.Yoga.YogaValue;
@@ -29,6 +29,8 @@ public abstract class BaseWidget
 		set => YogaNode.StyleSetMargin( YogaEdge.All, value );
 	}
 
+	public Vector2 BorderRadius { get; set; }
+
 	public Vector2 Size
 	{
 		get => new(YogaNode.Width, YogaNode.Height);
@@ -44,9 +46,9 @@ public abstract class BaseWidget
 		get => new(YogaNode.Left, YogaNode.Top);
 		set => YogaNode.Position = value;
 	}
-	
+
 	public YogaDirection Direction { get; set; } = YogaDirection.Inherit;
-	
+
 	public Vector2 Center => new(YogaNode.Left + YogaNode.Width / 2, YogaNode.Top + YogaNode.Height / 2);
 
 	public bool IsDirty { get; protected set; } = true;
@@ -67,16 +69,16 @@ public abstract class BaseWidget
 		YogaNode.Height = Size.Y;
 		YogaNode.Position = Position;
 		YogaNode.Direction = Direction;
-		
+
 		YogaNode.CalculateLayout( YogaNode.Width, YogaNode.Height, YogaNode.Direction );
 
 		// Recursively compute layout for children - TODO - (I think this is not needed)
-		foreach ( var c in Children )
-		{
-			c.ComputeLayout();
-		}
+		// foreach ( var c in Children )
+		// {
+		// 	c.ComputeLayout();
+		// }
 	}
-	
+
 	public void AddChild( BaseWidget child )
 	{
 		if ( child.Parent is not null )
@@ -111,5 +113,5 @@ public abstract class BaseWidget
 	}
 
 	// Called after Yoga layout computed. x,y are absolute positions in root space.
-	public abstract void Draw( SKCanvas canvas, float x, float y );
+	public abstract void Draw( SKCanvas canvas );
 }

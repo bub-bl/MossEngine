@@ -3,7 +3,7 @@ using Yoga;
 
 namespace MossEngine.UI.Yoga;
 
-public class NodeList : ICollection
+public class YogaNodeList : ICollection
 {
 	private readonly YogaNode _node;
 	private readonly List<YogaNode> _array = [];
@@ -22,7 +22,7 @@ public class NodeList : ICollection
 	public bool IsSynchronized => false;
 	public object SyncRoot => this;
 	
-	internal NodeList( YogaNode node )
+	internal YogaNodeList( YogaNode node )
 	{
 		_node = node;
 	}
@@ -104,7 +104,7 @@ public class NodeList : ICollection
 	
 	public IEnumerator<YogaNode> GetEnumerator()
 	{
-		return new NodeListEnumerator( this );
+		return new YogaNodeListEnumerator( this );
 	}
 
 	IEnumerator IEnumerable.GetEnumerator()
