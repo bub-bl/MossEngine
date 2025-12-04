@@ -4,12 +4,6 @@ namespace MossEngine.UI.Yoga;
 
 public unsafe partial class YogaNode
 {
-	public YogaPositionType PositionType
-	{
-		get => (YogaPositionType)YG.NodeStyleGetPositionType( this );
-		set => YG.NodeStyleSetPositionType( this, (YGPositionType)value );
-	}
-
 	public YogaFlexDirection FlexDirection
 	{
 		get => (YogaFlexDirection)YG.NodeStyleGetFlexDirection( this );

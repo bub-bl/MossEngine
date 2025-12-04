@@ -49,21 +49,83 @@ public class Panel
 
 	public YogaPositionType Position
 	{
-		get => YogaNode.PositionType;
-		set => YogaNode.PositionType = value;
+		get => YogaNode.Position;
+		set => YogaNode.Position = value;
+	}
+	
+	public YogaFlexDirection FlexDirection
+	{
+		get => YogaNode.FlexDirection;
+		set => YogaNode.FlexDirection = value;
+	}
+	
+	public YogaAlign AlignItems
+	{
+		get => YogaNode.AlignItems;
+		set => YogaNode.AlignItems = value;
+	}
+	
+	public YogaJustify JustifyContent
+	{
+		get => YogaNode.JustifyContent;
+		set => YogaNode.JustifyContent = value;
+	}
+	
+	public YogaAlign AlignContent
+	{
+		get => YogaNode.AlignContent;
+		set => YogaNode.AlignContent = value;
+	}
+	
+	public YogaAlign AlignSelf
+	{
+		get => YogaNode.AlignSelf;
+		set => YogaNode.AlignSelf = value;
+	}
+	
+	public YogaWrap FlexWrap
+	{
+		get => YogaNode.FlexWrap;
+		set => YogaNode.FlexWrap = value;
+	}
+	
+	public YogaOverflow Overflow
+	{
+		get => YogaNode.Overflow;
+		set => YogaNode.Overflow = value;
+	}
+	
+	public YogaDisplay Display
+	{
+		get => YogaNode.Display;
+		set => YogaNode.Display = value;
+	}
+	
+	public float Flex
+	{
+		get => YogaNode.Flex;
+		set => YogaNode.Flex = value;
+	}
+	
+	public float FlexGrow
+	{
+		get => YogaNode.FlexGrow;
+		set => YogaNode.FlexGrow = value;
+	}
+	
+	public float FlexShrink
+	{
+		get => YogaNode.FlexShrink;
+		set => YogaNode.FlexShrink = value;
+	}
+	
+	public float AspectRatio
+	{
+		get => YogaNode.AspectRatio;
+		set => YogaNode.AspectRatio = value;
 	}
 
 	public Vector2 BorderRadius { get; set; }
-
-	// public float LayoutLeft => YogaNode.LayoutLeft;
-	// public float LayoutTop => YogaNode.LayoutTop;
-	// public float LayoutRight => YogaNode.LayoutRight;
-	// public float LayoutBottom => YogaNode.LayoutBottom;
-	//
-	// public float AbsoluteLeft => (Parent?.AbsoluteLeft ?? 0f) + LayoutLeft;
-	// public float AbsoluteTop => (Parent?.AbsoluteTop ?? 0f) + LayoutTop;
-	// public float AbsoluteRight => AbsoluteLeft + (YogaNode.LayoutRight - LayoutLeft);
-	// public float AbsoluteBottom => AbsoluteTop + (YogaNode.LayoutBottom - LayoutTop);
 
 	public Length Left
 	{
@@ -123,7 +185,7 @@ public class Panel
 
 	public bool IsDirty { get; protected set; } = true;
 
-	public string DebugLabel { get; set; }
+	public string DebugLabel { get; set; } = null!;
 
 	public Panel()
 	{
@@ -132,7 +194,7 @@ public class Panel
 		YogaNode.AlignItems = YogaAlign.FlexStart;
 		YogaNode.JustifyContent = YogaJustify.FlexStart;
 		YogaNode.FlexDirection = YogaFlexDirection.Row;
-		YogaNode.PositionType = YogaPositionType.Relative;
+		YogaNode.Position = YogaPositionType.Relative;
 	}
 
 	public void ComputeLayout()
@@ -170,16 +232,12 @@ public class Panel
 		MarkDirty();
 	}
 
-	public bool HasParent => Parent is not null;
-
-	public Length LayoutLeft => YogaNode.LayoutLeft;
-	public Length LayoutTop => YogaNode.LayoutTop;
 
 	private Vector2 GetFinalPosition()
 	{
 		var local = new Vector2( YogaNode.LayoutLeft, YogaNode.LayoutTop );
 		
-		var parentAbs = YogaNode.PositionType is YogaPositionType.Absolute
+		var parentAbs = YogaNode.Position is YogaPositionType.Absolute
 			? Vector2.Zero
 			: Parent?.GetFinalPosition() ?? Vector2.Zero;
 		
