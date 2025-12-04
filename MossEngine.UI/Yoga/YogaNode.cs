@@ -257,10 +257,9 @@ public unsafe partial class YogaNode : YogaObject<YogaNode>, IDisposable
 		YG.NodeReset( this );
 	}
 
-	public void CalculateLayout( float width = Undefined, float height = Undefined,
-		YogaDirection direction = YogaDirection.Inherit )
+	public void CalculateLayout()
 	{
-		YG.NodeCalculateLayout( this, width, height, (YGDirection)direction );
+		YG.NodeCalculateLayout( this, Width, Height, (YGDirection)Direction );
 	}
 
 	internal void Free()

@@ -1,13 +1,9 @@
-using System;
-using System.Numerics;
 using Yoga;
 
 namespace MossEngine.UI.Yoga;
 
 public unsafe partial class YogaNode
 {
-	private const float LayoutEdgeTolerance = 0.0001f;
-
 	public Length Width
 	{
 		get => YG.NodeLayoutGetWidth( this );
@@ -65,7 +61,7 @@ public unsafe partial class YogaNode
 		get => (YogaPositionType)YG.NodeStyleGetPositionType( this );
 		set => YG.NodeStyleSetPositionType( this, (YGPositionType)value );
 	}
-	
+
 	public float LayoutLeft => YG.NodeLayoutGetLeft( this );
 	public float LayoutTop => YG.NodeLayoutGetTop( this );
 	public float LayoutRight => YG.NodeLayoutGetRight( this );
@@ -76,50 +72,114 @@ public unsafe partial class YogaNode
 		get => YG.NodeStyleGetPosition( this, (YGEdge)YogaEdge.Left );
 		set => SetNodeStylePosition( YogaEdge.Left, value );
 	}
-	
+
 	public Length Top
 	{
 		get => YG.NodeStyleGetPosition( this, (YGEdge)YogaEdge.Top );
 		set => SetNodeStylePosition( YogaEdge.Top, value );
 	}
-	
+
 	public Length Right
 	{
 		get => YG.NodeStyleGetPosition( this, (YGEdge)YogaEdge.Right );
 		set => SetNodeStylePosition( YogaEdge.Right, value );
 	}
-	
+
 	public Length Bottom
 	{
 		get => YG.NodeStyleGetPosition( this, (YGEdge)YogaEdge.Bottom );
 		set => SetNodeStylePosition( YogaEdge.Bottom, value );
 	}
-	
+
 	public Length Start
 	{
 		get => YG.NodeStyleGetPosition( this, (YGEdge)YogaEdge.Start );
 		set => SetNodeStylePosition( YogaEdge.Start, value );
 	}
-	
+
 	public Length End
 	{
 		get => YG.NodeStyleGetPosition( this, (YGEdge)YogaEdge.End );
 		set => SetNodeStylePosition( YogaEdge.End, value );
 	}
-	
+
 	public Length Horizontal
 	{
 		get => YG.NodeStyleGetPosition( this, (YGEdge)YogaEdge.Horizontal );
 		set => SetNodeStylePosition( YogaEdge.Horizontal, value );
 	}
-	
+
 	public Length Vertical
 	{
 		get => YG.NodeStyleGetPosition( this, (YGEdge)YogaEdge.Vertical );
 		set => SetNodeStylePosition( YogaEdge.Vertical, value );
 	}
 
-	private void SetNodeStylePosition(YogaEdge edge, Length value)
+	public YogaDirection Direction
+	{
+		get => (YogaDirection)YG.NodeLayoutGetDirection( this );
+		set => YG.NodeStyleSetDirection( this, (YGDirection)value );
+	}
+
+	public bool HadOverflow => YG.NodeLayoutGetHadOverflow( this ) is not 0;
+
+	public Margin Margin
+	{
+		get => new()
+		{
+			Left = YG.NodeStyleGetMargin( this, (YGEdge)YogaEdge.Left ),
+			Top = YG.NodeStyleGetMargin( this, (YGEdge)YogaEdge.Top ),
+			Right = YG.NodeStyleGetMargin( this, (YGEdge)YogaEdge.Right ),
+			Bottom = YG.NodeStyleGetMargin( this, (YGEdge)YogaEdge.Bottom ),
+			Start = YG.NodeStyleGetMargin( this, (YGEdge)YogaEdge.Start ),
+			End = YG.NodeStyleGetMargin( this, (YGEdge)YogaEdge.End ),
+			Horizontal = YG.NodeStyleGetMargin( this, (YGEdge)YogaEdge.Horizontal ),
+			Vertical = YG.NodeStyleGetMargin( this, (YGEdge)YogaEdge.Vertical ),
+			All = YG.NodeStyleGetMargin( this, (YGEdge)YogaEdge.All )
+		};
+		set
+		{
+			SetNodeStyleMargin( YogaEdge.Left, value.Left );
+			SetNodeStyleMargin( YogaEdge.Top, value.Top );
+			SetNodeStyleMargin( YogaEdge.Right, value.Right );
+			SetNodeStyleMargin( YogaEdge.Bottom, value.Bottom );
+			SetNodeStyleMargin( YogaEdge.Start, value.Start );
+			SetNodeStyleMargin( YogaEdge.End, value.End );
+			SetNodeStyleMargin( YogaEdge.Horizontal, value.Horizontal );
+			SetNodeStyleMargin( YogaEdge.Vertical, value.Vertical );
+			SetNodeStyleMargin( YogaEdge.All, value.All );
+		}
+	}
+	
+	public Padding Padding
+	{
+		get => new()
+		{
+			Left = YG.NodeStyleGetPadding( this, (YGEdge)YogaEdge.Left ),
+			Top = YG.NodeStyleGetPadding( this, (YGEdge)YogaEdge.Top ),
+			Right = YG.NodeStyleGetPadding( this, (YGEdge)YogaEdge.Right ),
+			Bottom = YG.NodeStyleGetPadding( this, (YGEdge)YogaEdge.Bottom ),
+			Start = YG.NodeStyleGetPadding( this, (YGEdge)YogaEdge.Start ),
+			End = YG.NodeStyleGetPadding( this, (YGEdge)YogaEdge.End ),
+			Horizontal = YG.NodeStyleGetPadding( this, (YGEdge)YogaEdge.Horizontal ),
+			Vertical = YG.NodeStyleGetPadding( this, (YGEdge)YogaEdge.Vertical ),
+			All = YG.NodeStyleGetPadding( this, (YGEdge)YogaEdge.All )
+		};
+		set
+		{
+			SetNodeStylePadding( YogaEdge.Left, value.Left );
+			SetNodeStylePadding( YogaEdge.Top, value.Top );
+			SetNodeStylePadding( YogaEdge.Right, value.Right );
+			SetNodeStylePadding( YogaEdge.Bottom, value.Bottom );
+			SetNodeStylePadding( YogaEdge.Start, value.Start );
+			SetNodeStylePadding( YogaEdge.End, value.End );
+			SetNodeStylePadding( YogaEdge.Horizontal, value.Horizontal );
+			SetNodeStylePadding( YogaEdge.Vertical, value.Vertical );
+			SetNodeStylePadding( YogaEdge.All, value.All );
+		}
+	}
+	
+	private void SetNodeStylePosition( YogaEdge edge, Length value )
 	{
 		switch ( value.Unit )
 		{
@@ -140,66 +200,46 @@ public unsafe partial class YogaNode
 				throw new NotSupportedException( "Stretch is not supported" );
 		}
 	}
-	
-	public YogaDirection Direction
-	{
-		get => (YogaDirection)YG.NodeLayoutGetDirection( this );
-		set => YG.NodeStyleSetDirection( this, (YGDirection)value );
-	}
 
-	public bool HadOverflow => YG.NodeLayoutGetHadOverflow( this ) is not 0;
-
-	public float GetMargin( YogaEdge edge )
+	private void SetNodeStylePadding( YogaEdge edge, Length value )
 	{
-		return ResolveCompoundLayoutEdge( edge,
-			static ( node, e ) => YG.NodeLayoutGetMargin( node, (YGEdge)e ),
-			name: nameof( GetMargin ) );
-	}
-
-	public float GetBorder( YogaEdge edge )
-	{
-		return ResolveCompoundLayoutEdge( edge,
-			static ( node, e ) => YG.NodeLayoutGetBorder( node, (YGEdge)e ),
-			name: nameof( GetBorder ) );
-	}
-
-	public float GetPadding( YogaEdge edge )
-	{
-		return ResolveCompoundLayoutEdge( edge,
-			static ( node, e ) => YG.NodeLayoutGetPadding( node, (YGEdge)e ),
-			name: nameof( GetPadding ) );
-	}
-
-	private float ResolveCompoundLayoutEdge( YogaEdge requestedEdge,
-		Func<YogaNode, YogaEdge, float> accessor,
-		string name )
-	{
-		return requestedEdge switch
+		switch ( value.Unit )
 		{
-			YogaEdge.All => RequireUniformValue( requestedEdge, accessor, name,
-				YogaEdge.Left, YogaEdge.Top, YogaEdge.Right, YogaEdge.Bottom ),
-			YogaEdge.Horizontal => RequireUniformValue( requestedEdge, accessor, name, YogaEdge.Left, YogaEdge.Right ),
-			YogaEdge.Vertical => RequireUniformValue( requestedEdge, accessor, name, YogaEdge.Top, YogaEdge.Bottom ),
-			_ => accessor( this, requestedEdge )
-		};
-	}
-
-	private float RequireUniformValue( YogaEdge requestedEdge,
-		Func<YogaNode, YogaEdge, float> accessor,
-		string name,
-		params YogaEdge[] expandedEdges )
-	{
-		var reference = accessor( this, expandedEdges[0] );
-		for ( var i = 1; i < expandedEdges.Length; i++ )
-		{
-			var candidate = accessor( this, expandedEdges[i] );
-			if ( Math.Abs( reference - candidate ) > LayoutEdgeTolerance )
-			{
-				throw new InvalidOperationException(
-					$"Cannot resolve {name} for '{requestedEdge}' because the layout values differ between {string.Join( ", ", expandedEdges )}. Query concrete edges instead." );
-			}
+			case YogaUnit.Point:
+				YG.NodeStyleSetPadding( this, (YGEdge)edge, value.Value );
+				break;
+			case YogaUnit.Percent:
+				YG.NodeStyleSetPaddingPercent( this, (YGEdge)edge, value.Value );
+				break;
+			case YogaUnit.Undefined:
+				YG.NodeStyleSetPadding( this, (YGEdge)edge, YG.YGUndefined );
+				break;
+			case YogaUnit.Auto:
+			case YogaUnit.FitContent:
+			case YogaUnit.MaxContent:
+			case YogaUnit.Stretch:
+				throw new NotSupportedException( "Padding does not support the specified YogaUnit" );
 		}
-
-		return reference;
+	}
+	
+	private void SetNodeStyleMargin( YogaEdge edge, Length value )
+	{
+		switch ( value.Unit )
+		{
+			case YogaUnit.Point:
+				YG.NodeStyleSetMargin( this, (YGEdge)edge, value.Value );
+				break;
+			case YogaUnit.Percent:
+				YG.NodeStyleSetMarginPercent( this, (YGEdge)edge, value.Value );
+				break;
+			case YogaUnit.Undefined:
+				YG.NodeStyleSetMargin( this, (YGEdge)edge, YG.YGUndefined );
+				break;
+			case YogaUnit.Auto:
+			case YogaUnit.FitContent:
+			case YogaUnit.MaxContent:
+			case YogaUnit.Stretch:
+				throw new NotSupportedException( "Margin does not support the specified YogaUnit" );
+		}
 	}
 }

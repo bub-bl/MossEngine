@@ -26,45 +26,29 @@ public sealed class GameWindow() : EditorWindow( "Editor - Game" )
 			Left = Length.Point( 100 ),
 			Top = Length.Point( 100 ),
 			BorderRadius = new Vector2( 40, 40 ),
-			// PaddingLeft = 20,
-			// PaddingTop = 60,
+			Padding = new Padding { Horizontal = Length.Point( 20 ), Vertical = Length.Point( 20 ) }
 		};
-		
+
 		var subRectangle = new Panel
 		{
 			Background = SKColors.Blue,
 			Foreground = SKColors.White,
-			// Text = "Hello World",
-			Width = Length.Percent( 50 ),
-			Height = Length.Percent( 50 ),
-			// Position = new Vector2( 100, 100 ),
-			// Position = YogaPositionType.Relative,
-			// Left = Length.Point( 100 ),
-			// Top = Length.Point( 100 ),
-			BorderRadius = new Vector2( 40, 40 ),
-			// PaddingLeft = 20,
-			// PaddingTop = 60,
+			Width = Length.Percent( 100 ),
+			Height = Length.Point( 50 ),
+			Left = Length.Point( 0 ),
+			Top = Length.Point( 0 )
 		};
-		
+
 		var text = new Panel
 		{
 			Text = "Hello World",
 			Background = SKColors.Green,
 			Foreground = SKColors.White,
-			Position = YogaPositionType.Relative,
-			Left = Length.Point( 20 ),
-			Top = Length.Point( 20 ),
-			// MarginLeft = 60,
-			// MarginTop = 60,
-			// Size = new Vector2( 200, 200 ),
-			// Position = new Vector2( 100, 100 ), 
-			// BorderRadius = new Vector2( 40, 40 ),
-			// Padding = 20
 		};
-		
+
 		rectangle.AddChild( subRectangle );
-		rectangle.AddChild( text );
-		
+		subRectangle.AddChild( text );
+
 		RootPanel.AddChild( rectangle );
 		Console.WriteLine( $"RootPanel children count: {RootPanel.Children.Count}" );
 	}
