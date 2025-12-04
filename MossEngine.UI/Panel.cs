@@ -310,7 +310,7 @@ public class Panel
 		var metrics = MeasurementPaint.FontMetrics;
 		var measuredHeight = MathF.Abs( metrics.Ascent ) + MathF.Abs( metrics.Descent );
 
-		return new SizeF( Resolve( measuredWidth, width, widthMode ) + 2,
+		return new SizeF( Resolve( measuredWidth, width, widthMode ),
 			Resolve( measuredHeight, height, heightMode ) );
 		
 		static float Resolve( float measured, float available, YogaMeasureMode mode ) => mode switch
