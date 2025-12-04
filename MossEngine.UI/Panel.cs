@@ -177,26 +177,13 @@ public class Panel
 
 	private Vector2 GetFinalPosition()
 	{
-		var parentLeft = Parent?.LayoutLeft ?? Length.Zero;
-		var parentTop = Parent?.LayoutTop ?? Length.Zero;
-
-		var finalLeft = parentLeft + LayoutLeft;
-		var finalTop = parentTop + LayoutTop;
+		var local = new Vector2( YogaNode.LayoutLeft, YogaNode.LayoutTop );
 		
-		unsafe
-		{
-			if ( HasParent )
-			{
-				var parentNodeLayoutLeft = YG.NodeLayoutGetLeft( Parent.YogaNode );
-				var parentNodeLayoutTop = YG.NodeLayoutGetTop( Parent.YogaNode );
-
-				Console.WriteLine( "Name: " + DebugLabel + ", " + LayoutLeft + ", " + LayoutTop + ", " +
-				                   Parent?.LayoutLeft + ", " + Parent?.LayoutTop + ", " + parentNodeLayoutLeft + ", " +
-				                   parentNodeLayoutTop );
-			}
-		}
-
-		return new Vector2( finalLeft, finalTop );
+		var parentAbs = YogaNode.PositionType is YogaPositionType.Absolute
+			? Vector2.Zero
+			: Parent?.GetFinalPosition() ?? Vector2.Zero;
+		
+		return parentAbs + local;
 	}
 
 	protected void DrawBackground( SKCanvas canvas )
