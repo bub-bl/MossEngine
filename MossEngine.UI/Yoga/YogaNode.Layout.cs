@@ -8,16 +8,56 @@ public unsafe partial class YogaNode
 {
 	private const float LayoutEdgeTolerance = 0.0001f;
 
-	public float Width
+	public Length Width
 	{
 		get => YG.NodeLayoutGetWidth( this );
-		set => YG.NodeStyleSetWidth( this, value );
+		set
+		{
+			switch ( value.Unit )
+			{
+				case YogaUnit.Point:
+					YG.NodeStyleSetWidth( this, value );
+					break;
+				case YogaUnit.Percent:
+					YG.NodeStyleSetWidthPercent( this, value );
+					break;
+				case YogaUnit.Auto:
+					YG.NodeStyleSetWidthAuto( this );
+					break;
+				case YogaUnit.FitContent:
+					throw new NotSupportedException( "FitContent is not supported" );
+				case YogaUnit.MaxContent:
+					throw new NotSupportedException( "MaxContent is not supported" );
+				case YogaUnit.Stretch:
+					throw new NotSupportedException( "Stretch is not supported" );
+			}
+		}
 	}
 
-	public float Height
+	public Length Height
 	{
 		get => YG.NodeLayoutGetHeight( this );
-		set => YG.NodeStyleSetHeight( this, value );
+		set
+		{
+			switch ( value.Unit )
+			{
+				case YogaUnit.Point:
+					YG.NodeStyleSetHeight( this, value );
+					break;
+				case YogaUnit.Percent:
+					YG.NodeStyleSetHeightPercent( this, value );
+					break;
+				case YogaUnit.Auto:
+					YG.NodeStyleSetHeightAuto( this );
+					break;
+				case YogaUnit.FitContent:
+					throw new NotSupportedException( "FitContent is not supported" );
+				case YogaUnit.MaxContent:
+					throw new NotSupportedException( "MaxContent is not supported" );
+				case YogaUnit.Stretch:
+					throw new NotSupportedException( "Stretch is not supported" );
+			}
+		}
 	}
 
 	public YogaPositionType Position

@@ -18,6 +18,18 @@ public abstract class BaseWidget
 	public SKColor Background { get; set; } = SKColors.Transparent;
 	public SKColor Foreground { get; set; } = SKColors.Black;
 
+	public Length Width
+	{
+		get => YogaNode.Width;
+		set => YogaNode.Width = value;
+	}
+	
+	public Length Height
+	{
+		get => YogaNode.Height;
+		set => YogaNode.Height = value;
+	}
+	
 	public float Padding
 	{
 		get => YogaNode.GetPadding( YogaEdge.All );
@@ -103,22 +115,6 @@ public abstract class BaseWidget
 	}
 
 	public Vector2 BorderRadius { get; set; }
-
-	public Vector2 Size
-	{
-		get => new(YogaNode.Width, YogaNode.Height);
-		set
-		{
-			YogaNode.Width = value.X;
-			YogaNode.Height = value.Y;
-		}
-	}
-
-	// public Vector2 Position
-	// {
-	// 	get => new(YogaNode.Left, YogaNode.Top);
-	// 	set => YogaNode.Position = value;
-	// }
 	
 	public YogaPositionType Position
 	{
@@ -197,8 +193,6 @@ public abstract class BaseWidget
 	public void ComputeLayout()
 	{
 		// set root size in case it changed
-		YogaNode.Width = Size.X;
-		YogaNode.Height = Size.Y;
 		YogaNode.Direction = Direction;
 		
 		YogaNode.CalculateLayout( YogaNode.Width, YogaNode.Height, YogaNode.Direction );
