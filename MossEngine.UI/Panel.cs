@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Drawing;
 using System.Numerics;
 using MossEngine.UI.Yoga;
 using SkiaSharp;
@@ -18,7 +19,18 @@ public class Panel
 	public SKColor Background { get; set; } = SKColors.Transparent;
 	public SKColor Foreground { get; set; } = SKColors.Black;
 
-	public string Text { get; set; } = string.Empty;
+	public string Text
+	{
+		get => field;
+		set
+		{
+			if ( field == value ) return;
+			field = value;
+
+			UpdateMeasurement();
+			MarkDirty();
+		}
+	}
 
 	public float LayoutWidth => YogaNode.LayoutWidth;
 	public float LayoutHeight => YogaNode.LayoutHeight;
@@ -52,73 +64,73 @@ public class Panel
 		get => YogaNode.Position;
 		set => YogaNode.Position = value;
 	}
-	
+
 	public YogaFlexDirection FlexDirection
 	{
 		get => YogaNode.FlexDirection;
 		set => YogaNode.FlexDirection = value;
 	}
-	
+
 	public YogaAlign AlignItems
 	{
 		get => YogaNode.AlignItems;
 		set => YogaNode.AlignItems = value;
 	}
-	
+
 	public YogaJustify JustifyContent
 	{
 		get => YogaNode.JustifyContent;
 		set => YogaNode.JustifyContent = value;
 	}
-	
+
 	public YogaAlign AlignContent
 	{
 		get => YogaNode.AlignContent;
 		set => YogaNode.AlignContent = value;
 	}
-	
+
 	public YogaAlign AlignSelf
 	{
 		get => YogaNode.AlignSelf;
 		set => YogaNode.AlignSelf = value;
 	}
-	
+
 	public YogaWrap FlexWrap
 	{
 		get => YogaNode.FlexWrap;
 		set => YogaNode.FlexWrap = value;
 	}
-	
+
 	public YogaOverflow Overflow
 	{
 		get => YogaNode.Overflow;
 		set => YogaNode.Overflow = value;
 	}
-	
+
 	public YogaDisplay Display
 	{
 		get => YogaNode.Display;
 		set => YogaNode.Display = value;
 	}
-	
+
 	public float Flex
 	{
 		get => YogaNode.Flex;
 		set => YogaNode.Flex = value;
 	}
-	
+
 	public float FlexGrow
 	{
 		get => YogaNode.FlexGrow;
 		set => YogaNode.FlexGrow = value;
 	}
-	
+
 	public float FlexShrink
 	{
 		get => YogaNode.FlexShrink;
 		set => YogaNode.FlexShrink = value;
 	}
-	
+
 	public float AspectRatio
 	{
 		get => YogaNode.AspectRatio;
@@ -195,6 +207,8 @@ public class Panel
 		YogaNode.JustifyContent = YogaJustify.FlexStart;
 		YogaNode.FlexDirection = YogaFlexDirection.Row;
 		YogaNode.Position = YogaPositionType.Relative;
+
+		UpdateMeasurement();
 	}
 
 	public void ComputeLayout()
@@ -215,6 +229,7 @@ public class Panel
 		var idx = Children.Count - 1;
 		YogaNode.InsertChildAt( child.YogaNode, idx );
 
+		UpdateMeasurement();
 		MarkDirty();
 	}
 
@@ -236,11 +251,11 @@ public class Panel
 	private Vector2 GetFinalPosition()
 	{
 		var local = new Vector2( YogaNode.LayoutLeft, YogaNode.LayoutTop );
-		
+
 		var parentAbs = YogaNode.Position is YogaPositionType.Absolute
 			? Vector2.Zero
 			: Parent?.GetFinalPosition() ?? Vector2.Zero;
-		
+
 		return parentAbs + local;
 	}
 
@@ -267,6 +282,43 @@ public class Panel
 			.WithColor( Foreground )
 			.WithFontSize( 20 )
 			.Draw();
+	}
+
+	private static readonly SKPaint MeasurementPaint = new() { IsAntialias = true, TextSize = 20 };
+
+	private void UpdateMeasurement()
+	{
+		// var rect = MeasurementPaint.MeasureText( Text );
+		// Width = rect.Width;
+		// Height = rect.Height;
+
+		YogaNode.MeasureFunction = ShouldMeasureText() ? MeasureText : null;
+	}
+
+	private bool ShouldMeasureText()
+	{
+		return !string.IsNullOrEmpty( Text ) && Children.Count == 0;
+	}
+
+	private SizeF MeasureText( YogaNode node, float width, YogaMeasureMode widthMode, float height,
+		 YogaMeasureMode heightMode )
+	{
+		var bounds = new SKRect();
+		MeasurementPaint.MeasureText( Text, ref bounds );
+
+		var measuredWidth = bounds.Width;
+		var metrics = MeasurementPaint.FontMetrics;
+		var measuredHeight = MathF.Abs( metrics.Ascent ) + MathF.Abs( metrics.Descent );
+
+		return new SizeF( Resolve( measuredWidth, width, widthMode ) + 2,
+			Resolve( measuredHeight, height, heightMode ) );
+		
+		static float Resolve( float measured, float available, YogaMeasureMode mode ) => mode switch
+		{
+			YogaMeasureMode.Exactly => available,
+			YogaMeasureMode.AtMost => MathF.Min( available, measured ),
+			_ => measured
+		};
 	}
 
 	public virtual void MarkDirty()
