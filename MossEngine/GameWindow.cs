@@ -2,6 +2,7 @@ using System.Numerics;
 using ImGuiNET;
 using MossEngine.Pipelines;
 using MossEngine.UI;
+using MossEngine.UI.Yoga;
 using Silk.NET.Maths;
 using SkiaSharp;
 
@@ -15,16 +16,20 @@ public sealed class GameWindow() : EditorWindow( "Editor - Game" )
 	{
 		_unlitRenderPipeline = new UnlitRenderPipeline( this );
 		_unlitRenderPipeline.Initialize();
-		
+
 		var rectangle = new Panel
 		{
 			Background = SKColors.Blue,
 			Foreground = SKColors.White,
 			// Text = "Hello World",
 			Size = new Vector2( 200, 200 ),
-			Position = new Vector2( 100, 100 ),
+			// Position = new Vector2( 100, 100 ),
+			// Position = YogaPositionType.Relative,
+			Left = Length.Point( 100 ),
+			Top = Length.Point( 100 ),
 			BorderRadius = new Vector2( 40, 40 ),
-			// Padding = 20
+			PaddingLeft = 20,
+			PaddingTop = 60,
 		};
 		
 		var text = new Panel
@@ -32,6 +37,11 @@ public sealed class GameWindow() : EditorWindow( "Editor - Game" )
 			Text = "Hello World",
 			Background = SKColors.Green,
 			Foreground = SKColors.White,
+			Position = YogaPositionType.Relative,
+			Left = Length.Point( 20 ),
+			Top = Length.Point( 20 ),
+			// MarginLeft = 60,
+			// MarginTop = 60,
 			// Size = new Vector2( 200, 200 ),
 			// Position = new Vector2( 100, 100 ), 
 			// BorderRadius = new Vector2( 40, 40 ),

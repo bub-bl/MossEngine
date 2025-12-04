@@ -20,21 +20,87 @@ public unsafe partial class YogaNode
 		set => YG.NodeStyleSetHeight( this, value );
 	}
 
-	public Vector2 Position
+	public YogaPositionType Position
 	{
-		get => new( YG.NodeLayoutGetLeft( this ), YG.NodeLayoutGetTop( this ) );
-		set
-		{
-			YG.NodeStyleSetPosition( this, (YGEdge)YogaEdge.Left, value.X );
-			YG.NodeStyleSetPosition( this, (YGEdge)YogaEdge.Top, value.Y );
-		}
+		get => (YogaPositionType)YG.NodeStyleGetPositionType( this );
+		set => YG.NodeStyleSetPositionType( this, (YGPositionType)value );
+	}
+	
+	public float LayoutLeft => YG.NodeLayoutGetLeft( this );
+	public float LayoutTop => YG.NodeLayoutGetTop( this );
+	public float LayoutRight => YG.NodeLayoutGetRight( this );
+	public float LayoutBottom => YG.NodeLayoutGetBottom( this );
+
+	public Length Left
+	{
+		get => YG.NodeStyleGetPosition( this, (YGEdge)YogaEdge.Left );
+		set => SetNodeStylePosition( YogaEdge.Left, value );
+	}
+	
+	public Length Top
+	{
+		get => YG.NodeStyleGetPosition( this, (YGEdge)YogaEdge.Top );
+		set => SetNodeStylePosition( YogaEdge.Top, value );
+	}
+	
+	public Length Right
+	{
+		get => YG.NodeStyleGetPosition( this, (YGEdge)YogaEdge.Right );
+		set => SetNodeStylePosition( YogaEdge.Right, value );
+	}
+	
+	public Length Bottom
+	{
+		get => YG.NodeStyleGetPosition( this, (YGEdge)YogaEdge.Bottom );
+		set => SetNodeStylePosition( YogaEdge.Bottom, value );
+	}
+	
+	public Length Start
+	{
+		get => YG.NodeStyleGetPosition( this, (YGEdge)YogaEdge.Start );
+		set => SetNodeStylePosition( YogaEdge.Start, value );
+	}
+	
+	public Length End
+	{
+		get => YG.NodeStyleGetPosition( this, (YGEdge)YogaEdge.End );
+		set => SetNodeStylePosition( YogaEdge.End, value );
+	}
+	
+	public Length Horizontal
+	{
+		get => YG.NodeStyleGetPosition( this, (YGEdge)YogaEdge.Horizontal );
+		set => SetNodeStylePosition( YogaEdge.Horizontal, value );
+	}
+	
+	public Length Vertical
+	{
+		get => YG.NodeStyleGetPosition( this, (YGEdge)YogaEdge.Vertical );
+		set => SetNodeStylePosition( YogaEdge.Vertical, value );
 	}
 
-	public float Left => YG.NodeLayoutGetLeft( this );
-	public float Top => YG.NodeLayoutGetTop( this );
-	public float Right => YG.NodeLayoutGetRight( this );
-	public float Bottom => YG.NodeLayoutGetBottom( this );
-
+	private void SetNodeStylePosition(YogaEdge edge, Length value)
+	{
+		switch ( value.Unit )
+		{
+			case YogaUnit.Point:
+				YG.NodeStyleSetPosition( this, (YGEdge)edge, value.Value );
+				break;
+			case YogaUnit.Percent:
+				YG.NodeStyleSetPositionPercent( this, (YGEdge)edge, value.Value );
+				break;
+			case YogaUnit.Auto:
+				YG.NodeStyleSetPositionAuto( this, (YGEdge)edge );
+				break;
+			case YogaUnit.FitContent:
+				throw new NotSupportedException( "FitContent is not supported" );
+			case YogaUnit.MaxContent:
+				throw new NotSupportedException( "MaxContent is not supported" );
+			case YogaUnit.Stretch:
+				throw new NotSupportedException( "Stretch is not supported" );
+		}
+	}
+	
 	public YogaDirection Direction
 	{
 		get => (YogaDirection)YG.NodeLayoutGetDirection( this );
