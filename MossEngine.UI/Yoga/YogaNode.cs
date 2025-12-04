@@ -63,7 +63,7 @@ public unsafe partial class YogaNode : YogaObject<YogaNode>, IDisposable
 				Marshal.GetFunctionPointerForDelegate( _measureFuncUnmanaged ) );
 		}
 	}
-
+	
 	public YogaNode? Parent
 	{
 		get => _owner;

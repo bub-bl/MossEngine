@@ -19,37 +19,48 @@ public sealed class GameWindow() : EditorWindow( "Editor - Game" )
 
 		var rectangle = new Panel
 		{
+			DebugLabel = "Rectangle",
 			Background = SKColors.Red,
 			Foreground = SKColors.White,
 			Width = Length.Point( 200 ),
 			Height = Length.Point( 200 ),
 			Left = Length.Point( 100 ),
 			Top = Length.Point( 100 ),
-			BorderRadius = new Vector2( 40, 40 ),
-			Padding = new Padding { Horizontal = Length.Point( 20 ), Vertical = Length.Point( 20 ) }
+			Position = YogaPositionType.Relative,
+			// BorderRadius = new Vector2( 40, 40 ),
+			// Padding = new Padding { Horizontal = Length.Point( 20 ), Vertical = Length.Point( 20 ) }
 		};
 
 		var subRectangle = new Panel
 		{
+			DebugLabel = "SubRectangle",
 			Background = SKColors.Blue,
 			Foreground = SKColors.White,
 			Width = Length.Percent( 100 ),
 			Height = Length.Point( 50 ),
 			Left = Length.Point( 0 ),
-			Top = Length.Point( 0 )
+			Top = Length.Point( 0 ),
+			Position = YogaPositionType.Relative
 		};
-
+		
 		var text = new Panel
 		{
+			DebugLabel = "Text",
 			Text = "Hello World",
 			Background = SKColors.Green,
 			Foreground = SKColors.White,
+			Left = Length.Point( 0 ),
+			Top = Length.Point( 0 ),
+			Position = YogaPositionType.Relative
 		};
 
 		rectangle.AddChild( subRectangle );
 		subRectangle.AddChild( text );
 
+		RootPanel.DebugLabel = "RootPanel";
+		RootPanel.Background = SKColors.Yellow;
 		RootPanel.AddChild( rectangle );
+		
 		Console.WriteLine( $"RootPanel children count: {RootPanel.Children.Count}" );
 	}
 

@@ -1,20 +1,20 @@
 <Solution>
-  <Folder Name="/Engine/">
-    <Project Path="MossEngine.Razor/MossEngine.Razor.csproj" />
-    <Project Path="MossEngine.System/MossEngine.System.csproj" />
-    <Project Path="MossEngine.UI/MossEngine.UI.csproj" />
-    <Project Path="MossEngine/MossEngine.csproj" />
-  </Folder>
-  <Folder Name="/Game/" />
-  <Folder Name="/ThirdParty/" />
-  <Folder Name="/ThirdParty/Microsoft/">
-    <Project Path="Microsoft.AspNetCore.Components/Microsoft.AspNetCore.Components.csproj" />
-  </Folder>
-  <Folder Name="/ThirdParty/Yoga/">
-    <Project Path="../../Documents/GitHub/Yoga-CS/Yoga-CS/Yoga-CS.csproj" />
-    <!-- <Project Path="../../Documents/GitHub/YogaSharp/Yoga.Interop/Yoga.Interop.csproj" /> -->
-    <!-- <Project Path="../../Documents/GitHub/YogaSharp/Yoga.Tests.Visual/Yoga.Tests.Visual.csproj" />
-    <Project Path="../../Documents/GitHub/YogaSharp/Yoga.Tests/Yoga.Tests.csproj" />
-    <Project Path="../../Documents/GitHub/YogaSharp/Yoga/Yoga.csproj" /> -->
-  </Folder>
+    <Folder Name="/Engine/">
+        <Project Path="MossEngine.Razor/MossEngine.Razor.csproj"/>
+        <Project Path="MossEngine.System/MossEngine.System.csproj"/>
+        <Project Path="MossEngine.UI/MossEngine.UI.csproj"/>
+        <Project Path="MossEngine/MossEngine.csproj"/>
+    </Folder>
+    <Folder Name="/Game/"/>
+    <Folder Name="/ThirdParty/"/>
+    <Folder Name="/ThirdParty/Microsoft/">
+        <Project Path="Microsoft.AspNetCore.Components/Microsoft.AspNetCore.Components.csproj"/>
+    </Folder>
+    <Folder Name="/ThirdParty/Yoga/">
+        <Project Path="../../Documents/GitHub/Yoga-CS/Yoga-CS/Yoga-CS.csproj"/>
+<!--        <Project Path="../../Documents/GitHub/YogaSharp/Yoga.Interop/Yoga.Interop.csproj"/>-->
+<!--        <Project Path="../../Documents/GitHub/YogaSharp/Yoga.Tests.Visual/Yoga.Tests.Visual.csproj"/>-->
+<!--        <Project Path="../../Documents/GitHub/YogaSharp/Yoga.Tests/Yoga.Tests.csproj"/>-->
+<!--        <Project Path="../../Documents/GitHub/YogaSharp/Yoga/Yoga.csproj"/>-->
+    </Folder>
 </Solution>

@@ -49,7 +49,9 @@ public abstract unsafe partial class BaseWindow( string title ) : IDisposable
 		ConfigureSurface();
 		InitializeImGui();
 
-		RootPanel = new RootPanel( Window.Size.X, Window.Size.Y );
+		RootPanel = new RootPanel();
+		RootPanel.Resize( Window.Size.X, Window.Size.Y );
+		
 		_rootPanelRenderer = new RootPanelRenderer( RootPanel );
 
 		Window.Load += OnWindowLoad;
@@ -125,7 +127,7 @@ public abstract unsafe partial class BaseWindow( string title ) : IDisposable
 	private void InternalOnSkiaDraw( SKCanvas canvas, Vector2D<int> size )
 	{
 		_rootPanelRenderer.Render( canvas );
-		
+
 		OnSkiaDraw( canvas, size );
 	}
 

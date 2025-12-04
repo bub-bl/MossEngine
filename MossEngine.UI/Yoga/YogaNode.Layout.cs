@@ -4,9 +4,13 @@ namespace MossEngine.UI.Yoga;
 
 public unsafe partial class YogaNode
 {
+	public bool HasParent => Parent is not null;
+	public float LayoutWidth => YG.NodeLayoutGetWidth( this );
+	public float LayoutHeight => YG.NodeLayoutGetHeight( this );
+	
 	public Length Width
 	{
-		get => YG.NodeLayoutGetWidth( this );
+		get => YG.NodeStyleGetWidth( this );
 		set
 		{
 			switch ( value.Unit )
@@ -32,7 +36,7 @@ public unsafe partial class YogaNode
 
 	public Length Height
 	{
-		get => YG.NodeLayoutGetHeight( this );
+		get => YG.NodeStyleGetHeight( this );
 		set
 		{
 			switch ( value.Unit )
@@ -62,10 +66,8 @@ public unsafe partial class YogaNode
 		set => YG.NodeStyleSetPositionType( this, (YGPositionType)value );
 	}
 
-	public float LayoutLeft => YG.NodeLayoutGetLeft( this );
-	public float LayoutTop => YG.NodeLayoutGetTop( this );
-	public float LayoutRight => YG.NodeLayoutGetRight( this );
-	public float LayoutBottom => YG.NodeLayoutGetBottom( this );
+	public Length LayoutLeft => YG.NodeLayoutGetLeft( this );
+	public Length LayoutTop => YG.NodeLayoutGetTop( this );
 
 	public Length Left
 	{

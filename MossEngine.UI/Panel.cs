@@ -1,43 +1,237 @@
+using System.Diagnostics;
+using System.Numerics;
 using MossEngine.UI.Yoga;
 using SkiaSharp;
+using Yoga;
 
 namespace MossEngine.UI;
 
-public class Panel : BaseWidget
+public class Panel
 {
+	public Panel? Parent { get; private set; }
+	public List<Panel> Children { get; } = [];
+
+	// Yoga node for layout
+	internal YogaNode YogaNode { get; }
+
+	// Style-ish properties (very minimal)
+	public SKColor Background { get; set; } = SKColors.Transparent;
+	public SKColor Foreground { get; set; } = SKColors.Black;
+
 	public string Text { get; set; } = string.Empty;
+
+	public float LayoutWidth => YogaNode.LayoutWidth;
+	public float LayoutHeight => YogaNode.LayoutHeight;
+
+	public Length Width
+	{
+		get => YogaNode.Width;
+		set => YogaNode.Width = value;
+	}
+
+	public Length Height
+	{
+		get => YogaNode.Height;
+		set => YogaNode.Height = value;
+	}
+
+	public Margin Margin
+	{
+		get => YogaNode.Margin;
+		set => YogaNode.Margin = value;
+	}
+
+	public Padding Padding
+	{
+		get => YogaNode.Padding;
+		set => YogaNode.Padding = value;
+	}
+
+	public YogaPositionType Position
+	{
+		get => YogaNode.PositionType;
+		set => YogaNode.PositionType = value;
+	}
+
+	public Vector2 BorderRadius { get; set; }
+
+	// public float LayoutLeft => YogaNode.LayoutLeft;
+	// public float LayoutTop => YogaNode.LayoutTop;
+	// public float LayoutRight => YogaNode.LayoutRight;
+	// public float LayoutBottom => YogaNode.LayoutBottom;
+	//
+	// public float AbsoluteLeft => (Parent?.AbsoluteLeft ?? 0f) + LayoutLeft;
+	// public float AbsoluteTop => (Parent?.AbsoluteTop ?? 0f) + LayoutTop;
+	// public float AbsoluteRight => AbsoluteLeft + (YogaNode.LayoutRight - LayoutLeft);
+	// public float AbsoluteBottom => AbsoluteTop + (YogaNode.LayoutBottom - LayoutTop);
+
+	public Length Left
+	{
+		get => YogaNode.Left;
+		set => YogaNode.Left = value;
+	}
+
+	public Length Top
+	{
+		get => YogaNode.Top;
+		set => YogaNode.Top = value;
+	}
+
+	public Length Right
+	{
+		get => YogaNode.Right;
+		set => YogaNode.Right = value;
+	}
+
+	public Length Bottom
+	{
+		get => YogaNode.Bottom;
+		set => YogaNode.Bottom = value;
+	}
+
+	public Length Start
+	{
+		get => YogaNode.Start;
+		set => YogaNode.Start = value;
+	}
+
+	public Length End
+	{
+		get => YogaNode.End;
+		set => YogaNode.End = value;
+	}
+
+	public Length Horizontal
+	{
+		get => YogaNode.Horizontal;
+		set => YogaNode.Horizontal = value;
+	}
+
+	public Length Vertical
+	{
+		get => YogaNode.Vertical;
+		set => YogaNode.Vertical = value;
+	}
+
+	public YogaDirection Direction
+	{
+		get => YogaNode.Direction;
+		set => YogaNode.Direction = value;
+	}
+
+	public Vector2 Center => new(YogaNode.LayoutLeft + YogaNode.Width / 2, YogaNode.LayoutTop + YogaNode.Height / 2);
+
+	public bool IsDirty { get; protected set; } = true;
+
+	public string DebugLabel { get; set; }
 
 	public Panel()
 	{
-		// default flex behaviour for panels
+		YogaNode = new YogaNode();
+		YogaNode.Context = this;
 		YogaNode.AlignItems = YogaAlign.FlexStart;
 		YogaNode.JustifyContent = YogaJustify.FlexStart;
 		YogaNode.FlexDirection = YogaFlexDirection.Row;
-		// YogaNode.Width = YogaValue.Auto.Value;
-		// YogaNode.Height = YogaValue.Auto.Value;
+		YogaNode.PositionType = YogaPositionType.Relative;
 	}
 
-	private void DrawBackground( SKCanvas canvas )
+	public void ComputeLayout()
 	{
+		// if ( !IsDirty ) return;
+		YogaNode.CalculateLayout();
+	}
+
+	public void AddChild( Panel child )
+	{
+		if ( child.Parent is not null )
+			throw new InvalidOperationException( "Already has parent" );
+
+		child.Parent = this;
+
+		Children.Add( child );
+
+		var idx = Children.Count - 1;
+		YogaNode.InsertChildAt( child.YogaNode, idx );
+
+		MarkDirty();
+	}
+
+	public void RemoveChild( Panel child )
+	{
+		if ( child.Parent != this ) return;
+
+		var idx = Children.IndexOf( child );
+		if ( idx < 0 ) return;
+
+		Children.RemoveAt( idx );
+		YogaNode.RemoveChildAt( idx );
+
+		child.Parent = null;
+		MarkDirty();
+	}
+
+	public bool HasParent => Parent is not null;
+
+	public Length LayoutLeft => YogaNode.LayoutLeft;
+	public Length LayoutTop => YogaNode.LayoutTop;
+
+	private Vector2 GetFinalPosition()
+	{
+		var parentLeft = Parent?.LayoutLeft ?? Length.Zero;
+		var parentTop = Parent?.LayoutTop ?? Length.Zero;
+
+		var finalLeft = parentLeft + LayoutLeft;
+		var finalTop = parentTop + LayoutTop;
+		
+		unsafe
+		{
+			if ( HasParent )
+			{
+				var parentNodeLayoutLeft = YG.NodeLayoutGetLeft( Parent.YogaNode );
+				var parentNodeLayoutTop = YG.NodeLayoutGetTop( Parent.YogaNode );
+
+				Console.WriteLine( "Name: " + DebugLabel + ", " + LayoutLeft + ", " + LayoutTop + ", " +
+				                   Parent?.LayoutLeft + ", " + Parent?.LayoutTop + ", " + parentNodeLayoutLeft + ", " +
+				                   parentNodeLayoutTop );
+			}
+		}
+
+		return new Vector2( finalLeft, finalTop );
+	}
+
+	protected void DrawBackground( SKCanvas canvas )
+	{
+		var position = GetFinalPosition();
+
 		new SkiaRectBuilder( canvas )
-			.At( AbsoluteLeft, AbsoluteTop )
-			.WithSize( Width, Height )
+			.At( position.X, position.Y )
+			.WithSize( LayoutWidth, LayoutHeight )
 			.WithBorderRadius( BorderRadius.X, BorderRadius.Y )
 			.WithFill( Background )
 			.Draw();
 	}
 
-	private void DrawText( SKCanvas canvas )
+	protected void DrawText( SKCanvas canvas )
 	{
+		var position = GetFinalPosition();
+
 		new SkiaTextBuilder( canvas )
-			.At( AbsoluteLeft, AbsoluteTop )
+			.At( position.X, position.Y )
+			.WithSize( LayoutWidth, LayoutHeight )
 			.WithText( Text )
 			.WithColor( Foreground )
 			.WithFontSize( 20 )
 			.Draw();
 	}
 
-	public override void Draw( SKCanvas canvas )
+	public virtual void MarkDirty()
+	{
+		IsDirty = true;
+		Parent?.MarkDirty();
+	}
+
+	// Called after Yoga layout computed. x,y are absolute positions in root space.
+	public virtual void Draw( SKCanvas canvas )
 	{
 		DrawBackground( canvas );
 		DrawText( canvas );
@@ -48,200 +242,5 @@ public class Panel : BaseWidget
 		}
 
 		IsDirty = false;
-	}
-}
-
-public abstract class BaseSkiaBuilder<TBuilder>( SKCanvas canvas ) where TBuilder : BaseSkiaBuilder<TBuilder>
-{
-	protected readonly SKCanvas Canvas = canvas;
-	protected readonly SKPaint Paint = new();
-
-	private float _x;
-	private float _y;
-	private float _width;
-	private float _height;
-	private bool _sizeSet;
-	private bool _positionSet;
-	private bool _rectExplicitlySet;
-	private SKRect _explicitRect;
-
-	public TBuilder WithRect( SKRect rect )
-	{
-		_explicitRect = rect;
-		_rectExplicitlySet = true;
-
-		return (TBuilder)this;
-	}
-
-	public TBuilder WithRect( float x, float y, float width, float height )
-	{
-		return WithRect( new SKRect( x, y, x + width, y + height ) );
-	}
-
-	public TBuilder At( float x, float y )
-	{
-		_x = x;
-		_y = y;
-		_positionSet = true;
-		_rectExplicitlySet = false;
-
-		return (TBuilder)this;
-	}
-
-	public TBuilder WithSize( float width, float height )
-	{
-		width = Math.Max( 0, width );
-		height = Math.Max( 0, height );
-
-		_width = width;
-		_height = height;
-		_sizeSet = true;
-		_rectExplicitlySet = false;
-
-		return (TBuilder)this;
-	}
-
-	protected SKRect BuildRect()
-	{
-		if ( _rectExplicitlySet )
-			return _explicitRect;
-
-		// if ( !_sizeSet )
-		// 	throw new InvalidOperationException( "Size must be specified via WithSize or WithRect before drawing." );
-
-		var x = _positionSet ? _x : 0f;
-		var y = _positionSet ? _y : 0f;
-
-		return new SKRect( x, y, x + _width, y + _height );
-	}
-
-	public abstract void Draw();
-}
-
-public class SkiaTextBuilder : BaseSkiaBuilder<SkiaTextBuilder>
-{
-	private string _text;
-
-	public SkiaTextBuilder( SKCanvas canvas ) : base( canvas )
-	{
-		Paint.IsAntialias = true;
-	}
-
-	public SkiaTextBuilder WithText( string text )
-	{
-		_text = text;
-		return this;
-	}
-
-	public SkiaTextBuilder WithColor( SKColor color )
-	{
-		Paint.Color = color;
-		return this;
-	}
-
-	public SkiaTextBuilder WithFont( SKTypeface typeface )
-	{
-		Paint.Typeface = typeface;
-		return this;
-	}
-
-	public SkiaTextBuilder WithFontSize( float fontSize )
-	{
-		Paint.TextSize = fontSize;
-		return this;
-	}
-
-	public override void Draw()
-	{
-		if ( string.IsNullOrEmpty( _text ) ) return;
-
-		var rect = BuildRect();
-		var top = rect.Top + Math.Abs( Paint.FontMetrics.Ascent );
-
-		Canvas.DrawText( _text, rect.Left, top, Paint );
-	}
-}
-
-public class SkiaRectBuilder : BaseSkiaBuilder<SkiaRectBuilder>
-{
-	private float _radiusX;
-	private float _radiusY;
-	private bool _fillEnabled = true;
-	private bool _strokeEnabled;
-	private SKColor _fillColor = SKColors.White;
-	private SKColor _strokeColor = SKColors.Transparent;
-	private float _strokeWidth = 1f;
-
-	public SkiaRectBuilder( SKCanvas canvas ) : base( canvas )
-	{
-		Paint.IsAntialias = true;
-	}
-
-	public SkiaRectBuilder WithBorderRadius( float radius )
-	{
-		return WithBorderRadius( radius, radius );
-	}
-
-	public SkiaRectBuilder WithBorderRadius( float radiusX, float radiusY )
-	{
-		_radiusX = Math.Max( 0, radiusX );
-		_radiusY = Math.Max( 0, radiusY );
-
-		return this;
-	}
-
-	public SkiaRectBuilder WithFill( SKColor color )
-	{
-		_fillColor = color;
-		_fillEnabled = true;
-
-		return this;
-	}
-
-	public SkiaRectBuilder WithStroke( SKColor color, float strokeWidth = 1f )
-	{
-		strokeWidth = Math.Max( 0, strokeWidth );
-
-		_strokeColor = color;
-		_strokeWidth = strokeWidth;
-		_strokeEnabled = true;
-
-		return this;
-	}
-
-	private void DrawRectGeometry( SKRect rect )
-	{
-		if ( _radiusX <= 0 && _radiusY <= 0 )
-		{
-			Canvas.DrawRect( rect, Paint );
-			return;
-		}
-
-		using var roundRect = new SKRoundRect( rect, _radiusX, _radiusY );
-		Canvas.DrawRoundRect( roundRect, Paint );
-	}
-
-	public override void Draw()
-	{
-		var rect = BuildRect();
-		if ( rect.Width <= 0 || rect.Height <= 0 ) return;
-
-		if ( _fillEnabled && _fillColor != SKColors.Transparent )
-		{
-			Paint.Style = SKPaintStyle.Fill;
-			Paint.StrokeWidth = 0;
-			Paint.Color = _fillColor;
-
-			DrawRectGeometry( rect );
-		}
-
-		if ( _strokeEnabled && _strokeColor != SKColors.Transparent )
-		{
-			Paint.Style = SKPaintStyle.Stroke;
-			Paint.StrokeWidth = _strokeWidth;
-			Paint.Color = _strokeColor;
-
-			DrawRectGeometry( rect );
-		}
 	}
 }

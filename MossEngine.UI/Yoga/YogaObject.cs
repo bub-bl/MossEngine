@@ -34,9 +34,4 @@ public abstract unsafe class YogaObject<T> where T : YogaObject<T>, new()
 		get => ContextCache.GetValueOrDefault( this );
 		set => ContextCache[this] = value;
 	}
-
-	public override int GetHashCode()
-	{
-		throw new NotImplementedException();
-	}
 }
