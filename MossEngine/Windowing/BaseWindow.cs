@@ -126,6 +126,7 @@ public abstract unsafe partial class BaseWindow( string title ) : IDisposable
 
 	private void InternalOnSkiaDraw( SKCanvas canvas, Vector2D<int> size )
 	{
+		RootPanel.Resize( size.X, size.Y );
 		_rootPanelRenderer.Render( canvas );
 
 		OnSkiaDraw( canvas, size );

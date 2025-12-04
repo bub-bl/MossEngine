@@ -132,8 +132,6 @@ public abstract unsafe partial class BaseWindow
 			Usage = TextureUsage.RenderAttachment | TextureUsage.CopyDst | TextureUsage.CopySrc
 		};
 		
-		RootPanel.Resize( newSize.X, newSize.Y );
-		
 		WebGpu.Wgpu.SurfaceConfigure( _surface, surfaceConfiguration );
 		Console.WriteLine( $"Surface reconfigurée pour la taille : {newSize.X}x{newSize.Y}" );
 	}
