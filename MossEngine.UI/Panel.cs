@@ -19,13 +19,8 @@ public class Panel : BaseWidget
 
 	private void DrawBackground( SKCanvas canvas )
 	{
-		var parentLeft = Parent?.LayoutLeft ?? Length.Zero;
-		var parentTop = Parent?.LayoutTop ?? Length.Zero;
-		var left = parentLeft + LayoutLeft;
-		var top = parentTop + LayoutTop;
-		
 		new SkiaRectBuilder( canvas )
-			.At( left, top )
+			.At( AbsoluteLeft, AbsoluteTop )
 			.WithSize( Width, Height )
 			.WithBorderRadius( BorderRadius.X, BorderRadius.Y )
 			.WithFill( Background )
@@ -34,13 +29,8 @@ public class Panel : BaseWidget
 
 	private void DrawText( SKCanvas canvas )
 	{
-		var parentLeft = Parent?.LayoutLeft ?? Length.Zero;
-		var parentTop = Parent?.LayoutTop ?? Length.Zero;
-		var left = parentLeft + LayoutLeft;
-		var top = parentTop + LayoutTop;
-
 		new SkiaTextBuilder( canvas )
-			.At( left, top )
+			.At( AbsoluteLeft, AbsoluteTop )
 			.WithText( Text )
 			.WithColor( Foreground )
 			.WithFontSize( 20 )

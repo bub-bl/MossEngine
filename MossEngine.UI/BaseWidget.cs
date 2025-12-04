@@ -53,6 +53,11 @@ public abstract class BaseWidget
 	public float LayoutRight => YogaNode.LayoutRight;
 	public float LayoutBottom => YogaNode.LayoutBottom;
 
+	public float AbsoluteLeft => (Parent?.AbsoluteLeft ?? 0f) + LayoutLeft;
+	public float AbsoluteTop => (Parent?.AbsoluteTop ?? 0f) + LayoutTop;
+	public float AbsoluteRight => AbsoluteLeft + (YogaNode.LayoutRight - LayoutLeft);
+	public float AbsoluteBottom => AbsoluteTop + (YogaNode.LayoutBottom - LayoutTop);
+
 	public Length Left
 	{
 		get => YogaNode.Left;
