@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Numerics;
 using MossEngine.UI.Yoga;
 using SkiaSharp;
@@ -247,8 +248,7 @@ public class Panel
 		MarkDirty();
 	}
 
-
-	private Vector2 GetFinalPosition()
+	protected Vector2 GetFinalPosition()
 	{
 		var local = new Vector2( YogaNode.LayoutLeft, YogaNode.LayoutTop );
 
@@ -297,11 +297,11 @@ public class Panel
 
 	private bool ShouldMeasureText()
 	{
-		return !string.IsNullOrEmpty( Text ) && Children.Count == 0;
+		return !string.IsNullOrEmpty( Text ) && Children.Count is 0;
 	}
 
 	private SizeF MeasureText( YogaNode node, float width, YogaMeasureMode widthMode, float height,
-		 YogaMeasureMode heightMode )
+		YogaMeasureMode heightMode )
 	{
 		var bounds = new SKRect();
 		MeasurementPaint.MeasureText( Text, ref bounds );
@@ -312,7 +312,7 @@ public class Panel
 
 		return new SizeF( Resolve( measuredWidth, width, widthMode ),
 			Resolve( measuredHeight, height, heightMode ) );
-		
+
 		static float Resolve( float measured, float available, YogaMeasureMode mode ) => mode switch
 		{
 			YogaMeasureMode.Exactly => available,
