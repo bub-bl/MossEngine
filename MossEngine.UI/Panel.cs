@@ -8,7 +8,7 @@ namespace MossEngine.UI;
 public class Panel
 {
 	private static readonly SKPaint MeasurementPaint = new() { IsAntialias = true, TextSize = 20 };
-	
+
 	public Panel? Parent { get; private set; }
 	public List<Panel> Children { get; } = [];
 
@@ -282,7 +282,64 @@ public class Panel
 			.WithFontSize( 20 )
 			.Draw();
 	}
-	
+
+	private IDisposable? PushOverflowClip( SKCanvas canvas )
+	{
+		if ( Overflow is YogaOverflow.Visible )
+			return null;
+
+		var position = GetFinalPosition();
+		var clipRect = new SKRect( position.X, position.Y, position.X + LayoutWidth, position.Y + LayoutHeight );
+		var hasRadius = BorderRadius.LengthSquared() > 0.001f;
+
+		canvas.Save();
+
+		if ( hasRadius )
+		{
+			var roundRect = new SKRoundRect( clipRect, BorderRadius.X, BorderRadius.Y );
+			canvas.ClipRoundRect( roundRect, SKClipOperation.Intersect, antialias: true );
+		}
+		else
+		{
+			canvas.ClipRect( clipRect, SKClipOperation.Intersect, antialias: true );
+		}
+
+		// if ( Overflow is YogaOverflow.Scroll )
+		// {
+		// 	var scrollY = MathF.Max( 0, YogaNode.ScrollY );
+		// 	var scrollX = MathF.Max( 0, YogaNode.ScrollX );
+		// 	canvas.Translate( -scrollX, -scrollY );
+		//
+		// 	return new CanvasRestore( canvas, translateBackX: scrollX, translateBackY: scrollY );
+		// }
+
+		return new CanvasRestore( canvas, translateBackX: 0, translateBackY: 0 );
+	}
+
+	private readonly struct CanvasRestore : IDisposable
+	{
+		private readonly SKCanvas _canvas;
+		private readonly float _translateBackX;
+		private readonly float _translateBackY;
+
+		public CanvasRestore( SKCanvas canvas, float translateBackX, float translateBackY )
+		{
+			_canvas = canvas;
+			_translateBackX = translateBackX;
+			_translateBackY = translateBackY;
+		}
+
+		public void Dispose()
+		{
+			if ( _translateBackX != 0 || _translateBackY != 0 )
+			{
+				_canvas.Translate( _translateBackX, _translateBackY );
+			}
+
+			_canvas.Restore();
+		}
+	}
+
 	private void UpdateMeasurement()
 	{
 		YogaNode.MeasureFunction = ShouldMeasureText() ? MeasureText : null;
@@ -320,16 +377,27 @@ public class Panel
 		Parent?.MarkDirty();
 	}
 
+	protected void ClipOverflow( SKCanvas canvas )
+	{
+		using var clip = PushOverflowClip( canvas );
+	}
+	
+	protected void DrawChildren( SKCanvas canvas )
+	{
+		foreach ( var c in Children )
+		{
+			c.Draw( canvas );
+		}
+	}
+
 	// Called after Yoga layout computed. x,y are absolute positions in root space.
 	public virtual void Draw( SKCanvas canvas )
 	{
 		DrawBackground( canvas );
 		DrawText( canvas );
-
-		foreach ( var c in Children )
-		{
-			c.Draw( canvas );
-		}
+		
+		ClipOverflow( canvas );
+		DrawChildren( canvas );
 
 		IsDirty = false;
 	}

@@ -91,12 +91,10 @@ public class Image : Panel
 	{
 		DrawBackground( canvas );
 		DrawImage( canvas );
-		// DrawText( canvas );
-
-		foreach ( var c in Children )
-		{
-			c.Draw( canvas );
-		}
+		DrawText( canvas );
+		
+		ClipOverflow( canvas );
+		DrawChildren( canvas );
 
 		IsDirty = false;
 	}
