@@ -36,10 +36,34 @@ public class Panel
 	public float LayoutWidth => YogaNode.LayoutWidth;
 	public float LayoutHeight => YogaNode.LayoutHeight;
 
+	public Length MinWidth
+	{
+		get => YogaNode.MinWidth;
+		set => YogaNode.MinWidth = value;
+	}
+	
+	public Length MaxWidth
+	{
+		get => YogaNode.MaxWidth;
+		set => YogaNode.MaxWidth = value;
+	}
+	
 	public Length Width
 	{
 		get => YogaNode.Width;
 		set => YogaNode.Width = value;
+	}
+	
+	public Length MinHeight
+	{
+		get => YogaNode.MinHeight;
+		set => YogaNode.MinHeight = value;
+	}
+	
+	public Length MaxHeight
+	{
+		get => YogaNode.MaxHeight;
+		set => YogaNode.MaxHeight = value;
 	}
 
 	public Length Height

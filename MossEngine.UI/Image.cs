@@ -61,7 +61,9 @@ public class Image : Panel
 		var position = GetFinalPosition();
 		var destRect = CreateDestinationRect( position );
 
-		using var paint = new SKPaint { FilterQuality = SKFilterQuality.High, IsAntialias = true };
+		using var paint = new SKPaint();
+		paint.FilterQuality = SKFilterQuality.High;
+		paint.IsAntialias = true;
 
 		var hasCornerRadius = BorderRadius.LengthSquared() > 0.001f;
 
@@ -103,7 +105,7 @@ public class Image : Panel
 		var destHeight = destRect.Height;
 
 		if ( imageWidth <= 0 || imageHeight <= 0 || destWidth <= 0 || destHeight <= 0 )
-			return ( srcRect, destRect );
+			return (srcRect, destRect);
 
 		var widthRatio = destWidth / imageWidth;
 		var heightRatio = destHeight / imageHeight;
@@ -111,53 +113,54 @@ public class Image : Panel
 		switch ( ObjectFit )
 		{
 			case ImageObjectFit.Fill:
-				return ( srcRect, destRect );
+				return (srcRect, destRect);
 
 			case ImageObjectFit.None:
-			{
-				var width = MathF.Min( destWidth, imageWidth );
-				var height = MathF.Min( destHeight, imageHeight );
-				return ( srcRect,
-					new SKRect( destRect.Left, destRect.Top, destRect.Left + width, destRect.Top + height ) );
-			}
+				{
+					var width = MathF.Min( destWidth, imageWidth );
+					var height = MathF.Min( destHeight, imageHeight );
+					
+					return (srcRect,
+						new SKRect( destRect.Left, destRect.Top, destRect.Left + width, destRect.Top + height ));
+				}
 
 			case ImageObjectFit.ScaleDown:
-			{
-				var scale = MathF.Min( 1f, MathF.Min( widthRatio, heightRatio ) );
-				return ( srcRect, CenterRect( destRect, imageWidth * scale, imageHeight * scale ) );
-			}
+				{
+					var scale = MathF.Min( 1f, MathF.Min( widthRatio, heightRatio ) );
+					return (srcRect, CenterRect( destRect, imageWidth * scale, imageHeight * scale ));
+				}
 
 			case ImageObjectFit.Contain:
-			{
-				var scale = MathF.Min( widthRatio, heightRatio );
-				return ( srcRect, CenterRect( destRect, imageWidth * scale, imageHeight * scale ) );
-			}
+				{
+					var scale = MathF.Min( widthRatio, heightRatio );
+					return (srcRect, CenterRect( destRect, imageWidth * scale, imageHeight * scale ));
+				}
 
 			case ImageObjectFit.Cover:
-			{
-				var scale = MathF.Max( widthRatio, heightRatio );
-				var coverWidth = imageWidth * scale;
-				var coverHeight = imageHeight * scale;
+				{
+					var scale = MathF.Max( widthRatio, heightRatio );
+					var coverWidth = imageWidth * scale;
+					var coverHeight = imageHeight * scale;
 
-				var sampleWidth = destWidth / coverWidth * imageWidth;
-				var sampleHeight = destHeight / coverHeight * imageHeight;
-				var sampleX = ( imageWidth - sampleWidth ) / 2f;
-				var sampleY = ( imageHeight - sampleHeight ) / 2f;
+					var sampleWidth = destWidth / coverWidth * imageWidth;
+					var sampleHeight = destHeight / coverHeight * imageHeight;
+					var sampleX = (imageWidth - sampleWidth) / 2f;
+					var sampleY = (imageHeight - sampleHeight) / 2f;
 
-				srcRect = new SKRect( sampleX, sampleY, sampleX + sampleWidth, sampleY + sampleHeight );
-				return ( srcRect, destRect );
-			}
+					srcRect = new SKRect( sampleX, sampleY, sampleX + sampleWidth, sampleY + sampleHeight );
+					return (srcRect, destRect);
+				}
 
 			default:
-				return ( srcRect, destRect );
+				return (srcRect, destRect);
 		}
 	}
 
 	private static SKRect CenterRect( SKRect bounds, float width, float height )
 	{
-		var offsetX = bounds.Left + ( bounds.Width - width ) / 2f;
-		var offsetY = bounds.Top + ( bounds.Height - height ) / 2f;
-		
+		var offsetX = bounds.Left + (bounds.Width - width) / 2f;
+		var offsetY = bounds.Top + (bounds.Height - height) / 2f;
+
 		return new SKRect( offsetX, offsetY, offsetX + width, offsetY + height );
 	}
 

@@ -6,6 +6,56 @@ public unsafe partial class YogaNode
 {
 	public bool HadOverflow => YG.NodeLayoutGetHadOverflow( this ) is not 0;
 
+	public Length MinWidth
+	{
+		get => YG.NodeStyleGetMinWidth( this );
+		set
+		{
+			switch ( value.Unit )
+			{
+				case YogaUnit.Point:
+					YG.NodeStyleSetMinWidth( this, value );
+					break;
+				case YogaUnit.Percent:
+					YG.NodeStyleSetMinWidthPercent( this, value );
+					break;
+				case YogaUnit.Auto:
+					throw new NotSupportedException( "Auto is not supported" );
+				case YogaUnit.FitContent:
+					throw new NotSupportedException( "FitContent is not supported" );
+				case YogaUnit.MaxContent:
+					throw new NotSupportedException( "MaxContent is not supported" );
+				case YogaUnit.Stretch:
+					throw new NotSupportedException( "Stretch is not supported" );
+			}
+		}
+	}
+	
+	public Length MaxWidth
+	{
+		get => YG.NodeStyleGetMaxWidth( this );
+		set
+		{
+			switch ( value.Unit )
+			{
+				case YogaUnit.Point:
+					YG.NodeStyleSetMaxWidth( this, value );
+					break;
+				case YogaUnit.Percent:
+					YG.NodeStyleSetMaxWidthPercent( this, value );
+					break;
+				case YogaUnit.Auto:
+					throw new NotSupportedException( "Auto is not supported" );
+				case YogaUnit.FitContent:
+					throw new NotSupportedException( "FitContent is not supported" );
+				case YogaUnit.MaxContent:
+					throw new NotSupportedException( "MaxContent is not supported" );
+				case YogaUnit.Stretch:
+					throw new NotSupportedException( "Stretch is not supported" );
+			}
+		}
+	}
+	
 	public Length Width
 	{
 		get => YG.NodeStyleGetWidth( this );
@@ -22,6 +72,56 @@ public unsafe partial class YogaNode
 				case YogaUnit.Auto:
 					YG.NodeStyleSetWidthAuto( this );
 					break;
+				case YogaUnit.FitContent:
+					throw new NotSupportedException( "FitContent is not supported" );
+				case YogaUnit.MaxContent:
+					throw new NotSupportedException( "MaxContent is not supported" );
+				case YogaUnit.Stretch:
+					throw new NotSupportedException( "Stretch is not supported" );
+			}
+		}
+	}
+	
+	public Length MinHeight
+	{
+		get => YG.NodeStyleGetMinHeight( this );
+		set
+		{
+			switch ( value.Unit )
+			{
+				case YogaUnit.Point:
+					YG.NodeStyleSetMinHeight( this, value );
+					break;
+				case YogaUnit.Percent:
+					YG.NodeStyleSetMinHeightPercent( this, value );
+					break;
+				case YogaUnit.Auto:
+					throw new NotSupportedException( "Auto is not supported" );
+				case YogaUnit.FitContent:
+					throw new NotSupportedException( "FitContent is not supported" );
+				case YogaUnit.MaxContent:
+					throw new NotSupportedException( "MaxContent is not supported" );
+				case YogaUnit.Stretch:
+					throw new NotSupportedException( "Stretch is not supported" );
+			}
+		}
+	}
+	
+	public Length MaxHeight
+	{
+		get => YG.NodeStyleGetMaxHeight( this );
+		set
+		{
+			switch ( value.Unit )
+			{
+				case YogaUnit.Point:
+					YG.NodeStyleSetMaxHeight( this, value );
+					break;
+				case YogaUnit.Percent:
+					YG.NodeStyleSetMaxHeightPercent( this, value );
+					break;
+				case YogaUnit.Auto:
+					throw new NotSupportedException( "Auto is not supported" );
 				case YogaUnit.FitContent:
 					throw new NotSupportedException( "FitContent is not supported" );
 				case YogaUnit.MaxContent:
