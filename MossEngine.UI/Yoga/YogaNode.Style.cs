@@ -414,14 +414,14 @@ public unsafe partial class YogaNode
 			case YogaUnit.Percent:
 				YG.NodeStyleSetPaddingPercent( this, (YGEdge)edge, value.Value );
 				break;
-			case YogaUnit.Undefined:
-				YG.NodeStyleSetPadding( this, (YGEdge)edge, YG.YGUndefined );
-				break;
 			case YogaUnit.Auto:
+				throw new NotSupportedException( "Auto is not supported" );
 			case YogaUnit.FitContent:
+				throw new NotSupportedException( "FitContent is not supported" );
 			case YogaUnit.MaxContent:
+				throw new NotSupportedException( "MaxContent is not supported" );
 			case YogaUnit.Stretch:
-				throw new NotSupportedException( "Padding does not support the specified YogaUnit" );
+				throw new NotSupportedException( "Stretch is not supported" );
 		}
 	}
 
@@ -435,14 +435,15 @@ public unsafe partial class YogaNode
 			case YogaUnit.Percent:
 				YG.NodeStyleSetMarginPercent( this, (YGEdge)edge, value.Value );
 				break;
-			case YogaUnit.Undefined:
-				YG.NodeStyleSetMargin( this, (YGEdge)edge, YG.YGUndefined );
-				break;
 			case YogaUnit.Auto:
+				YG.NodeStyleSetMarginAuto( this, (YGEdge)edge );
+				break;
 			case YogaUnit.FitContent:
+				throw new NotSupportedException( "FitContent is not supported" );
 			case YogaUnit.MaxContent:
+				throw new NotSupportedException( "MaxContent is not supported" );
 			case YogaUnit.Stretch:
-				throw new NotSupportedException( "Margin does not support the specified YogaUnit" );
+				throw new NotSupportedException( "Stretch is not supported" );
 		}
 	}
 
