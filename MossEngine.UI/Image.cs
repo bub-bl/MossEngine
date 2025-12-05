@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using MossEngine.UI.Yoga;
 using SkiaSharp;
 
@@ -56,11 +54,7 @@ public class Image : Panel
 	{
 		EnsureImageLoaded();
 
-		if ( _image is null )
-		{
-			Console.WriteLine( nameof(DrawImage) + ": Image is null" );
-			return;
-		}
+		if ( _image is null ) return;
 
 		var position = GetFinalPosition();
 		var width = LayoutWidth > 0 ? LayoutWidth : _image.Width;

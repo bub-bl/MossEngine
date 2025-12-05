@@ -315,28 +315,17 @@ public class Panel
 
 		return new CanvasRestore( canvas, translateBackX: 0, translateBackY: 0 );
 	}
-
-	private readonly struct CanvasRestore : IDisposable
+	
+	protected void ClipOverflow( SKCanvas canvas )
 	{
-		private readonly SKCanvas _canvas;
-		private readonly float _translateBackX;
-		private readonly float _translateBackY;
-
-		public CanvasRestore( SKCanvas canvas, float translateBackX, float translateBackY )
+		using var clip = PushOverflowClip( canvas );
+	}
+	
+	protected void DrawChildren( SKCanvas canvas )
+	{
+		foreach ( var c in Children )
 		{
-			_canvas = canvas;
-			_translateBackX = translateBackX;
-			_translateBackY = translateBackY;
-		}
-
-		public void Dispose()
-		{
-			if ( _translateBackX != 0 || _translateBackY != 0 )
-			{
-				_canvas.Translate( _translateBackX, _translateBackY );
-			}
-
-			_canvas.Restore();
+			c.Draw( canvas );
 		}
 	}
 
@@ -375,19 +364,6 @@ public class Panel
 	{
 		IsDirty = true;
 		Parent?.MarkDirty();
-	}
-
-	protected void ClipOverflow( SKCanvas canvas )
-	{
-		using var clip = PushOverflowClip( canvas );
-	}
-	
-	protected void DrawChildren( SKCanvas canvas )
-	{
-		foreach ( var c in Children )
-		{
-			c.Draw( canvas );
-		}
 	}
 
 	// Called after Yoga layout computed. x,y are absolute positions in root space.
