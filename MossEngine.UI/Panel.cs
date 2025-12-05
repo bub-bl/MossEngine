@@ -393,6 +393,8 @@ public class Panel
 	// Called after Yoga layout computed. x,y are absolute positions in root space.
 	public virtual void Draw( SKCanvas canvas )
 	{
+		if ( Display is YogaDisplay.None ) return;
+
 		DrawBackground( canvas );
 		DrawText( canvas );
 		

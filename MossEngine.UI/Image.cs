@@ -89,6 +89,8 @@ public class Image : Panel
 
 	public override void Draw( SKCanvas canvas )
 	{
+		if ( Display is YogaDisplay.None ) return;
+
 		DrawBackground( canvas );
 		DrawImage( canvas );
 		DrawText( canvas );
