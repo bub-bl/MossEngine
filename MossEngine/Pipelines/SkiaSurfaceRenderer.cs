@@ -72,7 +72,8 @@ public sealed class SkiaRenderPipeline : IDisposable
 
 		FreePixelBuffer();
 
-		_imageInfo = new SKImageInfo( size.X, size.Y, SKColorType.Bgra8888, SKAlphaType.Premul );
+		_imageInfo = new SKImageInfo( size.X, size.Y, SKColorType.Bgra8888, SKAlphaType.Premul,
+			SKColorSpace.CreateSrgb() );
 		_pixelBuffer = new byte[_imageInfo.RowBytes * _imageInfo.Height];
 		_pixelHandle = GCHandle.Alloc( _pixelBuffer, GCHandleType.Pinned );
 
@@ -121,7 +122,7 @@ public sealed class SkiaRenderPipeline : IDisposable
 		var desc = new TextureDescriptor
 		{
 			Dimension = TextureDimension.Dimension2D,
-			Format = TextureFormat.Bgra8Unorm,
+			Format = TextureFormat.Bgra8UnormSrgb,
 			Size = new Extent3D { Width = (uint)size.X, Height = (uint)size.Y, DepthOrArrayLayers = 1 },
 			MipLevelCount = 1,
 			SampleCount = 1,
