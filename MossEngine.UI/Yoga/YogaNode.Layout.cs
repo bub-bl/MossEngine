@@ -1,247 +1,118 @@
+using System.Drawing;
+using System.Runtime.InteropServices;
 using Yoga;
 
 namespace MossEngine.UI.Yoga;
 
 public unsafe partial class YogaNode
 {
-	public bool HasParent => Parent is not null;
+	private MeasureFuncUnmanaged _measureFuncUnmanaged;
+	private BaselineFuncUnmanaged? _baselineFunctionUnmanaged;
+	private DirtiedFunctionUnmanaged _dirtiedFunctionUnmanaged;
+
+	public delegate float BaselineFunc( YogaNode node, float width, float height );
+
+	[UnmanagedFunctionPointer( CallingConvention.Cdecl )]
+	private delegate float BaselineFuncUnmanaged( void* node, float width, float height );
+
+	public delegate SizeF MeasureFunc( YogaNode node, float width, YogaMeasureMode widthMode,
+		float height, YogaMeasureMode heightMode );
+
+	[UnmanagedFunctionPointer( CallingConvention.Cdecl )]
+	private delegate YGSize MeasureFuncUnmanaged( void* node, float width, YGMeasureMode widthMode, float height,
+		YGMeasureMode heightMode );
+
+	public delegate void DirtiedFunction( YogaNode node );
+
+	[UnmanagedFunctionPointer( CallingConvention.Cdecl )]
+	public delegate void DirtiedFunctionUnmanaged( void* node );
+
+	public event DirtiedFunction? HaveDirtied;
+
+	public MeasureFunc? MeasureFunction
+	{
+		get;
+		set
+		{
+			field = value;
+
+			if ( field is null )
+			{
+				YG.NodeSetMeasureFunc( this, null );
+				return;
+			}
+
+			_measureFuncUnmanaged = ( node, width, mode, height, heightMode ) =>
+			{
+				var result = field.Invoke( this, width, (YogaMeasureMode)mode, height,
+					(YogaMeasureMode)heightMode );
+
+				return new YGSize { width = result.Width, height = result.Height };
+			};
+
+			YG.NodeSetMeasureFunc( this,
+				(delegate* unmanaged[Cdecl]< void*, float, YGMeasureMode, float, YGMeasureMode, YGSize >)
+				Marshal.GetFunctionPointerForDelegate( _measureFuncUnmanaged ) );
+		}
+	}
+
+	public DirtiedFunctionUnmanaged DirtiedFunc
+	{
+		get => Marshal.GetDelegateForFunctionPointer<DirtiedFunctionUnmanaged>(
+			(IntPtr)YG.NodeGetDirtiedFunc( this ) );
+		set => YG.NodeSetDirtiedFunc( this,
+			(delegate* unmanaged[Cdecl]< void*, void >)Marshal.GetFunctionPointerForDelegate( value ) );
+	}
+
+	public BaselineFunc? BaselineFunction
+	{
+		get;
+		set
+		{
+			field = value;
+
+			if ( field is null )
+			{
+				YG.NodeSetBaselineFunc( this, null );
+				return;
+			}
+
+			_baselineFunctionUnmanaged = ( node, width, height ) => field( this, width, height );
+
+			YG.NodeSetBaselineFunc( this,
+				(delegate* unmanaged[Cdecl]< void*, float, float, float >)Marshal.GetFunctionPointerForDelegate(
+					_baselineFunctionUnmanaged ) );
+		}
+	}
+
 	public float LayoutWidth => YG.NodeLayoutGetWidth( this );
 	public float LayoutHeight => YG.NodeLayoutGetHeight( this );
-	
-	public Length Width
-	{
-		get => YG.NodeStyleGetWidth( this );
-		set
-		{
-			switch ( value.Unit )
-			{
-				case YogaUnit.Point:
-					YG.NodeStyleSetWidth( this, value );
-					break;
-				case YogaUnit.Percent:
-					YG.NodeStyleSetWidthPercent( this, value );
-					break;
-				case YogaUnit.Auto:
-					YG.NodeStyleSetWidthAuto( this );
-					break;
-				case YogaUnit.FitContent:
-					throw new NotSupportedException( "FitContent is not supported" );
-				case YogaUnit.MaxContent:
-					throw new NotSupportedException( "MaxContent is not supported" );
-				case YogaUnit.Stretch:
-					throw new NotSupportedException( "Stretch is not supported" );
-			}
-		}
-	}
-
-	public Length Height
-	{
-		get => YG.NodeStyleGetHeight( this );
-		set
-		{
-			switch ( value.Unit )
-			{
-				case YogaUnit.Point:
-					YG.NodeStyleSetHeight( this, value );
-					break;
-				case YogaUnit.Percent:
-					YG.NodeStyleSetHeightPercent( this, value );
-					break;
-				case YogaUnit.Auto:
-					YG.NodeStyleSetHeightAuto( this );
-					break;
-				case YogaUnit.FitContent:
-					throw new NotSupportedException( "FitContent is not supported" );
-				case YogaUnit.MaxContent:
-					throw new NotSupportedException( "MaxContent is not supported" );
-				case YogaUnit.Stretch:
-					throw new NotSupportedException( "Stretch is not supported" );
-			}
-		}
-	}
-
-	public YogaPositionType Position
-	{
-		get => (YogaPositionType)YG.NodeStyleGetPositionType( this );
-		set => YG.NodeStyleSetPositionType( this, (YGPositionType)value );
-	}
-
 	public Length LayoutLeft => YG.NodeLayoutGetLeft( this );
 	public Length LayoutTop => YG.NodeLayoutGetTop( this );
 
-	public Length Left
+	public bool AlwaysFormsContainingBlock
 	{
-		get => YG.NodeStyleGetPosition( this, (YGEdge)YogaEdge.Left );
-		set => SetNodeStylePosition( YogaEdge.Left, value );
+		set => YG.NodeSetAlwaysFormsContainingBlock( this, (byte)(value ? 1 : 0) );
 	}
 
-	public Length Top
+	public bool HasNewLayout
 	{
-		get => YG.NodeStyleGetPosition( this, (YGEdge)YogaEdge.Top );
-		set => SetNodeStylePosition( YogaEdge.Top, value );
+		get => YG.NodeGetHasNewLayout( this ) is not 0;
+		set => YG.NodeSetHasNewLayout( this, (byte)(value ? 1 : 0) );
 	}
-
-	public Length Right
+	
+	public void SetDirtiedEvent()
 	{
-		get => YG.NodeStyleGetPosition( this, (YGEdge)YogaEdge.Right );
-		set => SetNodeStylePosition( YogaEdge.Right, value );
-	}
-
-	public Length Bottom
-	{
-		get => YG.NodeStyleGetPosition( this, (YGEdge)YogaEdge.Bottom );
-		set => SetNodeStylePosition( YogaEdge.Bottom, value );
-	}
-
-	public Length Start
-	{
-		get => YG.NodeStyleGetPosition( this, (YGEdge)YogaEdge.Start );
-		set => SetNodeStylePosition( YogaEdge.Start, value );
-	}
-
-	public Length End
-	{
-		get => YG.NodeStyleGetPosition( this, (YGEdge)YogaEdge.End );
-		set => SetNodeStylePosition( YogaEdge.End, value );
-	}
-
-	public Length Horizontal
-	{
-		get => YG.NodeStyleGetPosition( this, (YGEdge)YogaEdge.Horizontal );
-		set => SetNodeStylePosition( YogaEdge.Horizontal, value );
-	}
-
-	public Length Vertical
-	{
-		get => YG.NodeStyleGetPosition( this, (YGEdge)YogaEdge.Vertical );
-		set => SetNodeStylePosition( YogaEdge.Vertical, value );
-	}
-
-	public YogaDirection Direction
-	{
-		get => (YogaDirection)YG.NodeLayoutGetDirection( this );
-		set => YG.NodeStyleSetDirection( this, (YGDirection)value );
-	}
-
-	public bool HadOverflow => YG.NodeLayoutGetHadOverflow( this ) is not 0;
-
-	public Margin Margin
-	{
-		get => new()
+		_dirtiedFunctionUnmanaged = ( void* node ) =>
 		{
-			Left = YG.NodeStyleGetMargin( this, (YGEdge)YogaEdge.Left ),
-			Top = YG.NodeStyleGetMargin( this, (YGEdge)YogaEdge.Top ),
-			Right = YG.NodeStyleGetMargin( this, (YGEdge)YogaEdge.Right ),
-			Bottom = YG.NodeStyleGetMargin( this, (YGEdge)YogaEdge.Bottom ),
-			Start = YG.NodeStyleGetMargin( this, (YGEdge)YogaEdge.Start ),
-			End = YG.NodeStyleGetMargin( this, (YGEdge)YogaEdge.End ),
-			Horizontal = YG.NodeStyleGetMargin( this, (YGEdge)YogaEdge.Horizontal ),
-			Vertical = YG.NodeStyleGetMargin( this, (YGEdge)YogaEdge.Vertical ),
-			All = YG.NodeStyleGetMargin( this, (YGEdge)YogaEdge.All )
+			HaveDirtied?.Invoke( this );
 		};
-		set
-		{
-			SetNodeStyleMargin( YogaEdge.Left, value.Left );
-			SetNodeStyleMargin( YogaEdge.Top, value.Top );
-			SetNodeStyleMargin( YogaEdge.Right, value.Right );
-			SetNodeStyleMargin( YogaEdge.Bottom, value.Bottom );
-			SetNodeStyleMargin( YogaEdge.Start, value.Start );
-			SetNodeStyleMargin( YogaEdge.End, value.End );
-			SetNodeStyleMargin( YogaEdge.Horizontal, value.Horizontal );
-			SetNodeStyleMargin( YogaEdge.Vertical, value.Vertical );
-			SetNodeStyleMargin( YogaEdge.All, value.All );
-		}
-	}
-	
-	public Padding Padding
-	{
-		get => new()
-		{
-			Left = YG.NodeStyleGetPadding( this, (YGEdge)YogaEdge.Left ),
-			Top = YG.NodeStyleGetPadding( this, (YGEdge)YogaEdge.Top ),
-			Right = YG.NodeStyleGetPadding( this, (YGEdge)YogaEdge.Right ),
-			Bottom = YG.NodeStyleGetPadding( this, (YGEdge)YogaEdge.Bottom ),
-			Start = YG.NodeStyleGetPadding( this, (YGEdge)YogaEdge.Start ),
-			End = YG.NodeStyleGetPadding( this, (YGEdge)YogaEdge.End ),
-			Horizontal = YG.NodeStyleGetPadding( this, (YGEdge)YogaEdge.Horizontal ),
-			Vertical = YG.NodeStyleGetPadding( this, (YGEdge)YogaEdge.Vertical ),
-			All = YG.NodeStyleGetPadding( this, (YGEdge)YogaEdge.All )
-		};
-		set
-		{
-			SetNodeStylePadding( YogaEdge.Left, value.Left );
-			SetNodeStylePadding( YogaEdge.Top, value.Top );
-			SetNodeStylePadding( YogaEdge.Right, value.Right );
-			SetNodeStylePadding( YogaEdge.Bottom, value.Bottom );
-			SetNodeStylePadding( YogaEdge.Start, value.Start );
-			SetNodeStylePadding( YogaEdge.End, value.End );
-			SetNodeStylePadding( YogaEdge.Horizontal, value.Horizontal );
-			SetNodeStylePadding( YogaEdge.Vertical, value.Vertical );
-			SetNodeStylePadding( YogaEdge.All, value.All );
-		}
-	}
-	
-	private void SetNodeStylePosition( YogaEdge edge, Length value )
-	{
-		switch ( value.Unit )
-		{
-			case YogaUnit.Point:
-				YG.NodeStyleSetPosition( this, (YGEdge)edge, value.Value );
-				break;
-			case YogaUnit.Percent:
-				YG.NodeStyleSetPositionPercent( this, (YGEdge)edge, value.Value );
-				break;
-			case YogaUnit.Auto:
-				YG.NodeStyleSetPositionAuto( this, (YGEdge)edge );
-				break;
-			case YogaUnit.FitContent:
-				throw new NotSupportedException( "FitContent is not supported" );
-			case YogaUnit.MaxContent:
-				throw new NotSupportedException( "MaxContent is not supported" );
-			case YogaUnit.Stretch:
-				throw new NotSupportedException( "Stretch is not supported" );
-		}
-	}
 
-	private void SetNodeStylePadding( YogaEdge edge, Length value )
-	{
-		switch ( value.Unit )
-		{
-			case YogaUnit.Point:
-				YG.NodeStyleSetPadding( this, (YGEdge)edge, value.Value );
-				break;
-			case YogaUnit.Percent:
-				YG.NodeStyleSetPaddingPercent( this, (YGEdge)edge, value.Value );
-				break;
-			case YogaUnit.Undefined:
-				YG.NodeStyleSetPadding( this, (YGEdge)edge, YG.YGUndefined );
-				break;
-			case YogaUnit.Auto:
-			case YogaUnit.FitContent:
-			case YogaUnit.MaxContent:
-			case YogaUnit.Stretch:
-				throw new NotSupportedException( "Padding does not support the specified YogaUnit" );
-		}
+		DirtiedFunc = _dirtiedFunctionUnmanaged;
 	}
 	
-	private void SetNodeStyleMargin( YogaEdge edge, Length value )
+	public void CalculateLayout()
 	{
-		switch ( value.Unit )
-		{
-			case YogaUnit.Point:
-				YG.NodeStyleSetMargin( this, (YGEdge)edge, value.Value );
-				break;
-			case YogaUnit.Percent:
-				YG.NodeStyleSetMarginPercent( this, (YGEdge)edge, value.Value );
-				break;
-			case YogaUnit.Undefined:
-				YG.NodeStyleSetMargin( this, (YGEdge)edge, YG.YGUndefined );
-				break;
-			case YogaUnit.Auto:
-			case YogaUnit.FitContent:
-			case YogaUnit.MaxContent:
-			case YogaUnit.Stretch:
-				throw new NotSupportedException( "Margin does not support the specified YogaUnit" );
-		}
+		YG.NodeCalculateLayout( this, Width, Height, (YGDirection)Direction );
 	}
 }
