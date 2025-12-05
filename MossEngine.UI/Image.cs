@@ -1,4 +1,7 @@
-﻿using SkiaSharp;
+using System;
+using System.IO;
+using MossEngine.UI.Yoga;
+using SkiaSharp;
 
 namespace MossEngine.UI;
 
@@ -68,7 +71,20 @@ public class Image : Panel
 		paint.FilterQuality = SKFilterQuality.High;
 		paint.IsAntialias = true;
 
-		canvas.DrawImage( _image, destRect, paint );
+		var hasCornerRadius = BorderRadius.LengthSquared() > 0.001f;
+		
+		if ( hasCornerRadius )
+		{
+			var roundRect = new SKRoundRect( destRect, BorderRadius.X, BorderRadius.Y );
+			canvas.Save();
+			canvas.ClipRoundRect( roundRect, SKClipOperation.Intersect, antialias: true );
+			canvas.DrawImage( _image, destRect, paint );
+			canvas.Restore();
+		}
+		else
+		{
+			canvas.DrawImage( _image, destRect, paint );
+		}
 	}
 
 	public override void Draw( SKCanvas canvas )

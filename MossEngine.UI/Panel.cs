@@ -1,15 +1,14 @@
-using System.Diagnostics;
 using System.Drawing;
-using System.IO;
 using System.Numerics;
 using MossEngine.UI.Yoga;
 using SkiaSharp;
-using Yoga;
 
 namespace MossEngine.UI;
 
 public class Panel
 {
+	private static readonly SKPaint MeasurementPaint = new() { IsAntialias = true, TextSize = 20 };
+	
 	public Panel? Parent { get; private set; }
 	public List<Panel> Children { get; } = [];
 
@@ -283,15 +282,9 @@ public class Panel
 			.WithFontSize( 20 )
 			.Draw();
 	}
-
-	private static readonly SKPaint MeasurementPaint = new() { IsAntialias = true, TextSize = 20 };
-
+	
 	private void UpdateMeasurement()
 	{
-		// var rect = MeasurementPaint.MeasureText( Text );
-		// Width = rect.Width;
-		// Height = rect.Height;
-
 		YogaNode.MeasureFunction = ShouldMeasureText() ? MeasureText : null;
 	}
 
