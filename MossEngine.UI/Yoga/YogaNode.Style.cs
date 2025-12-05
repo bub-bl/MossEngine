@@ -22,11 +22,14 @@ public unsafe partial class YogaNode
 				case YogaUnit.Auto:
 					throw new NotSupportedException( "Auto is not supported" );
 				case YogaUnit.FitContent:
-					throw new NotSupportedException( "FitContent is not supported" );
+					YG.NodeStyleSetMinWidthFitContent( this );
+					break;
 				case YogaUnit.MaxContent:
-					throw new NotSupportedException( "MaxContent is not supported" );
+					YG.NodeStyleSetMinWidthMaxContent( this );
+					break;
 				case YogaUnit.Stretch:
-					throw new NotSupportedException( "Stretch is not supported" );
+					YG.NodeStyleSetMinWidthStretch( this );
+					break;
 			}
 		}
 	}
@@ -47,11 +50,14 @@ public unsafe partial class YogaNode
 				case YogaUnit.Auto:
 					throw new NotSupportedException( "Auto is not supported" );
 				case YogaUnit.FitContent:
-					throw new NotSupportedException( "FitContent is not supported" );
+					YG.NodeStyleSetMaxWidthFitContent( this );
+					break;
 				case YogaUnit.MaxContent:
-					throw new NotSupportedException( "MaxContent is not supported" );
+					YG.NodeStyleSetMaxWidthMaxContent( this );
+					break;
 				case YogaUnit.Stretch:
-					throw new NotSupportedException( "Stretch is not supported" );
+					YG.NodeStyleSetMaxWidthStretch( this );
+					break;
 			}
 		}
 	}
@@ -73,11 +79,14 @@ public unsafe partial class YogaNode
 					YG.NodeStyleSetWidthAuto( this );
 					break;
 				case YogaUnit.FitContent:
-					throw new NotSupportedException( "FitContent is not supported" );
+					YG.NodeStyleSetWidthFitContent( this );
+					break;
 				case YogaUnit.MaxContent:
-					throw new NotSupportedException( "MaxContent is not supported" );
+					YG.NodeStyleSetWidthMaxContent( this );
+					break;
 				case YogaUnit.Stretch:
-					throw new NotSupportedException( "Stretch is not supported" );
+					YG.NodeStyleSetWidthStretch( this );
+					break;
 			}
 		}
 	}
@@ -98,11 +107,14 @@ public unsafe partial class YogaNode
 				case YogaUnit.Auto:
 					throw new NotSupportedException( "Auto is not supported" );
 				case YogaUnit.FitContent:
-					throw new NotSupportedException( "FitContent is not supported" );
+					YG.NodeStyleSetMinHeightFitContent( this );
+					break;
 				case YogaUnit.MaxContent:
-					throw new NotSupportedException( "MaxContent is not supported" );
+					YG.NodeStyleSetMinHeightMaxContent( this );
+					break;
 				case YogaUnit.Stretch:
-					throw new NotSupportedException( "Stretch is not supported" );
+					YG.NodeStyleSetMinHeightStretch( this );
+					break;
 			}
 		}
 	}
@@ -123,11 +135,14 @@ public unsafe partial class YogaNode
 				case YogaUnit.Auto:
 					throw new NotSupportedException( "Auto is not supported" );
 				case YogaUnit.FitContent:
-					throw new NotSupportedException( "FitContent is not supported" );
+					YG.NodeStyleSetMaxHeightFitContent( this );
+					break;
 				case YogaUnit.MaxContent:
-					throw new NotSupportedException( "MaxContent is not supported" );
+					YG.NodeStyleSetMaxHeightMaxContent( this );
+					break;
 				case YogaUnit.Stretch:
-					throw new NotSupportedException( "Stretch is not supported" );
+					YG.NodeStyleSetMaxHeightStretch( this );
+					break;
 			}
 		}
 	}
@@ -149,11 +164,14 @@ public unsafe partial class YogaNode
 					YG.NodeStyleSetHeightAuto( this );
 					break;
 				case YogaUnit.FitContent:
-					throw new NotSupportedException( "FitContent is not supported" );
+					YG.NodeStyleSetHeightFitContent( this );
+					break;
 				case YogaUnit.MaxContent:
-					throw new NotSupportedException( "MaxContent is not supported" );
+					YG.NodeStyleSetHeightMaxContent( this );
+					break;
 				case YogaUnit.Stretch:
-					throw new NotSupportedException( "Stretch is not supported" );
+					YG.NodeStyleSetHeightStretch( this );
+					break;
 			}
 		}
 	}
