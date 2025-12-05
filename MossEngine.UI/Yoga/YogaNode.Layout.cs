@@ -113,6 +113,6 @@ public unsafe partial class YogaNode
 	
 	public void CalculateLayout()
 	{
-		YG.NodeCalculateLayout( this, Width, Height, (YGDirection)Direction );
+		YG.NodeCalculateLayout( this, YG.YGUndefined, YG.YGUndefined, (YGDirection)Direction );
 	}
 }
