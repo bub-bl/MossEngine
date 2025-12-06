@@ -1,4 +1,3 @@
-using System.Drawing;
 using System.Numerics;
 using MossEngine.UI.Yoga;
 using SkiaSharp;
@@ -7,8 +6,7 @@ namespace MossEngine.UI;
 
 public partial class Panel
 {
-	private static readonly SKPaint MeasurementPaint = new() { IsAntialias = true, TextSize = 20 };
-
+	public Guid Id { get; } = Guid.NewGuid();
 	public Panel? Parent { get; private set; }
 	public List<Panel> Children { get; } = [];
 	public object? Tag { get; set; }
@@ -22,25 +20,14 @@ public partial class Panel
 	public bool IsHitTestVisible { get; set; } = true;
 	public bool IsFocusable { get; set; } = true;
 
-	public string Text
-	{
-		get => field;
-		set
-		{
-			if ( field == value ) return;
-			field = value;
-
-			UpdateMeasurement();
-			MarkDirty();
-		}
-	}
-
 	public float LayoutWidth => YogaNode.LayoutWidth;
 	public float LayoutHeight => YogaNode.LayoutHeight;
 
 	public bool IsDirty { get; protected set; } = true;
 
 	public string DebugLabel { get; set; } = null!;
+
+	public event EventHandler? Update;
 
 	public Panel()
 	{
@@ -51,13 +38,28 @@ public partial class Panel
 		YogaNode.FlexDirection = YogaFlexDirection.Row;
 		YogaNode.Position = YogaPositionType.Relative;
 
-		UpdateMeasurement();
+		// UpdateMeasurement();
 	}
 
 	public void ComputeLayout()
 	{
 		// if ( !IsDirty ) return;
 		YogaNode.CalculateLayout();
+	}
+
+	internal void InternalOnUpdate()
+	{
+		OnUpdate();
+	}
+
+	protected virtual void OnUpdate()
+	{
+		Update?.Invoke( this, EventArgs.Empty );
+		
+		foreach ( var child in Children )
+		{
+			child.InternalOnUpdate();
+		}
 	}
 
 	public void AddChild( Panel child )
@@ -72,7 +74,8 @@ public partial class Panel
 		var idx = Children.Count - 1;
 		YogaNode.InsertChildAt( child.YogaNode, idx );
 
-		UpdateMeasurement();
+		// UpdateMeasurement();
+		OnAddChild( child );
 		MarkDirty();
 	}
 
@@ -100,7 +103,17 @@ public partial class Panel
 		YogaNode.RemoveChildAt( idx );
 
 		child.Parent = null;
+
+		OnRemoveChild( child );
 		MarkDirty();
+	}
+
+	protected virtual void OnAddChild( Panel child )
+	{
+	}
+
+	protected virtual void OnRemoveChild( Panel child )
+	{
 	}
 
 	protected internal Vector2 GetFinalPosition()
@@ -123,19 +136,6 @@ public partial class Panel
 			.WithSize( LayoutWidth, LayoutHeight )
 			.WithBorderRadius( BorderRadius.X, BorderRadius.Y )
 			.WithFill( Background )
-			.Draw();
-	}
-
-	protected void DrawText( SKCanvas canvas )
-	{
-		var position = GetFinalPosition();
-
-		new SkiaTextBuilder( canvas )
-			.At( position.X, position.Y )
-			.WithSize( LayoutWidth, LayoutHeight )
-			.WithText( Text )
-			.WithColor( Foreground )
-			.WithFontSize( 20 )
 			.Draw();
 	}
 
@@ -171,12 +171,12 @@ public partial class Panel
 
 		return new CanvasRestore( canvas, translateBackX: 0, translateBackY: 0 );
 	}
-	
+
 	protected void ClipOverflow( SKCanvas canvas )
 	{
 		using var clip = PushOverflowClip( canvas );
 	}
-	
+
 	protected void DrawChildren( SKCanvas canvas )
 	{
 		foreach ( var c in Children )
@@ -185,38 +185,7 @@ public partial class Panel
 		}
 	}
 
-	private void UpdateMeasurement()
-	{
-		YogaNode.MeasureFunction = ShouldMeasureText() ? MeasureText : null;
-	}
-
-	private bool ShouldMeasureText()
-	{
-		return !string.IsNullOrEmpty( Text ) && Children.Count is 0;
-	}
-
-	private SizeF MeasureText( YogaNode node, float width, YogaMeasureMode widthMode, float height,
-		YogaMeasureMode heightMode )
-	{
-		var bounds = new SKRect();
-		MeasurementPaint.MeasureText( Text, ref bounds );
-
-		var measuredWidth = bounds.Width;
-		var metrics = MeasurementPaint.FontMetrics;
-		var measuredHeight = MathF.Abs( metrics.Ascent ) + MathF.Abs( metrics.Descent );
-
-		return new SizeF( Resolve( measuredWidth, width, widthMode ),
-			Resolve( measuredHeight, height, heightMode ) );
-
-		static float Resolve( float measured, float available, YogaMeasureMode mode ) => mode switch
-		{
-			YogaMeasureMode.Exactly => available,
-			YogaMeasureMode.AtMost => MathF.Min( available, measured ),
-			_ => measured
-		};
-	}
-
-	public virtual void MarkDirty()
+	protected virtual void MarkDirty()
 	{
 		IsDirty = true;
 		Parent?.MarkDirty();
@@ -228,11 +197,26 @@ public partial class Panel
 		if ( Display is YogaDisplay.None ) return;
 
 		DrawBackground( canvas );
-		DrawText( canvas );
-		
+		// DrawText( canvas );
+
 		ClipOverflow( canvas );
 		DrawChildren( canvas );
 
 		IsDirty = false;
+	}
+
+	public void StateHasChanged()
+	{
+		MarkDirty();
+	}
+
+	public virtual int BuildHash()
+	{
+		return -1;
+	}
+
+	public override string ToString()
+	{
+		return $"{GetType().Name}({Id})";
 	}
 }
