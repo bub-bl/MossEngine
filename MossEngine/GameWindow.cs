@@ -1,5 +1,4 @@
 using System.Numerics;
-using ImGuiNET;
 using MossEngine.Pipelines;
 using MossEngine.UI;
 using MossEngine.UI.Yoga;
@@ -24,9 +23,11 @@ public sealed class GameWindow() : EditorWindow( "Editor - Game" )
 			Foreground = SKColors.White,
 			Width = Length.Point( 200 ),
 			Height = Length.Point( 200 ),
-			Left = Length.Point( 100 ),
-			Top = Length.Point( 100 ),
+			// Left = Length.Point( 10 ),
+			// Top = Length.Point( 10 ),
 			Position = YogaPositionType.Relative,
+			// AlignItems = YogaAlign.Center,
+			// JustifyContent = YogaJustify.Center,
 			// BorderRadius = new Vector2( 40, 40 ),
 			// Padding = new Padding { Horizontal = Length.Point( 20 ), Vertical = Length.Point( 20 ) }
 		};
@@ -36,13 +37,15 @@ public sealed class GameWindow() : EditorWindow( "Editor - Game" )
 			DebugLabel = "SubRectangle",
 			Background = SKColors.Blue,
 			Foreground = SKColors.White,
-			Width = Length.Percent( 100 ),
+			Width = Length.Point( 100 ),
 			Height = Length.Point( 50 ),
-			Left = Length.Point( 0 ),
-			Top = Length.Point( 0 ),
+			// Left = Length.Point( 100 ),
+			// Top = Length.Point( 10 ),
+			// AlignItems = YogaAlign.Center,
+			// JustifyContent = YogaJustify.Center,
 			Position = YogaPositionType.Relative
 		};
-		
+
 		var text = new Panel
 		{
 			DebugLabel = "Text",
@@ -57,10 +60,25 @@ public sealed class GameWindow() : EditorWindow( "Editor - Game" )
 		rectangle.AddChild( subRectangle );
 		subRectangle.AddChild( text );
 
+		var image = new Image
+		{
+			DebugLabel = "Image",
+			Background = SKColors.Black,
+			Width = Length.Point( 400 ),
+			Height = Length.Point( 400 ),
+			BorderRadius = new Vector2( 20, 20 ),
+			Overflow = YogaOverflow.Hidden,
+			ObjectFit = ImageObjectFit.ScaleDown,
+			Src = @"C:\Users\bubbl\Pictures\gta-modding.jpg"
+		};
+
 		RootPanel.DebugLabel = "RootPanel";
+		RootPanel.Width = Length.Percent( 90 );
+		RootPanel.Height = Length.Percent( 90 );
 		RootPanel.Background = SKColors.Yellow;
 		RootPanel.AddChild( rectangle );
-		
+		RootPanel.AddChild( image );
+
 		Console.WriteLine( $"RootPanel children count: {RootPanel.Children.Count}" );
 	}
 

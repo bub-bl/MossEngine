@@ -33,8 +33,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\..\Documents\GitHub\YogaSharp\Yoga\Yoga.csproj"/>
-        <ProjectReference Include="..\Microsoft.AspNetCore.Components\Microsoft.AspNetCore.Components.csproj"/>
-        <ProjectReference Include="..\MossEngine.Razor\MossEngine.Razor.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

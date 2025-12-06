@@ -2,7 +2,6 @@ using System.Drawing;
 using System.Numerics;
 using MossEngine.UI.Yoga;
 using SkiaSharp;
-using Yoga;
 
 namespace MossEngine.UI;
 
@@ -12,6 +11,7 @@ public class Panel
 
 	public Panel? Parent { get; private set; }
 	public List<Panel> Children { get; } = [];
+	public object? Tag { get; set; }
 
 	// Yoga node for layout
 	internal YogaNode YogaNode { get; }
@@ -255,6 +255,19 @@ public class Panel
 		YogaNode.InsertChildAt( child.YogaNode, idx );
 
 		UpdateMeasurement();
+		MarkDirty();
+	}
+
+	public void ClearChildren()
+	{
+		for ( var i = Children.Count - 1; i >= 0; i-- )
+		{
+			var child = Children[i];
+			Children.RemoveAt( i );
+			YogaNode.RemoveChildAt( i );
+			child.Parent = null;
+		}
+
 		MarkDirty();
 	}
 

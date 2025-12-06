@@ -458,7 +458,7 @@ public unsafe partial class YogaNode
 				YG.NodeStyleSetGapPercent( this, (YGGutter)gutter, gap.Value );
 				break;
 			default:
-				throw new Exception( "Unsupported unit" );
+				throw new NotSupportedException( "Unsupported unit" );
 		}
 	}
 }

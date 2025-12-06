@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.AspNetCore.Components.Rendering;
 
 namespace Microsoft.AspNetCore.Components;
 
@@ -17,7 +18,10 @@ public delegate RenderFragment RenderFragment<TValue>( TValue value );
 /// <summary>
 /// A component type
 /// </summary>
-public interface IComponent { }
+public interface IComponent
+{
+	void BuildRenderTree( RenderTreeBuilder builder );
+}
 
 /// <summary>
 /// Signifies a parameter attribute
@@ -29,8 +33,9 @@ public class ParameterAttribute : Attribute
 /// <summary>
 /// A base component
 /// </summary>
-public class ComponentBase : IComponent
+public abstract class ComponentBase : IComponent
 {
+	public abstract void BuildRenderTree( RenderTreeBuilder builder );
 }
 
 [System.AttributeUsage( System.AttributeTargets.Class, AllowMultiple = true, Inherited = true )]
