@@ -1,3 +1,5 @@
+using MossEngine.System.Time;
+using MossEngine.Utility;
 using Silk.NET.Maths;
 using Silk.NET.WebGPU;
 using Silk.NET.Windowing;
@@ -42,6 +44,8 @@ public abstract unsafe partial class EngineWindow
 	{
 		// If the window is minimized, don't render to avoid errors.
 		if ( Window.WindowState is WindowState.Minimized ) return;
+
+		using var _ = Time.Scope( RealTime.Now, deltaTime );
 
 		OnBeforeRender( deltaTime );
 		OnRender( deltaTime );
