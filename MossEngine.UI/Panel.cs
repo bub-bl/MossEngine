@@ -5,7 +5,7 @@ using SkiaSharp;
 
 namespace MossEngine.UI;
 
-public class Panel
+public partial class Panel
 {
 	private static readonly SKPaint MeasurementPaint = new() { IsAntialias = true, TextSize = 20 };
 
@@ -19,6 +19,8 @@ public class Panel
 	// Style-ish properties (very minimal)
 	public SKColor Background { get; set; } = SKColors.Transparent;
 	public SKColor Foreground { get; set; } = SKColors.Black;
+	public bool IsHitTestVisible { get; set; } = true;
+	public bool IsFocusable { get; set; } = true;
 
 	public string Text
 	{
@@ -285,7 +287,7 @@ public class Panel
 		MarkDirty();
 	}
 
-	protected Vector2 GetFinalPosition()
+	protected internal Vector2 GetFinalPosition()
 	{
 		var local = new Vector2( YogaNode.LayoutLeft, YogaNode.LayoutTop );
 
