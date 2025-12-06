@@ -88,7 +88,7 @@ public sealed class GameWindow() : EditorWindow( "Editor - Game" )
 		base.OnRender( deltaTime );
 	}
 
-	protected override void OnSkiaDraw( SKCanvas canvas, Vector2D<int> size )
+	protected override void OnDraw( SKCanvas canvas, Vector2D<int> size )
 	{
 		// using var backgroundPaint = new SKPaint();
 		// backgroundPaint.Color = SKColor.Empty;

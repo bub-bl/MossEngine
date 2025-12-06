@@ -43,11 +43,11 @@ public abstract unsafe partial class EngineWindow( string title ) : IDisposable
 
 		Window = Silk.NET.Windowing.Window.Create( options );
 
-		Window.Load += OnWindowLoad;
-		Window.Update += OnWindowUpdate;
+		Window.Load += InternalOnWindowLoad;
+		Window.Update += InternalOnWindowUpdate;
 		Window.Render += OnWindowRender;
-		Window.Resize += OnWindowFramebufferResize;
-		Window.FramebufferResize += OnWindowFramebufferResize;
+		Window.Resize += InternalOnWindowFramebufferResize;
+		Window.FramebufferResize += InternalOnWindowFramebufferResize;
 		Window.Closing += OnWindowClose;
 		Window.FileDrop += OnWindowFileDrop;
 		Window.Move += OnWindowMove;
@@ -129,10 +129,10 @@ public abstract unsafe partial class EngineWindow( string title ) : IDisposable
 		RootPanel.Resize( size.X, size.Y );
 		_rootPanelRenderer.Render( canvas );
 
-		OnSkiaDraw( canvas, size );
+		OnDraw( canvas, size );
 	}
 
-	protected virtual void OnSkiaDraw( SKCanvas canvas, Vector2D<int> size )
+	protected virtual void OnDraw( SKCanvas canvas, Vector2D<int> size )
 	{
 	}
 
@@ -141,11 +141,11 @@ public abstract unsafe partial class EngineWindow( string title ) : IDisposable
 		_skiaRenderPipeline.Dispose();
 		_imGuiController.Dispose();
 
-		Window.Load -= OnWindowLoad;
-		Window.Update -= OnWindowUpdate;
+		Window.Load -= InternalOnWindowLoad;
+		Window.Update -= InternalOnWindowUpdate;
 		Window.Render -= OnWindowRender;
-		Window.Resize -= OnWindowFramebufferResize;
-		Window.FramebufferResize -= OnWindowFramebufferResize;
+		Window.Resize -= InternalOnWindowFramebufferResize;
+		Window.FramebufferResize -= InternalOnWindowFramebufferResize;
 		Window.Closing -= OnWindowClose;
 		Window.FileDrop -= OnWindowFileDrop;
 		Window.Move -= OnWindowMove;

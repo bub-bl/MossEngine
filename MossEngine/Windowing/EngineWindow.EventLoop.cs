@@ -6,25 +6,24 @@ namespace MossEngine.Windowing;
 
 public abstract unsafe partial class EngineWindow
 {
-	protected virtual void OnWindowLoad()
+	private void InternalOnWindowLoad()
 	{
-		OnLoad();
+		OnWindowLoad();
 		InitializeInput();
 	}
 
-	protected virtual void OnWindowUpdate( double deltaTime )
+	private void InternalOnWindowUpdate( double deltaTime )
 	{
-		OnUpdate( deltaTime );
+		OnWindowUpdate( deltaTime );
 	}
 
-	protected virtual void OnWindowFramebufferResize( Vector2D<int> newSize )
+	private void InternalOnWindowFramebufferResize( Vector2D<int> newSize )
 	{
-		OnResize( newSize );
+		OnWindowResize( newSize );
 	}
 
 	protected virtual void OnWindowClose()
 	{
-		OnClose();
 	}
 
 	protected virtual void OnWindowFileDrop( string[] obj )
@@ -36,37 +35,6 @@ public abstract unsafe partial class EngineWindow
 	}
 
 	protected virtual void OnWindowStateChanged( WindowState state )
-	{
-		switch (state)
-		{
-			case WindowState.Minimized:
-				OnMinimize();
-				break;
-			case WindowState.Maximized:
-				OnMaximize();
-				break;
-			case WindowState.Normal:
-				OnRestore();
-				break;
-			case WindowState.Fullscreen:
-				OnFullscreen();
-				break;
-		}
-	}
-
-	protected virtual void OnMinimize()
-	{
-	}
-	
-	protected virtual void OnMaximize()
-	{
-	}
-
-	protected virtual void OnRestore()
-	{
-	}
-	
-	protected virtual void OnFullscreen()
 	{
 	}
 
@@ -111,8 +79,7 @@ public abstract unsafe partial class EngineWindow
 
 		var renderPassDescriptor = new RenderPassDescriptor
 		{
-			ColorAttachments = colorAttachments,
-			ColorAttachmentCount = 1
+			ColorAttachments = colorAttachments, ColorAttachmentCount = 1
 		};
 
 		RenderPassEncoder = WebGpu.Wgpu.CommandEncoderBeginRenderPass( _commandEncoder, renderPassDescriptor );
@@ -135,19 +102,15 @@ public abstract unsafe partial class EngineWindow
 		Window.SwapBuffers();
 	}
 
-	protected virtual void OnUpdate( double deltaTime )
+	protected virtual void OnWindowUpdate( double deltaTime )
 	{
 	}
 
-	protected virtual void OnLoad()
+	protected virtual void OnWindowLoad()
 	{
 	}
 
-	protected virtual void OnClose()
-	{
-	}
-
-	protected virtual void OnResize( Vector2D<int> newSize )
+	protected virtual void OnWindowResize( Vector2D<int> newSize )
 	{
 		// if ( _surface is null || Device is null || _adapter is null ) return;
 		if ( Window.WindowState is WindowState.Minimized ) return;
@@ -162,7 +125,7 @@ public abstract unsafe partial class EngineWindow
 			PresentMode = PresentMode.Fifo,
 			Usage = TextureUsage.RenderAttachment | TextureUsage.CopyDst | TextureUsage.CopySrc
 		};
-		
+
 		WebGpu.Wgpu.SurfaceConfigure( _surface, surfaceConfiguration );
 		Console.WriteLine( $"Surface reconfigurée pour la taille : {newSize.X}x{newSize.Y}" );
 	}
