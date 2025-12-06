@@ -1,7 +1,7 @@
-using System.Numerics;
+﻿using System.Numerics;
 using Silk.NET.Input;
 
-namespace MossEngine;
+namespace MossEngine.UI;
 
 public sealed class MouseEventArgs : EventArgs
 {
