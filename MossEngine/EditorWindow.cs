@@ -2,4 +2,4 @@ using MossEngine.Windowing;
 
 namespace MossEngine;
 
-public abstract class EditorWindow( string title ) : BaseWindow( title );
+public abstract class EditorWindow( string title ) : EngineWindow( title );

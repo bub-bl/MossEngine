@@ -4,7 +4,7 @@ using Silk.NET.Input;
 
 namespace MossEngine.Windowing;
 
-public abstract partial class BaseWindow
+public abstract partial class EngineWindow
 {
 	private IInputContext _input = null!;
 

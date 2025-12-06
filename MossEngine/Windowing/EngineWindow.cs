@@ -1,7 +1,6 @@
 using ImGuiNET;
 using MossEngine.Pipelines;
 using MossEngine.UI;
-using Silk.NET.Input;
 using Silk.NET.Maths;
 using Silk.NET.WebGPU;
 using Silk.NET.Windowing;
@@ -9,7 +8,7 @@ using SkiaSharp;
 
 namespace MossEngine.Windowing;
 
-public abstract unsafe partial class BaseWindow( string title ) : IDisposable
+public abstract unsafe partial class EngineWindow( string title ) : IDisposable
 {
 	private WebGpuSurface _surface = null!;
 	private WebGpuAdapter _adapter = null!;

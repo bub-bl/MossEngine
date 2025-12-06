@@ -4,7 +4,7 @@ using Silk.NET.Windowing;
 
 namespace MossEngine.Windowing;
 
-public abstract unsafe partial class BaseWindow
+public abstract unsafe partial class EngineWindow
 {
 	protected virtual void OnWindowLoad()
 	{

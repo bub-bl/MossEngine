@@ -4,7 +4,7 @@ using Silk.NET.WebGPU;
 
 namespace MossEngine.Pipelines;
 
-public class UnlitRenderPipeline( BaseWindow window )
+public class UnlitRenderPipeline( EngineWindow window )
 {
 	private unsafe RenderPipeline* _renderPipeline;
 
