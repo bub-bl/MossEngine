@@ -4,7 +4,7 @@ using NLog;
 
 namespace MossEngine.System.Logging;
 
-internal static partial class Logging
+internal static class Logging
 {
 	private static readonly Dictionary<string, LogLevel> Rules = new();
 	private static readonly Dictionary<int, bool> RuleCache = new();

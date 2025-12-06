@@ -6,39 +6,43 @@ namespace MossEngine.System.Logging;
 [StackTraceHidden]
 public class Logger
 {
-	private NLog.Logger _log;
+	private readonly NLog.Logger _log;
 
 	/// <summary>
 	/// Name of this logger.
 	/// </summary>
-	public string Name { get; protected set; }
+	public string Name { get; }
 
 	public Logger( string name )
 	{
 		Logging.InitializeConfig();
 
+		_log = LogManager.GetLogger( name );
 		Name = name;
-		_log = NLog.LogManager.GetLogger( name );
 
 		Logging.RegisterLogger( Name );
 	}
 
-	internal void DoInfo( FormattableString message ) => WriteToTargets( NLog.LogLevel.Info, null, message );
-	internal void DoTrace( FormattableString message ) => WriteToTargets( NLog.LogLevel.Trace, null, message );
-	internal void DoWarning( FormattableString message ) => WriteToTargets( NLog.LogLevel.Warn, null, message );
-	internal void DoError( FormattableString message ) => WriteToTargets( NLog.LogLevel.Error, null, message );
+	private void DoInfo( FormattableString message ) => WriteToTargets( NLog.LogLevel.Info, null, message );
+	private void DoTrace( FormattableString message ) => WriteToTargets( NLog.LogLevel.Trace, null, message );
+	private void DoWarning( FormattableString message ) => WriteToTargets( NLog.LogLevel.Warn, null, message );
+	private void DoError( FormattableString message ) => WriteToTargets( NLog.LogLevel.Error, null, message );
 
 	/// <inheritdoc cref="Info(object)"/>
 	public void Info( FormattableString message ) => DoInfo( message );
+
 	/// <inheritdoc cref="Trace(object)"/>
 	public void Trace( FormattableString message ) => DoTrace( message );
+
 	/// <inheritdoc cref="Warning(object)"/>
 	public void Warning( FormattableString message ) => DoWarning( message );
+
 	/// <inheritdoc cref="Error(object)"/>
 	public void Error( FormattableString message ) => DoError( message );
 
 	/// <inheritdoc cref="Error(Exception, object)"/>
-	public void Error( Exception exception, FormattableString message ) => WriteToTargets( NLog.LogLevel.Error, exception, message );
+	public void Error( Exception exception, FormattableString message ) =>
+		WriteToTargets( NLog.LogLevel.Error, exception, message );
 
 	/// <summary>
 	/// Log an exception as an error, with given message override.
@@ -51,10 +55,12 @@ public class Logger
 	/// Log an exception as an error.
 	/// </summary>
 	/// <param name="exception">The exception to log.</param>
-	public void Error( Exception exception ) => WriteToTargets( NLog.LogLevel.Error, exception, $"{exception.Message}" );
+	public void Error( Exception exception ) =>
+		WriteToTargets( NLog.LogLevel.Error, exception, $"{exception.Message}" );
 
 	/// <inheritdoc cref="Warning(Exception, object)"/>
-	public void Warning( Exception exception, FormattableString message ) => WriteToTargets( NLog.LogLevel.Warn, exception, message );
+	public void Warning( Exception exception, FormattableString message ) =>
+		WriteToTargets( NLog.LogLevel.Warn, exception, message );
 
 	/// <summary>
 	/// Log an exception as a warning, with given message override.
@@ -123,23 +129,21 @@ public class Logger
 		Error( $"{message}" );
 	}
 
-	internal void WriteToTargets( NLog.LogLevel nlogLevel, Exception ex, FormattableString message, string name = null )
+	private void WriteToTargets( NLog.LogLevel nlogLevel, Exception? ex, FormattableString message,
+		string? name = null )
 	{
 		name ??= Name;
 
-		LogLevel level = nlogLevel.Ordinal switch
+		var level = nlogLevel.Ordinal switch
 		{
-			0 => LogLevel.Trace,
-			1 => LogLevel.Trace,
+			0 or 1 => LogLevel.Trace,
 			2 => LogLevel.Info,
 			3 => LogLevel.Warn,
-			4 => LogLevel.Error,
-			5 => LogLevel.Error,
+			4 or 5 => LogLevel.Error,
 			_ => LogLevel.Info,
 		};
 
-		if ( !Logging.ShouldLog( name, level ) )
-			return;
+		if ( !Logging.ShouldLog( name, level ) ) return;
 
 		var defaultMessage = message.ToString();
 		var arguments = new List<object>();
@@ -148,10 +152,11 @@ public class Logger
 
 		// Only show the first line in the console, but inspecting that line will show the rest
 
-		var firstLineBreakIndex = htmlMessage.IndexOf( "\n", StringComparison.Ordinal );
+		var firstLineBreakIndex = htmlMessage.IndexOf( '\n' );
+
 		if ( firstLineBreakIndex > -1 )
 		{
-			htmlMessage = htmlMessage.Substring( 0, firstLineBreakIndex ).TrimEnd();
+			htmlMessage = htmlMessage[..firstLineBreakIndex].TrimEnd();
 		}
 
 		var logEvent = LogEventInfo.Create( nlogLevel, name, defaultMessage );
@@ -168,7 +173,7 @@ public class Logger
 
 		_log.Log( logEvent );
 
-		string stacktrace = null;
+		string? stacktrace = null;
 
 		if ( logEvent.Exception != null )
 		{
@@ -204,20 +209,23 @@ public class Logger
 	/// <param name="o">Object to wrap</param>
 	/// <param name="outArgs">Inspectable objects will be added here</param>
 	/// <returns>Html-wrapped object. Either a string or a primitive.</returns>
-	static object WrapObject( object o, List<object> outArgs )
+	private static object WrapObject( object? o, List<object> outArgs )
 	{
-		if ( o == null ) return "null";
-
-		if ( o is FormattableString formattable )
+		switch ( o )
 		{
-			var wrappedArgs = formattable.GetArguments()
-				.Select( x => WrapObject( x, outArgs ) )
-				.ToArray();
+			case null:
+				return "null";
+			case FormattableString formattable:
+				{
+					var wrappedArgs = formattable.GetArguments()
+						.Select( x => WrapObject( x, outArgs ) )
+						.ToArray();
 
-			return string.Format( formattable.Format, wrappedArgs );
+					return string.Format( formattable.Format, wrappedArgs );
+				}
+			case string:
+				return HttpUtility.HtmlEncode( o );
 		}
-
-		if ( o is string ) return HttpUtility.HtmlEncode( o );
 
 		var t = o.GetType();
 		if ( t.IsPrimitive ) return o;
@@ -227,5 +235,4 @@ public class Logger
 
 		return $"<a href=\"arg:{index}\" style=\"\">{HttpUtility.HtmlEncode( o.ToString() )}</a>";
 	}
-
 }

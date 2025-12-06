@@ -41,6 +41,10 @@
     <ItemGroup>
         <Folder Include="Rendering\"/>
     </ItemGroup>
+    
+    <ItemGroup>
+        <Using Include="MossEngine.System.GlobalSystemNamespace" Static="true" />
+    </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\MossEngine.System\MossEngine.System.csproj" />
