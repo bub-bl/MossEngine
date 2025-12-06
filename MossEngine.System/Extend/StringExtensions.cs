@@ -7,7 +7,6 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using MossEngine.UI.Graphics;
 using MossEngine.UI.Math;
-using MossEngine.UI.Utility.Hashing;
 
 namespace MossEngine.UI.Extend;
 
@@ -671,15 +670,6 @@ public static partial class SandboxSystemExtensions
 		catch ( Exception e ) { Log.Warning( e ); }
 
 		return false;
-	}
-
-	/// <summary>
-	/// Generate xxhash3 hash from given string.
-	/// </summary>
-	public static int FastHash( this string str )
-	{
-		// Must Match the version in Sandbox,CodeGen. Should only be changed after careful benchmarking.
-		return (int)XxHash3.HashToUInt64( GetUtf16Bytes( str ) );
 	}
 
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
