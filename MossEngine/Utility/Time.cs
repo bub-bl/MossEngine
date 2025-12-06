@@ -14,7 +14,7 @@ public static class Time
 	/// </summary>
 	public static float Delta { get; set; }
 
-	private static void Update( double now, double delta )
+	internal static void Update( double now, double delta )
 	{
 		Now = (float)now;
 		Delta = (float)delta;
