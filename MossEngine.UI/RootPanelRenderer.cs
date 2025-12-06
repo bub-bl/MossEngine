@@ -9,9 +9,12 @@ public sealed class RootPanelRenderer( RootPanel root )
 	{
 		// optional: clear
 		canvas.Clear( SKColors.Transparent );
-		
+
 		// layout
 		root.ComputeLayout();
+
+		// update
+		root.InternalOnUpdate();
 
 		// draw tree
 		root.Draw( canvas );
