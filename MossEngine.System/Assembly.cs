@@ -4,9 +4,8 @@ global using System.Diagnostics;
 global using System.Linq;
 global using System.Text;
 global using System.Text.Json;
-global using static MossEngine.UI.GlobalSystemNamespace;
+global using static MossEngine.System.GlobalSystemNamespace;
 using System.Runtime.CompilerServices;
-using MossEngine.UI.Attributes;
 
 // [assembly: InternalsVisibleTo( "Sandbox.Test" )]
 // [assembly: InternalsVisibleTo( "Sandbox.Hotload.Test" )]
@@ -22,5 +21,3 @@ using MossEngine.UI.Attributes;
 // [assembly: InternalsVisibleTo( "Facepunch.Interopgen" )]
 // [assembly: InternalsVisibleTo( "Sandbox.AppSystem" )]
 // [assembly: InternalsVisibleTo( "Sbox-Server" )]
-
-[assembly: TasksPersistOnContextReset]

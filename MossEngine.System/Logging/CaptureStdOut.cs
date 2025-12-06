@@ -1,4 +1,4 @@
-﻿namespace MossEngine.UI.Logging
+﻿namespace MossEngine.System.Logging
 {
 	internal class CaptureStdOut : TextWriter
 	{

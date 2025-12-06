@@ -1,12 +1,8 @@
-﻿using MossEngine.UI.Logging;
+﻿using MossEngine.System.Logging;
 
-namespace MossEngine.UI
+namespace MossEngine.System;
+
+public static class GlobalSystemNamespace
 {
-	public static class GlobalSystemNamespace
-	{
-		public static Logger Log { get; } = new( "Generic" );
-
-		// Avoiding the temptation to swamp this will global properties
-		// like IsServer etc - at least for now.
-	}
+	public static Logger Log { get; } = new( "Generic" );
 }

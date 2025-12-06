@@ -1,4 +1,6 @@
-﻿namespace MossEngine.UI.Math;
+﻿using System.Numerics;
+
+namespace MossEngine.System.Math;
 
 /// <summary>
 /// Models a unit mass attached to a spring and a damper, with a particular
@@ -12,7 +14,7 @@ internal readonly struct SpringDamper
 	/// <param name="frequency">How many times the spring oscillates per second.</param>
 	/// <param name="damping">How much damping to apply each oscillation, as with the legacy <see cref="Vector3.SpringDamp(in Vector3, in Vector3, ref Vector3, float, float, float)"/>.</param>
 	public static SpringDamper FromDamping( float frequency = 2f, float damping = 0.5f ) =>
-		new( frequency, damping * frequency * MathF.PI * 2f );
+		new(frequency, damping * frequency * MathF.PI * 2f);
 
 	/// <summary>
 	/// Create a critically damped model with a given <paramref name="smoothingTime"/>, for movement that doesn't oscillate but smoothly
@@ -52,7 +54,7 @@ internal readonly struct SpringDamper
 		var omega0 = Frequency * MathF.PI * 2f;
 
 		// Damped angular frequency
-		_omega = MathF.Sqrt( System.Math.Max( 0f, omega0 * omega0 - DecayRate * DecayRate ) );
+		_omega = MathF.Sqrt( global::System.Math.Max( 0f, omega0 * omega0 - DecayRate * DecayRate ) );
 	}
 
 	#region Simulate
@@ -84,8 +86,8 @@ internal readonly struct SpringDamper
 	/// <inheritdoc cref="Simulate(float,float,float)"/>
 	public (Vector2 Position, Vector2 Velocity) Simulate( Vector2 position, Vector2 velocity, float deltaTime )
 	{
-		(position.x, velocity.x) = Simulate( position.x, velocity.x, deltaTime );
-		(position.y, velocity.y) = Simulate( position.y, velocity.y, deltaTime );
+		(position.X, velocity.X) = Simulate( position.X, velocity.X, deltaTime );
+		(position.Y, velocity.Y) = Simulate( position.Y, velocity.Y, deltaTime );
 
 		return (position, velocity);
 	}
@@ -93,9 +95,9 @@ internal readonly struct SpringDamper
 	/// <inheritdoc cref="Simulate(float,float,float)"/>
 	public (Vector3 Position, Vector3 Velocity) Simulate( Vector3 position, Vector3 velocity, float deltaTime )
 	{
-		(position.x, velocity.x) = Simulate( position.x, velocity.x, deltaTime );
-		(position.y, velocity.y) = Simulate( position.y, velocity.y, deltaTime );
-		(position.z, velocity.z) = Simulate( position.z, velocity.z, deltaTime );
+		(position.X, velocity.X) = Simulate( position.X, velocity.X, deltaTime );
+		(position.Y, velocity.Y) = Simulate( position.Y, velocity.Y, deltaTime );
+		(position.Z, velocity.Z) = Simulate( position.Z, velocity.Z, deltaTime );
 
 		return (position, velocity);
 	}
@@ -104,7 +106,8 @@ internal readonly struct SpringDamper
 
 	#region Private
 
-	private (float MaxPosition, float MaxVelocity, float Phase) FindOscillationParameters( float position, float velocity )
+	private (float MaxPosition, float MaxVelocity, float Phase) FindOscillationParameters( float position,
+		float velocity )
 	{
 		// Total energy (kinetic + potential) x 2, assuming unit mass
 		var energy2 = velocity * velocity + _omega * _omega * position * position;

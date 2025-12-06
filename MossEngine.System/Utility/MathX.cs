@@ -1,8 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
-using MossEngine.UI.Extend;
-using MossEngine.UI.Math;
+using MossEngine.System.Math;
 
-namespace MossEngine.UI.Utility;
+namespace MossEngine.System.Utility;
 
 /// <summary>
 /// A class to add functionality to the math library that System.Math and System.MathF don't provide.
@@ -10,81 +9,84 @@ namespace MossEngine.UI.Utility;
 /// </summary>
 public static partial class MathX
 {
-	internal const float toRadians = (float)System.Math.PI * 2F / 360F;
-	internal const float toDegrees = 1.0f / toRadians;
-	internal const float toGradiansDegrees = 0.9f;
-	internal const float toGradiansRadians = 0.01570796326f;
+	private const float ToRadians = (float)global::System.Math.PI * 2F / 360F;
+	private const float ToDegrees = 1.0f / ToRadians;
+	private const float ToGradiansDegrees = 0.9f;
+	private const float ToGradiansRadians = 0.01570796326f;
+	
+	internal const float ToMeters = 0.0254f;
+	internal const float ToInches = 1.0f / ToMeters;
+	internal const float ToMillimeters = 25.4f;
 
-	/// <summary>
-	/// Convert degrees to radians.
-	///
-	/// <para>180 degrees is <see cref="Math.PI"/> (roughly 3.14) radians, etc.</para>
-	/// </summary>
 	/// <param name="deg">A value in degrees to convert.</param>
-	/// <returns>The given value converted to radians.</returns>
-	public static float DegreeToRadian( this float deg ) => deg * toRadians;
-
-	/// <summary>
-	/// Convert radians to degrees.
-	///
-	/// <para>180 degrees is <see cref="Math.PI"/> (roughly 3.14) radians, etc.</para>
-	/// </summary>
-	/// <param name="rad">A value in radians to convert.</param>
-	/// <returns>The given value converted to degrees.</returns>
-	public static float RadianToDegree( this float rad ) => rad * toDegrees;
-
-	/// <summary>
-	/// Convert gradians to degrees.
-	///
-	/// <para>100 gradian is 90 degrees, 200 gradian is 180 degrees, etc.</para>
-	/// </summary>
-	/// <param name="grad">A value in gradians to convert.</param>
-	/// <returns>The given value converted to degrees.</returns>
-	public static float GradiansToDegrees( this float grad ) => grad * toGradiansDegrees;
-
-	/// <summary>
-	/// Convert gradians to radians.
-	///
-	/// <para>200 gradian is <see cref="Math.PI"/> (roughly 3.14) radians, etc.</para>
-	/// </summary>
-	/// <param name="grad">A value in gradians to convert.</param>
-	/// <returns>The given value converted to radians.</returns>
-	public static float GradiansToRadians( this float grad ) => grad * toGradiansRadians;
-
-	internal const float toMeters = 0.0254f;
-	internal const float toInches = 1.0f / toMeters;
-	internal const float toMillimeters = 25.4f;
-
-	/// <summary>
-	/// Convert meters to inches.
-	/// </summary>
-	public static float MeterToInch( this float meters ) => meters * toInches;
-
-	/// <summary>
-	/// Convert inches to meters.
-	/// </summary>
-	public static float InchToMeter( this float inches ) => inches * toMeters;
-
-	/// <summary>
-	/// Convert inches to millimeters.
-	/// </summary>
-	public static float InchToMillimeter( this float inches ) => inches * toMillimeters;
-
-	/// <summary>
-	/// Convert millimeters to inches.
-	/// </summary>
-	public static float MillimeterToInch( this float millimeters ) => millimeters * (1.0f / toMillimeters);
-
-
-	/// <summary>
-	/// Snap number to grid
-	/// </summary>
-	public static float SnapToGrid( this float f, float gridSize )
+	extension(float deg)
 	{
-		if ( gridSize.AlmostEqual( 0.0f ) ) return f;
-		var inv = 1 / gridSize;
-		return MathF.Round( f * inv ) / inv;
+		/// <summary>
+		/// Convert degrees to radians.
+		/// 
+		/// <para>180 degrees is <see cref="Math.PI"/> (roughly 3.14) radians, etc.</para>
+		/// </summary>
+		/// <returns>The given value converted to radians.</returns>
+		public float DegreeToRadian() => deg * ToRadians;
+
+		/// <summary>
+		/// Convert radians to degrees.
+		/// 
+		/// <para>180 degrees is <see cref="Math.PI"/> (roughly 3.14) radians, etc.</para>
+		/// </summary>
+		/// <returns>The given value converted to degrees.</returns>
+		public float RadianToDegree() => deg * ToDegrees;
+
+		/// <summary>
+		/// Convert gradians to degrees.
+		/// 
+		/// <para>100 gradian is 90 degrees, 200 gradian is 180 degrees, etc.</para>
+		/// </summary>
+		/// <returns>The given value converted to degrees.</returns>
+		public float GradiansToDegrees() => deg * ToGradiansDegrees;
+
+		/// <summary>
+		/// Convert gradians to radians.
+		/// 
+		/// <para>200 gradian is <see cref="Math.PI"/> (roughly 3.14) radians, etc.</para>
+		/// </summary>
+		/// <returns>The given value converted to radians.</returns>
+		public float GradiansToRadians() => deg * ToGradiansRadians;
 	}
+
+	extension(float meters)
+	{
+		/// <summary>
+		/// Convert meters to inches.
+		/// </summary>
+		public float MeterToInch() => meters * ToInches;
+
+		/// <summary>
+		/// Convert inches to meters.
+		/// </summary>
+		public float InchToMeter() => meters * ToMeters;
+
+		/// <summary>
+		/// Convert inches to millimeters.
+		/// </summary>
+		public float InchToMillimeter() => meters * ToMillimeters;
+
+		/// <summary>
+		/// Convert millimeters to inches.
+		/// </summary>
+		public float MillimeterToInch() => meters * (1.0f / ToMillimeters);
+
+		/// <summary>
+		/// Snap number to grid
+		/// </summary>
+		public float SnapToGrid( float gridSize )
+		{
+			if ( gridSize.AlmostEqual( 0.0f ) ) return meters;
+			var inv = 1 / gridSize;
+			return MathF.Round( meters * inv ) / inv;
+		}
+	}
+
 
 	/// <summary>
 	/// Snap number to grid
@@ -94,41 +96,43 @@ public static partial class MathX
 		return (f / gridSize) * gridSize;
 	}
 
-	/// <summary>
-	/// Remove the fractional part and return the float as an integer.
-	/// </summary>
-	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	public static int FloorToInt( this float f )
+	extension(float f)
 	{
-		return (int)MathF.Floor( f );
-	}
+		/// <summary>
+		/// Remove the fractional part and return the float as an integer.
+		/// </summary>
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public int FloorToInt()
+		{
+			return (int)MathF.Floor( f );
+		}
 
-	/// <summary>
-	/// Remove the fractional part of given floating point number
-	/// </summary>
-	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	public static float Floor( this float f )
-	{
-		return MathF.Floor( f );
-	}
+		/// <summary>
+		/// Remove the fractional part of given floating point number
+		/// </summary>
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public float Floor()
+		{
+			return MathF.Floor( f );
+		}
 
-	/// <summary>
-	/// Rounds up given float to next integer value.
-	/// </summary>
-	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	public static int CeilToInt( this float f )
-	{
-		return (int)MathF.Ceiling( f );
+		/// <summary>
+		/// Rounds up given float to next integer value.
+		/// </summary>
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public int CeilToInt()
+		{
+			return (int)MathF.Ceiling( f );
+		}
 	}
 
 	/// <summary>
 	/// Orders the two given numbers so that a is less than b.
 	/// </summary>
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	static void Order( ref float a, ref float b )
+	private static void Order( ref float a, ref float b )
 	{
 		if ( a <= b ) return;
-
 		(b, a) = (a, b);
 	}
 
@@ -144,7 +148,6 @@ public static partial class MathX
 	public static float Clamp( this float v, float min, float max )
 	{
 		Order( ref min, ref max );
-
 		return v < min ? min : v < max ? v : max;
 	}
 
@@ -174,7 +177,7 @@ public static partial class MathX
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static double Lerp( double from, double to, double frac, bool clamp = true )
 	{
-		if ( clamp ) frac = frac.Clamp( 0, 1 );
+		if ( clamp ) frac = double.Clamp( frac, 0, 1 );
 		return (from + frac * (to - from));
 	}
 
@@ -196,12 +199,10 @@ public static partial class MathX
 		if ( from == null ) return null;
 		if ( to == null ) return from;
 
-		float[] output = new float[System.Math.Min( from.Length, to.Length )];
+		var output = new float[global::System.Math.Min( from.Length, to.Length )];
 
-		for ( int i = 0; i < output.Length; i++ )
-		{
+		for ( var i = 0; i < output.Length; i++ )
 			output[i] = from[i].LerpTo( to[i], delta, clamp );
-		}
 
 		return output;
 	}
@@ -232,78 +233,81 @@ public static partial class MathX
 		return lerped >= MathF.PI ? lerped - MathF.Tau : lerped;
 	}
 
-	/// <inheritdoc cref="LerpRadians"/>
-	public static float LerpRadiansTo( this float from, float to, float frac, bool clamp = true )
+	/// <param name="from">The value relative to <paramref name="from1"/> and <paramref name="to"/>.</param>
+	extension(float from)
 	{
-		return LerpRadians( from, to, frac, clamp );
-	}
-
-	/// <summary>
-	/// Performs inverse of a linear interpolation, that is, the return value is the fraction of a linear interpolation.
-	/// </summary>
-	/// <param name="value">The value relative to <paramref name="from"/> and <paramref name="to"/>.</param>
-	/// <param name="from">The "starting value" of the interpolation. If <paramref name="value"/> is at this value or less, the function will return 0 or less.</param>
-	/// <param name="to">The "final value" of the interpolation. If <paramref name="value"/> is at this value or greater, the function will return 1 or greater.</param>
-	/// <param name="clamp">Whether the return value is allowed to exceed range of 0 - 1.</param>
-	/// <returns>The resulting fraction.</returns>
-	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	public static float LerpInverse( this float value, float from, float to, bool clamp = true )
-	{
-		if ( clamp ) value = value.Clamp( from, to );
-
-		value -= from;
-		to -= from;
-
-		if ( to == 0 ) return 0;
-
-		return value / to;
-	}
-
-	/// <summary>
-	/// Adds or subtracts given amount based on whether the input is smaller of bigger than the target.
-	/// </summary>
-	public static float Approach( this float f, float target, float delta )
-	{
-		if ( f > target )
+		/// <inheritdoc cref="LerpRadians"/>
+		public float LerpRadiansTo( float to, float frac, bool clamp = true )
 		{
-			f -= delta;
-			if ( f < target ) return target;
-		}
-		else
-		{
-			f += delta;
-			if ( f > target ) return target;
+			return LerpRadians( from, to, frac, clamp );
 		}
 
-		return f;
-	}
+		/// <summary>
+		/// Performs inverse of a linear interpolation, that is, the return value is the fraction of a linear interpolation.
+		/// </summary>
+		/// <param name="from1">The "starting value" of the interpolation. If <paramref name="from"/> is at this value or less, the function will return 0 or less.</param>
+		/// <param name="to">The "final value" of the interpolation. If <paramref name="from"/> is at this value or greater, the function will return 1 or greater.</param>
+		/// <param name="clamp">Whether the return value is allowed to exceed range of 0 - 1.</param>
+		/// <returns>The resulting fraction.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public float LerpInverse( float from1, float to, bool clamp = true )
+		{
+			if ( clamp ) from = from.Clamp( from1, to );
 
-	/// <summary>
-	/// Returns true if given value is close to given value within given tolerance.
-	/// </summary>
-	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	public static bool AlmostEqual( this float value, float b, float within = 0.0001f )
-	{
-		return MathF.Abs( value - b ) <= within;
-	}
+			from -= from1;
+			to -= from1;
 
-	/// <summary>
-	/// Does what you expected to happen when you did "a % b"
-	/// </summary>
-	public static float UnsignedMod( this float a, float b )
-	{
-		return a - b * (a / b).Floor();
-	}
+			if ( to == 0 ) return 0;
 
-	/// <summary>
-	/// Convert angle to between 0 - 360
-	/// </summary>
-	public static float NormalizeDegrees( this float degree )
-	{
-		degree = degree % 360;
-		if ( degree < 0 ) degree += 360;
+			return from / to;
+		}
 
-		return degree;
+		/// <summary>
+		/// Adds or subtracts given amount based on whether the input is smaller of bigger than the target.
+		/// </summary>
+		public float Approach( float target, float delta )
+		{
+			if ( from > target )
+			{
+				from -= delta;
+				if ( from < target ) return target;
+			}
+			else
+			{
+				from += delta;
+				if ( from > target ) return target;
+			}
+
+			return from;
+		}
+
+		/// <summary>
+		/// Returns true if given value is close to given value within given tolerance.
+		/// </summary>
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public bool AlmostEqual( float b, float within = 0.0001f )
+		{
+			return MathF.Abs( from - b ) <= within;
+		}
+
+		/// <summary>
+		/// Does what you expected to happen when you did "a % b"
+		/// </summary>
+		public float UnsignedMod( float b )
+		{
+			return from - b * (from / b).Floor();
+		}
+
+		/// <summary>
+		/// Convert angle to between 0 - 360
+		/// </summary>
+		public float NormalizeDegrees()
+		{
+			from = from % 360;
+			if ( from < 0 ) from += 360;
+
+			return from;
+		}
 	}
 
 	/// <summary>
@@ -356,13 +360,13 @@ public static partial class MathX
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static double Remap( this double value, double oldLow, double oldHigh, double newLow, double newHigh, bool clamp )
 	{
-		if ( System.Math.Abs( oldHigh - oldLow ) < 0.0001 )
+		if ( global::System.Math.Abs( oldHigh - oldLow ) < 0.0001 )
 			return clamp ? newLow : value;
 
 		var v = newLow + (value - oldLow) * (newHigh - newLow) / (oldHigh - oldLow);
 
 		if ( clamp )
-			v = v.Clamp( newLow, newHigh );
+			v = double.Clamp( v, newLow, newHigh );
 
 		return v;
 	}
@@ -373,7 +377,7 @@ public static partial class MathX
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static int Remap( this int value, int oldLow, int oldHigh, int newLow, int newHigh )
 	{
-		return (int)Remap( (float)value, (float)oldLow, (float)oldHigh, (float)newLow, (float)newHigh, true );
+		return (int)Remap( value, oldLow, oldHigh, newLow, newHigh, true );
 	}
 
 

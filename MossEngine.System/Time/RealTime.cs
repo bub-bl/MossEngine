@@ -1,8 +1,6 @@
-﻿
-using MossEngine.UI.Extend;
-using MossEngine.UI.Utility;
+﻿using MossEngine.System.Utility;
 
-namespace MossEngine.UI.Time;
+namespace MossEngine.System.Time;
 
 /// <summary>
 /// Access to time.
@@ -11,16 +9,16 @@ public static class RealTime
 {
 	static RealTime()
 	{
-		timeMeasure = FastTimer.StartNew();
+		TimeMeasure = FastTimer.StartNew();
 
 		var epoch = new DateTime( 2022, 1, 1, 1, 1, 1, DateTimeKind.Utc );
 		var now = DateTime.UtcNow;
 
-		nowOffset = (now - epoch).TotalSeconds;
+		NowOffset = (now - epoch).TotalSeconds;
 	}
 
-	static FastTimer timeMeasure;
-	static double nowOffset;
+	private static readonly FastTimer TimeMeasure;
+	private static readonly double NowOffset;
 
 	/// <summary>
 	/// The time since game startup, in seconds.
@@ -30,12 +28,12 @@ public static class RealTime
 	/// <summary>
 	/// The time since game startup, in seconds.
 	/// </summary>
-	internal static double DoubleNow => timeMeasure.ElapsedSeconds;
+	internal static double DoubleNow => TimeMeasure.ElapsedSeconds;
 
 	/// <summary>
 	/// The number of a seconds since a set point in time. This value should match between servers and clients. If they have their timezone set correctly.
 	/// </summary>
-	public static double GlobalNow => (nowOffset + timeMeasure.ElapsedSeconds);
+	public static double GlobalNow => (NowOffset + TimeMeasure.ElapsedSeconds);
 
 	/// <summary>
 	/// The time delta (in seconds) between the last frame and the current (for all intents and purposes)
@@ -47,17 +45,16 @@ public static class RealTime
 	/// </summary>
 	public static float SmoothDelta { get; internal set; }
 
-	static double LastTick;
+	private static double _lastTick;
 
 	internal static void Update( double now )
 	{
-		if ( LastTick > 0 )
+		if ( _lastTick > 0 )
 		{
-			Delta = (float)(now - LastTick).Clamp( 0.0, 2.0 );
-
+			Delta = float.Clamp( (float)(now - _lastTick), 0.0f, 2.0f );
 			SmoothDelta = MathX.Lerp( SmoothDelta, Delta, 0.1f );
 		}
 
-		LastTick = now;
+		_lastTick = now;
 	}
 }

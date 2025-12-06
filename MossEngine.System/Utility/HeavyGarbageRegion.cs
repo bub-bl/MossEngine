@@ -1,5 +1,5 @@
 ﻿
-namespace MossEngine.UI.Utility;
+namespace MossEngine.System.Utility;
 
 /// <summary>
 /// A disposable region that prevents garbage collection for the duration of the using block.

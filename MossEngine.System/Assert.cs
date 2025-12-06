@@ -1,6 +1,4 @@
-﻿using MossEngine.UI.Utility;
-
-namespace MossEngine.UI;
+﻿namespace MossEngine.System;
 
 public static class Assert
 {
@@ -10,11 +8,11 @@ public static class Assert
 	/// <typeparam name="T">Any type capable of being null.</typeparam>
 	/// <param name="obj">Object to test</param>
 	/// <param name="message">Message to show when object is null</param>
-	/// <exception cref="System.Exception">Thrown when the given object is null.</exception>
+	/// <exception cref="Exception">Thrown when the given object is null.</exception>
 	public static void NotNull<T>( T obj, string message )
 	{
 		if ( obj == null )
-			throw new System.Exception( message );
+			throw new Exception( message );
 	}
 
 	/// <summary>
@@ -22,7 +20,7 @@ public static class Assert
 	/// </summary>
 	/// <typeparam name="T">Any type capable of being null.</typeparam>
 	/// <param name="obj">Object to test</param>
-	/// <exception cref="System.Exception">Thrown when the given object is null.</exception>
+	/// <exception cref="Exception">Thrown when the given object is null.</exception>
 	public static void NotNull<T>( T obj ) => NotNull( obj, "Object should not be null" );
 
 	/// <summary>
@@ -31,11 +29,11 @@ public static class Assert
 	/// <typeparam name="T">Any type capable of being null.</typeparam>
 	/// <param name="obj">Object to test</param>
 	/// <param name="message">Message to show when null</param>
-	/// <exception cref="System.Exception">Thrown when the given object is null.</exception>
+	/// <exception cref="Exception">Thrown when the given object is null.</exception>
 	public static void IsNull<T>( T obj, string message )
 	{
 		if ( obj != null )
-			throw new System.Exception( message );
+			throw new Exception( message );
 	}
 
 	/// <summary>
@@ -43,7 +41,7 @@ public static class Assert
 	/// </summary>
 	/// <typeparam name="T">Any type capable of being null.</typeparam>
 	/// <param name="obj">Object to test</param>
-	/// <exception cref="System.Exception">Thrown when the given object is null.</exception>
+	/// <exception cref="Exception">Thrown when the given object is null.</exception>
 	public static void IsNull<T>( T obj ) => IsNull( obj, "Object should be null" );
 
 	/// <summary>
@@ -52,7 +50,7 @@ public static class Assert
 	public static void IsValid( IValid obj )
 	{
 		if ( !obj.IsValid() )
-			throw new System.Exception( "Assert: IsValid" );
+			throw new Exception( "Assert: IsValid" );
 	}
 
 	/// <summary>
@@ -62,20 +60,20 @@ public static class Assert
 	/// <param name="a">Object A to test.</param>
 	/// <param name="b">Object B to test.</param>
 	/// <param name="message">Message to include in the exception, if any.</param>
-	/// <exception cref="System.Exception">Thrown when 2 given objects are not equal</exception>
-	public static void AreEqual<T>( T a, T b, string message = null )
+	/// <exception cref="Exception">Thrown when 2 given objects are not equal</exception>
+	public static void AreEqual<T>( T a, T b, string? message = null )
 	{
-		if ( !object.Equals( a, b ) )
-			throw new System.Exception( $"Assert: AreEqual {message}" );
+		if ( !Equals( a, b ) )
+			throw new Exception( $"Assert: AreEqual {message}" );
 	}
 
 	/// <summary>
 	/// Throws an exception when the 2 given objects are equal to each other.
 	/// </summary>
-	public static void AreNotEqual<T>( T a, T b, string message = null )
+	public static void AreNotEqual<T>( T a, T b, string? message = null )
 	{
-		if ( object.Equals( a, b ) )
-			throw new System.Exception( $"Assert: AreNotEqual {message}" );
+		if ( Equals( a, b ) )
+			throw new Exception( $"Assert: AreNotEqual {message}" );
 	}
 
 	/// <summary>
@@ -83,11 +81,11 @@ public static class Assert
 	/// </summary>
 	/// <param name="isValid">The expression to test</param>
 	/// <param name="message">Message to include in the exception, if any.</param>
-	/// <exception cref="System.Exception">Thrown when given expression is not <b>true</b>.</exception>
-	public static void True( bool isValid, string message = null )
+	/// <exception cref="Exception">Thrown when given expression is not <b>true</b>.</exception>
+	public static void True( bool isValid, string? message = null )
 	{
 		if ( !isValid )
-			throw new System.Exception( $"Assert: {message ?? "True"}" );
+			throw new Exception( $"Assert: {message ?? "True"}" );
 	}
 
 	/// <summary>
@@ -95,10 +93,10 @@ public static class Assert
 	/// </summary>
 	/// <param name="isValid">The expression to test</param>
 	/// <param name="message">Message to include in the exception, if any.</param>
-	/// <exception cref="System.Exception">Thrown when given expression is not <b>false</b>.</exception>
-	public static void False( bool isValid, string message = null )
+	/// <exception cref="Exception">Thrown when given expression is not <b>false</b>.</exception>
+	public static void False( bool isValid, string? message = null )
 	{
 		if ( isValid )
-			throw new System.Exception( $"Assert: {message ?? "False"}" );
+			throw new Exception( $"Assert: {message ?? "False"}" );
 	}
 }

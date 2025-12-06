@@ -1,7 +1,7 @@
 ﻿
-using MossEngine.UI.Attributes;
+using MossEngine.System.Attributes;
 
-namespace MossEngine.UI.Logging
+namespace MossEngine.System.Logging
 {
 	public enum LogLevel
 	{
@@ -26,7 +26,7 @@ namespace MossEngine.UI.Logging
 		public string Message { get; set; }
 
 		[ReadOnly]
-		[SkipHotload]
+		// [SkipHotload]
 		public Exception Exception { get; set; }
 
 		[ReadOnly]
@@ -42,7 +42,7 @@ namespace MossEngine.UI.Logging
 		public DateTime Time { get; set; }
 
 		[ReadOnly]
-		[SkipHotload]
+		// [SkipHotload]
 		public object[] Arguments { get; set; }
 
 		[ReadOnly]

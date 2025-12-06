@@ -1,4 +1,4 @@
-﻿namespace MossEngine.UI.Attributes;
+﻿namespace MossEngine.System.Attributes;
 
 /// <summary>
 /// An attribute that describes a version update for a JSON object.

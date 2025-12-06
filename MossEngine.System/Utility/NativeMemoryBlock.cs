@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Runtime.InteropServices;
 
-namespace MossEngine.UI.Utility;
+namespace MossEngine.System.Utility;
 
 /// <summary>
 /// A growable block of native memory with automatic pooling and safe disposal.
@@ -11,7 +11,7 @@ namespace MossEngine.UI.Utility;
 internal unsafe class NativeMemoryBlock : IDisposable
 {
 	// Pool of reusable blocks to reduce allocation overhead
-	static ConcurrentQueue<NativeMemoryBlock> SharedPool = new();
+	private static readonly ConcurrentQueue<NativeMemoryBlock> SharedPool = new();
 
 	/// <summary>
 	/// Gets the pointer to the allocated native memory.
@@ -26,7 +26,7 @@ internal unsafe class NativeMemoryBlock : IDisposable
 	/// <summary>
 	/// Tracks whether this block is currently in the shared pool.
 	/// </summary>
-	private bool InPool;
+	private bool _inPool;
 
 	/// <summary>
 	/// Creates a new native memory block with the specified initial size.
@@ -37,6 +37,15 @@ internal unsafe class NativeMemoryBlock : IDisposable
 		Pointer = NativeMemory.Alloc( (uint)initialSize );
 		Size = initialSize;
 	}
+	
+	/// <summary>
+	/// Finalizer ensures native memory is freed even if Dispose is not called.
+	/// </summary>
+	~NativeMemoryBlock()
+	{
+		Dispose();
+	}
+
 
 	/// <summary>
 	/// Gets a block from the pool or creates a new one.
@@ -48,42 +57,31 @@ internal unsafe class NativeMemoryBlock : IDisposable
 	{
 		if ( initialSize <= 0 ) initialSize = 512;
 
-		if ( SharedPool.TryDequeue( out var pooled ) )
-		{
-			pooled.InPool = false;
-			pooled.Grow( initialSize );
-			return pooled;
-		}
+		if ( !SharedPool.TryDequeue( out var pooled ) )
+			return new NativeMemoryBlock( initialSize );
 
-		return new NativeMemoryBlock( initialSize );
+		pooled._inPool = false;
+		pooled.Grow( initialSize );
+			
+		return pooled;
 	}
-
-	/// <summary>
-	/// Finalizer ensures native memory is freed even if Dispose is not called.
-	/// </summary>
-	~NativeMemoryBlock()
-	{
-		Dispose();
-	}
-
+	
 	/// <summary>
 	/// Disposes the block, either returning it to the pool or freeing the memory.
 	/// Small blocks (&lt;64KB) are pooled for reuse. Larger blocks are freed immediately.
 	/// </summary>
 	public void Dispose()
 	{
-		if ( InPool )
-			return;
-
-		if ( Pointer is null )
-			return;
+		if ( _inPool ) return;
+		if ( Pointer is null ) return;
 
 		// Pool blocks smaller than 64KB (up to 8 in the pool)
 		// Larger blocks aren't pooled to avoid memory bloat
 		if ( Size < 1024 * 64 && SharedPool.Count < 8 )
 		{
 			SharedPool.Enqueue( this );
-			InPool = true;
+			_inPool = true;
+			
 			return;
 		}
 
@@ -103,19 +101,23 @@ internal unsafe class NativeMemoryBlock : IDisposable
 	/// <exception cref="ObjectDisposedException">If the block has been disposed</exception>
 	public void Grow( int totalSize )
 	{
-		if ( Pointer is null )
-			throw new ObjectDisposedException( nameof( NativeMemoryBlock ) );
-
-		if ( Size >= totalSize )
-			return;
-
-		// Double size until we reach the required size
-		while ( Size < totalSize )
+		if ( Pointer is not null )
 		{
-			Size *= 2;
-		}
+			if ( Size >= totalSize )
+				return;
 
-		Pointer = NativeMemory.Realloc( Pointer, (uint)Size );
+			// Double size until we reach the required size
+			while ( Size < totalSize )
+			{
+				Size *= 2;
+			}
+
+			Pointer = NativeMemory.Realloc( Pointer, (uint)Size );
+		}
+		else
+		{
+			throw new ObjectDisposedException( nameof(NativeMemoryBlock) );
+		}
 	}
 
 	/// <summary>
@@ -125,19 +127,20 @@ internal unsafe class NativeMemoryBlock : IDisposable
 	public string ToNullTerminatedUtf8String()
 	{
 		// Find null terminator
-		int len = 0;
-		for ( int i = 0; i < Size; i++ )
+		var len = 0;
+
+		for ( var i = 0; i < Size; i++ )
 		{
-			if ( ((byte*)Pointer)[i] == 0 )
-			{
-				len = i;
-				break;
-			}
+			if ( ((byte*)Pointer)[i] is not 0 )
+				continue;
+
+			len = i;
+			break;
 		}
 
-		if ( len == 0 || len >= Size )
+		if ( len is 0 || len >= Size )
 			return string.Empty;
 
-		return System.Text.Encoding.UTF8.GetString( (byte*)Pointer, len );
+		return Encoding.UTF8.GetString( (byte*)Pointer, len );
 	}
 }

@@ -1,7 +1,7 @@
 ﻿using System.Buffers;
 using System.Runtime.CompilerServices;
 
-namespace MossEngine.UI.Utility;
+namespace MossEngine.System.Utility;
 
 /// <summary>
 /// A stack-only type with the ability to rent a buffer of a specified length and getting a <see cref="Span{T}"/> from it.
@@ -15,17 +15,17 @@ namespace MossEngine.UI.Utility;
 /// As soon as the code leaves the scope of that <see langword="using"/> block, the underlying buffer will automatically
 /// be disposed.
 /// </summary>
-internal readonly ref struct PooledSpan<T>
+internal readonly ref struct PooledSpan<T> : IDisposable
 {
 	/// <summary>
-	/// The usable length within <see cref="array"/>.
+	/// The usable length within <see cref="_array"/>.
 	/// </summary>
-	private readonly int length;
+	private readonly int _length;
 
 	/// <summary>
 	/// The underlying <typeparamref name="T"/> array.
 	/// </summary>
-	private readonly T[] array;
+	private readonly T[] _array;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="PooledSpan{T}"/> struct with the specified parameters.
@@ -33,14 +33,14 @@ internal readonly ref struct PooledSpan<T>
 	/// <param name="length">The length of the new memory buffer to use.</param>
 	public PooledSpan( int length )
 	{
-		this.length = length;
-		this.array = ArrayPool<T>.Shared.Rent( length );
+		_length = length;
+		_array = ArrayPool<T>.Shared.Rent( length );
 	}
 
 	/// <summary>
 	/// Gets a <see cref="Span{T}"/> wrapping the memory belonging to the current instance.
 	/// </summary>
-	public Span<T> Span => array.AsSpan( 0, length );
+	public Span<T> Span => _array.AsSpan( 0, _length );
 
 	/// <summary>
 	/// Implements the duck-typed <see cref="IDisposable.Dispose"/> method.
@@ -48,6 +48,6 @@ internal readonly ref struct PooledSpan<T>
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public void Dispose()
 	{
-		ArrayPool<T>.Shared.Return( array );
+		ArrayPool<T>.Shared.Return( _array );
 	}
 }

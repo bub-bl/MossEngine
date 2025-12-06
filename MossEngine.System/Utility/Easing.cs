@@ -1,5 +1,5 @@
 ﻿
-namespace MossEngine.UI.Utility;
+namespace MossEngine.System.Utility;
 
 /// <summary>
 /// Easing functions used for transitions. See <a href="https://easings.net/">https://easings.net/</a> for examples.

@@ -1,21 +1,20 @@
-﻿namespace MossEngine.UI;
+﻿namespace MossEngine.System;
 
 /// <summary>
 /// Hidden random class. This is secretly used by Game.Random, but being here 
 /// allows all of our system functions to use the same Random instance.
 /// </summary>
-static class SandboxSystem
+internal static class Rand
 {
-	[ThreadStatic]
-	static Random _random;
-
-	internal static Random Random
+	[field: ThreadStatic]
+	public static Random Random
 	{
 		get
 		{
-			_random ??= new Random();
-			return _random;
+			field ??= new Random();
+			return field;
 		}
+		private set;
 	}
 
 	/// <summary>
@@ -23,6 +22,6 @@ static class SandboxSystem
 	/// </summary>
 	public static void SetRandomSeed( int seed )
 	{
-		_random = new Random( seed );
+		Random = new Random( seed );
 	}
 }

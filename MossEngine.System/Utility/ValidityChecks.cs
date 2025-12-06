@@ -1,5 +1,5 @@
 ﻿
-namespace MossEngine.UI.Utility;
+namespace MossEngine.System.Utility;
 
 internal static class OOBChecks
 {

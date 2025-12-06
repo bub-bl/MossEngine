@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using NLog;
 
-namespace MossEngine.UI.Logging;
+namespace MossEngine.System.Logging;
 
 [StackTraceHidden]
 public class Logger

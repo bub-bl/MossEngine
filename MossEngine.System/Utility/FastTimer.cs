@@ -1,4 +1,4 @@
-﻿namespace MossEngine.UI.Utility;
+﻿namespace MossEngine.System.Utility;
 
 /// <summary>
 /// A lightweight, high-resolution timer for performance measurement.

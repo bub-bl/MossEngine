@@ -1,7 +1,7 @@
 ﻿using NLog;
 using NLog.Targets;
 
-namespace MossEngine.UI.Logging
+namespace MossEngine.System.Logging
 {
 	[Target( "GameLog" )]
 	internal sealed class GameLog : Target

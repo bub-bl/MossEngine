@@ -1,85 +1,72 @@
 ﻿using System.Threading.Channels;
-using MossEngine.UI.Extend;
-using MossEngine.UI.Utility;
+using MossEngine.System.Utility;
 using NLog;
 
-namespace MossEngine.UI.Logging;
+namespace MossEngine.System.Logging;
 
 internal static partial class Logging
 {
-	static bool _initialized;
+	private static readonly Dictionary<string, LogLevel> Rules = new();
+	private static readonly Dictionary<int, bool> RuleCache = new();
+
+	private static bool _initialized;
+	
 	internal static void InitializeConfig()
 	{
-		if ( _initialized )
-			return;
-
+		if ( _initialized ) return;
 		_initialized = true;
 
 		var config = new NLog.Config.LoggingConfiguration();
-		var game_target = new GameLog();
+		var gameTarget = new GameLog();
 
-		NLog.LogManager.Setup().SetupExtensions( s =>
+		LogManager.Setup().SetupExtensions( s =>
 		{
 			s.RegisterLayoutRenderer( "nicestack", ( logEvent ) =>
 			{
-				var frames = logEvent.StackTrace.GetFrames().Skip( 1 ).Take( 10 ).Where( x => x.GetMethod().DeclaringType.Name != "Logger" );
+				var frames = logEvent.StackTrace.GetFrames().Skip( 1 ).Take( 10 ).Where( x => x.GetMethod()?.DeclaringType?.Name != "Logger" );
 				var stack = string.Join( "\n", frames.Select( x => $"\t\t{x.GetMethod()?.DeclaringType?.Name}.{x.GetMethod()?.Name} - {x.GetFileName()}:{x.GetFileLineNumber()}" ) );
-				if ( stack.StartsWith( "\t\tEngineLoop.Print - " ) ) return "";
-
-				return $"\n{stack}\n";
+				
+				return stack.StartsWith( "\t\tEngineLoop.Print - " ) ? "" : $"\n{stack}\n";
 			} );
 		} );
 
 		var appName = Process.GetCurrentProcess().ProcessName.Split( '.' )[0];
 
-		var gamePath = System.Environment.GetEnvironmentVariable( "FACEPUNCH_ENGINE", EnvironmentVariableTarget.User );
+		var gamePath = Environment.GetEnvironmentVariable( "FACEPUNCH_ENGINE", EnvironmentVariableTarget.User );
 		gamePath ??= AppContext.BaseDirectory;
 
-		var file_target = new NLog.Targets.FileTarget
+		var fileTarget = new NLog.Targets.FileTarget
 		{
-			FileName = System.IO.Path.Combine( gamePath, $"logs/{appName}.log" ),
+			FileName = Path.Combine( gamePath, $"logs/{appName}.log" ),
 			ArchiveOldFileOnStartup = true,
 			OpenFileCacheSize = 10,
 			MaxArchiveFiles = 10,
 			KeepFileOpen = true,
 
-
-			//DeleteOldFileOnStartup = true,
-			//Layout = "${date:format=yyyy/MM/dd HH\\:mm\\:ss.ffff}\t[${logger}] ${message}\t${exception:format=ToString}${nicestack}"
 			Layout = "${date:format=yyyy/MM/dd HH\\:mm\\:ss.ffff}\t[${logger}] ${message}\t${exception:format=ToString}"
 		};
 
-		//
-		// Targets
-		//
-		config.AddTarget( "file", file_target );
-		config.AddTarget( "console", game_target );
-		//config.AddTarget( "null", new NLog.Targets.NullTarget() );
+		config.AddTarget( "file", fileTarget );
+		config.AddTarget( "console", gameTarget );
 
 		config.LoggingRules.Clear();
 
-		//
 		// Create a logging rule that captures everything
-		//
 		{
-			var rule = new NLog.Config.LoggingRule( "global" );
-			rule.LoggerNamePattern = "*";
+			var rule = new NLog.Config.LoggingRule( "global" ) { LoggerNamePattern = "*" };
 			rule.EnableLoggingForLevels( NLog.LogLevel.Trace, NLog.LogLevel.Fatal );
-			rule.Targets.Add( file_target );
-			rule.Targets.Add( game_target );
-			//rule.Filters.Add( new WhenMethodFilter( TestLogFilter ) );
+			rule.Targets.Add( fileTarget );
+			rule.Targets.Add( gameTarget );
 
 			config.LoggingRules.Add( rule );
 		}
 
-		NLog.LogManager.Configuration = config;
+		LogManager.Configuration = config;
 
-		//
 		// When we quit, shut nlog down
-		//
 		AppDomain.CurrentDomain.ProcessExit += ( x, y ) =>
 		{
-			NLog.LogManager.Shutdown();
+			LogManager.Shutdown();
 		};
 
 		SetRule( "*", LogLevel.Info );
@@ -94,10 +81,7 @@ internal static partial class Logging
 
 	public static LogLevel GetDefaultLevel()
 	{
-		if ( Rules.TryGetValue( "*", out var r ) )
-			return r;
-
-		return LogLevel.Info;
+		return Rules.GetValueOrDefault("*", LogLevel.Info);
 	}
 
 	public static void SetRule( string wildcard, LogLevel minimumLevel )
@@ -105,10 +89,6 @@ internal static partial class Logging
 		Rules[wildcard] = minimumLevel;
 		RuleCache.Clear();
 	}
-
-	internal static Dictionary<string, LogLevel> Rules = new();
-
-	static Dictionary<int, bool> RuleCache = new();
 
 	/// <summary>
 	/// Return true if we should print this log entry. Use a cache to avoid craziness.
@@ -118,6 +98,7 @@ internal static partial class Logging
 		lock ( RuleCache )
 		{
 			var hash = HashCode.Combine( loggerName, level );
+			
 			if ( RuleCache.TryGetValue( hash, out var should ) )
 				return should;
 
@@ -128,40 +109,39 @@ internal static partial class Logging
 		}
 	}
 
-	static bool WorkOutShouldLog( string loggerName, LogLevel level )
+	private static bool WorkOutShouldLog( string loggerName, LogLevel level )
 	{
 		foreach ( var v in Rules.OrderByDescending( x => x.Key.Length ) )
 		{
-			if ( loggerName.WildcardMatch( v.Key ) && level >= v.Value )
+			if ( loggerName.StartsWith( v.Key ) && level >= v.Value )
 				return true;
 		}
 
 		return false;
 	}
 
-	// Todo - turn off logging?
 	public static bool Enabled { get; set; } = true;
 	internal static bool PrintToConsole { get; set; } = true;
 
-	internal static event Action<LogEvent> OnMessage;
-	internal static Action<Exception> OnException;
+	internal static event Action<LogEvent>? OnMessage;
+	internal static Action<Exception>? OnException;
 
-	static Channel<LogEvent> QueuedMessages = Channel.CreateUnbounded<LogEvent>();
+	private static readonly Channel<LogEvent> QueuedMessages = Channel.CreateUnbounded<LogEvent>();
 
-	private static int callDepth = 0;
+	private static int _callDepth;
 
 	internal static void Write( in LogEvent e )
 	{
-		if ( ThreadSafe.IsMainThread && callDepth < 3 )
+		if ( ThreadSafe.IsMainThread && _callDepth < 3 )
 		{
 			try
 			{
-				callDepth++;
+				_callDepth++;
 				OnMessage?.Invoke( e );
 			}
 			finally
 			{
-				callDepth--;
+				_callDepth--;
 			}
 		}
 		else
@@ -180,29 +160,29 @@ internal static partial class Logging
 			{
 				OnMessage?.Invoke( msg );
 			}
-			catch ( System.Exception e )
+			catch ( Exception e )
 			{
 				Log.Error( e );
 			}
 		}
 	}
 
-	public static Logger GetLogger( string name = null )
+	public static Logger GetLogger( string? name = null )
 	{
-		if ( name == null )
-		{
-			var frame = new System.Diagnostics.StackFrame( 1, false );
-			var method = frame.GetMethod();
-			name = method.DeclaringType.Name;
-		}
+		if ( name is not null )
+			return new Logger( name );
 
+		var frame = new StackFrame( 1, false );
+		var method = frame.GetMethod();
+			
+		name = method?.DeclaringType?.Name;
 		return new Logger( name );
 	}
 
 	/// <summary>
 	/// Keep a list of loggers
 	/// </summary>
-	public static HashSet<string> Loggers = new( StringComparer.OrdinalIgnoreCase );
+	public static readonly HashSet<string> Loggers = new( StringComparer.OrdinalIgnoreCase );
 
 	internal static void RegisterEngineLogger( int id, string v )
 	{

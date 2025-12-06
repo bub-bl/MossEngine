@@ -1,16 +1,17 @@
 ﻿using System.Collections.Immutable;
+using System.ComponentModel;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
-using MossEngine.UI.Attributes;
-using MossEngine.UI.Utility;
+using MossEngine.System.Utility;
 
-namespace MossEngine.UI.Math;
+namespace MossEngine.System.Math;
 
 /// <summary>
 /// Describes a curve, which can have multiple key frames.
 /// </summary>
-[JsonConverter( typeof( Curve.JsonConverter ) )]
-public unsafe struct Curve
+[JsonConverter( typeof(JsonConverter) )]
+public struct Curve
 {
 	/// <summary>
 	/// The range of this curve. This affects looping.
@@ -27,7 +28,7 @@ public unsafe struct Curve
 	/// <summary>
 	/// A curve that linearly interpolates from 0 to 1
 	/// </summary>
-	public static readonly Curve Linear = new Curve( new List<Frame>() { new Frame( 0, 0, -1, 1 ), new Frame( 1, 1, -1, 1 ) } );
+	public static readonly Curve Linear = new(new List<Frame> { new Frame( 0, 0, -1, 1 ), new Frame( 1, 1, -1, 1 ) });
 
 	/// <summary>
 	/// A curve that eases from 0 to 1
@@ -37,12 +38,14 @@ public unsafe struct Curve
 	/// <summary>
 	/// A curve that eases in from 0 to 1
 	/// </summary>
-	public static readonly Curve EaseIn = new Curve( new List<Frame>() { new Frame( 0, 0, 0, 0 ), new Frame( 1, 1, -MathF.PI, MathF.PI ) } );
+	public static readonly Curve EaseIn =
+		new Curve( new List<Frame>() { new Frame( 0, 0, 0, 0 ), new Frame( 1, 1, -MathF.PI, MathF.PI ) } );
 
 	/// <summary>
 	/// A curve that eases out from 0 to 1
 	/// </summary>
-	public static readonly Curve EaseOut = new Curve( new List<Frame>() { new Frame( 0, 0, -MathF.PI, MathF.PI ), new Frame( 1, 1, 0, 0 ) } );
+	public static readonly Curve EaseOut =
+		new Curve( new List<Frame>() { new Frame( 0, 0, -MathF.PI, MathF.PI ), new Frame( 1, 1, 0, 0 ) } );
 
 	public Curve( ImmutableArray<Frame> frames )
 	{
@@ -63,7 +66,7 @@ public unsafe struct Curve
 	static public implicit operator Curve( float value )
 	{
 		var c = new Curve();
-		c.AddPoint( c.TimeRange.x.LerpTo( c.TimeRange.y, 0.5f ), value );
+		c.AddPoint( c.TimeRange.X.LerpTo( c.TimeRange.Y, 0.5f ), value );
 		return c;
 	}
 
@@ -73,7 +76,7 @@ public unsafe struct Curve
 	public readonly Curve WithFrames( ImmutableList<Frame> frames )
 	{
 		var c = this;
-		c.Frames = frames.ToImmutableArray();
+		c.Frames = [..frames];
 		return c;
 	}
 
@@ -93,7 +96,7 @@ public unsafe struct Curve
 	public readonly Curve WithFrames( IEnumerable<Frame> frames )
 	{
 		var c = this;
-		c.Frames = frames.ToImmutableArray();
+		c.Frames = [..frames];
 		return c;
 	}
 
@@ -112,7 +115,8 @@ public unsafe struct Curve
 			var frameOut = -frame.Out;
 			frames.Add( new Frame( frameTime, frameVal, frameIn, frameOut ) );
 		}
-		c.Frames = frames.ToImmutableArray();
+
+		c.Frames = [..frames];
 		return c;
 	}
 
@@ -197,39 +201,32 @@ public unsafe struct Curve
 		/// <summary>
 		/// The In and Out are user set, but are joined (mirrored)
 		/// </summary>
-		[Icon( "open_in_full" )]
 		[Description( "Can change the angle but tangents are mirrored" )]
 		Mirrored,
 
 		/// <summary>
 		/// The In and Out are user set and operate independently
 		/// </summary>
-		[Icon( "call_split" )]
 		[Description( "Can change in and out tangents independantly" )]
 		Split,
 
 		/// <summary>
 		/// Curves are generated automatically
 		/// </summary>
-		[Icon( "horizontal_rule" )]
 		[Description( "Tangents are locked to 0" )]
 		Flat,
 
 		/// <summary>
 		/// No curves, linear interpolation from this handle to the next
 		/// </summary>
-		[Icon( "show_chart" )]
 		[Description( "No tangents - interpolate linearly from this point to the next" )]
 		Linear,
 
 		/// <summary>
 		/// No interpolation use raw values
 		/// </summary>
-		[Icon( "turn_sharp_right" )]
 		[Description( "No tangents or interpolation, use this handle's value until we reach the next point" )]
 		Stepped,
-
-
 	}
 
 	/// <summary>
@@ -247,7 +244,7 @@ public unsafe struct Curve
 		get => Frames.IsDefaultOrEmpty ? 0 : Frames.Length;
 	}
 
-	public Frame this[int index]
+	public Frame this[ int index ]
 	{
 		readonly get => Frames[index];
 		set
@@ -328,13 +325,13 @@ public unsafe struct Curve
 	public readonly float Evaluate( float time, bool angles )
 	{
 		// convert to normalized
-		time = time.LerpInverse( TimeRange.x, TimeRange.y, false );
+		time = time.LerpInverse( TimeRange.X, TimeRange.Y, false );
 
 		// can add ping pong, clamping, looping here on time - which is now 0-1
 
 		var delta = EvaluateDelta( time, angles );
 
-		return delta.Remap( 0, 1, ValueRange.x, ValueRange.y, false );
+		return delta.Remap( 0, 1, ValueRange.X, ValueRange.Y, false );
 	}
 
 	/// <summary>
@@ -373,6 +370,7 @@ public unsafe struct Curve
 		{
 			return Frames[0].Value;
 		}
+
 		if ( baseIndex >= Frames.Length )
 		{
 			return Frames[^1].Value;
@@ -410,7 +408,8 @@ public unsafe struct Curve
 					if ( frameA.Mode == HandleMode.Flat ) ot = 0;
 					if ( frameB.Mode == HandleMode.Flat ) it = 0;
 
-					return p0 + t * (t * (t * ((it + ot) * dx - 2.0f * dy) + (-it - 2.0f * ot) * dx + 3.0f * dy) + ot * dx);
+					return p0 + t * (t * (t * ((it + ot) * dx - 2.0f * dy) + (-it - 2.0f * ot) * dx + 3.0f * dy) +
+					                 ot * dx);
 				}
 		}
 	}
@@ -421,8 +420,8 @@ public unsafe struct Curve
 	/// </summary>
 	public void Fix()
 	{
-		if ( ValueRange == 0 ) ValueRange = new Vector2( 0, 1 );
-		if ( TimeRange == 0 ) TimeRange = new Vector2( 0, 1 );
+		if ( ValueRange == Vector2.Zero ) ValueRange = new Vector2( 0, 1 );
+		if ( TimeRange == Vector2.Zero ) TimeRange = new Vector2( 0, 1 );
 		if ( Length == 0 ) AddPoint( 0.5f, 0.5f );
 	}
 
@@ -483,7 +482,6 @@ public unsafe struct Curve
 						}
 
 						continue;
-
 					}
 
 					reader.Read();
@@ -529,7 +527,6 @@ public unsafe struct Curve
 					writer.WritePropertyName( "frames" );
 					JsonSerializer.Serialize( writer, val.Frames, options );
 				}
-
 			}
 			writer.WriteEndObject();
 		}
@@ -537,8 +534,8 @@ public unsafe struct Curve
 
 	static float RemapDelta( float delta, in Vector2 oldRange, in Vector2 range )
 	{
-		var value = delta.Remap( 0, 1, oldRange.x, oldRange.y, false );
-		return value.Remap( range.x, range.y, 0.0f, 1.0f, false );
+		var value = delta.Remap( 0, 1, oldRange.X, oldRange.Y, false );
+		return value.Remap( range.X, range.Y, 0.0f, 1.0f, false );
 	}
 
 	public void UpdateValueRange( Vector2 newRange, bool retainValues )
@@ -546,7 +543,12 @@ public unsafe struct Curve
 		if ( retainValues )
 		{
 			var oldRange = ValueRange;
-			Frames = Frames.Select( x => { var a = x; a.Value = RemapDelta( a.Value, oldRange, newRange ); return a; } ).ToImmutableArray();
+			Frames = Frames.Select( x =>
+			{
+				var a = x;
+				a.Value = RemapDelta( a.Value, oldRange, newRange );
+				return a;
+			} ).ToImmutableArray();
 		}
 
 		ValueRange = newRange;
@@ -557,23 +559,26 @@ public unsafe struct Curve
 		if ( retainTimes )
 		{
 			var oldRange = TimeRange;
-			Frames = Frames.Select( x => { var a = x; a.Time = RemapDelta( a.Time, oldRange, newRange ); return a; } ).ToImmutableArray();
+			Frames = Frames.Select( x =>
+			{
+				var a = x;
+				a.Time = RemapDelta( a.Time, oldRange, newRange );
+				return a;
+			} ).ToImmutableArray();
 		}
+
 		TimeRange = newRange;
 	}
 }
-
 
 /// <summary>
 /// Two curves
 /// </summary>
 public struct CurveRange
 {
-	[JsonPropertyName( "a" )]
-	public Curve A { readonly get; set; }
+	[JsonPropertyName( "a" )] public Curve A { readonly get; set; }
 
-	[JsonPropertyName( "b" )]
-	public Curve B { readonly get; set; }
+	[JsonPropertyName( "b" )] public Curve B { readonly get; set; }
 
 	public CurveRange()
 	{
