@@ -37,6 +37,37 @@ public abstract unsafe partial class EngineWindow
 
 	protected virtual void OnWindowStateChanged( WindowState state )
 	{
+		switch (state)
+		{
+			case WindowState.Minimized:
+				OnMinimize();
+				break;
+			case WindowState.Maximized:
+				OnMaximize();
+				break;
+			case WindowState.Normal:
+				OnRestore();
+				break;
+			case WindowState.Fullscreen:
+				OnFullscreen();
+				break;
+		}
+	}
+
+	protected virtual void OnMinimize()
+	{
+	}
+	
+	protected virtual void OnMaximize()
+	{
+	}
+
+	protected virtual void OnRestore()
+	{
+	}
+	
+	protected virtual void OnFullscreen()
+	{
 	}
 
 	protected virtual void OnWindowRender( double deltaTime )
