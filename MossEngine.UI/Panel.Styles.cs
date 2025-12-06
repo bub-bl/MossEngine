@@ -52,6 +52,24 @@ public partial class Panel
 		get => YogaNode.Padding;
 		set => YogaNode.Padding = value;
 	}
+	
+	public Length Gap
+	{
+		get => YogaNode.Gap;
+		set => YogaNode.Gap = value;
+	}
+	
+	public Length GapRow
+	{
+		get => YogaNode.GapRow;
+		set => YogaNode.GapRow = value;
+	}
+	
+	public Length GapColumn
+	{
+		get => YogaNode.GapColumn;
+		set => YogaNode.GapColumn = value;
+	}
 
 	public YogaPositionType Position
 	{
