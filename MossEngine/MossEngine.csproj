@@ -40,7 +40,6 @@
 
     <ItemGroup>
         <Folder Include="Rendering\"/>
-        <Folder Include="UI\"/>
     </ItemGroup>
 
     <ItemGroup>
