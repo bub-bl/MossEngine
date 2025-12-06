@@ -1,13 +1,14 @@
 using System.Numerics;
 using MossEngine.Pipelines;
 using MossEngine.UI;
+using MossEngine.UI.Components;
 using MossEngine.UI.Yoga;
 using Silk.NET.Maths;
 using SkiaSharp;
 
 namespace MossEngine;
 
-public sealed class GameWindow() : EditorWindow( "Editor - Game" )
+public sealed class GameWindow() : BaseEditorWindow( "Editor - Game" )
 {
 	private UnlitRenderPipeline _unlitRenderPipeline = null!;
 
@@ -23,33 +24,22 @@ public sealed class GameWindow() : EditorWindow( "Editor - Game" )
 			Foreground = SKColors.White,
 			Width = Length.Point( 200 ),
 			Height = Length.Point( 200 ),
-			// Left = Length.Point( 10 ),
-			// Top = Length.Point( 10 ),
 			Position = YogaPositionType.Relative,
-			// AlignItems = YogaAlign.Center,
-			// JustifyContent = YogaJustify.Center,
-			// BorderRadius = new Vector2( 40, 40 ),
-			// Padding = new Padding { Horizontal = Length.Point( 20 ), Vertical = Length.Point( 20 ) }
 		};
 
 		var subRectangle = new Panel
 		{
 			DebugLabel = "SubRectangle",
 			Background = SKColors.Blue,
-			Foreground = SKColors.White,
 			Width = Length.Point( 100 ),
 			Height = Length.Point( 50 ),
-			// Left = Length.Point( 100 ),
-			// Top = Length.Point( 10 ),
-			// AlignItems = YogaAlign.Center,
-			// JustifyContent = YogaJustify.Center,
 			Position = YogaPositionType.Relative
 		};
 
-		var text = new Panel
+		var text = new Text
 		{
 			DebugLabel = "Text",
-			Text = "Hello World",
+			Value = "Hello World",
 			Background = SKColors.Green,
 			Foreground = SKColors.White,
 			Left = Length.Point( 0 ),
@@ -68,7 +58,7 @@ public sealed class GameWindow() : EditorWindow( "Editor - Game" )
 			Height = Length.Point( 400 ),
 			BorderRadius = new Vector2( 20, 20 ),
 			Overflow = YogaOverflow.Hidden,
-			ObjectFit = ImageObjectFit.ScaleDown,
+			ObjectFit = ObjectFit.ScaleDown,
 			Src = @"C:\Users\bubbl\Pictures\gta-modding.jpg"
 		};
 

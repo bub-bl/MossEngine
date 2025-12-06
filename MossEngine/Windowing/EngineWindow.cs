@@ -8,7 +8,7 @@ using SkiaSharp;
 
 namespace MossEngine.Windowing;
 
-public abstract unsafe partial class EngineWindow( string title ) : IDisposable
+public abstract unsafe partial class EngineWindow( string title, int width, int height ) : IDisposable
 {
 	private WebGpuSurface _surface = null!;
 	private WebGpuAdapter _adapter = null!;
@@ -33,7 +33,7 @@ public abstract unsafe partial class EngineWindow( string title ) : IDisposable
 	{
 		//Create a window.
 		var options = WindowOptions.Default;
-		options.Size = new Vector2D<int>( 800, 600 );
+		options.Size = new Vector2D<int>( width, height );
 		options.ShouldSwapAutomatically = false;
 		options.IsContextControlDisabled = true;
 		options.Title = title;
