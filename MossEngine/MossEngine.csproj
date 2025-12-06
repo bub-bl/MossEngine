@@ -43,6 +43,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\MossEngine.System\MossEngine.System.csproj" />
         <ProjectReference Include="..\MossEngine.UI\MossEngine.UI.csproj"/>
     </ItemGroup>
 
