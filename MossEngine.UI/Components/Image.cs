@@ -2,14 +2,14 @@ using System.Numerics;
 using MossEngine.UI.Yoga;
 using SkiaSharp;
 
-namespace MossEngine.UI;
+namespace MossEngine.UI.Components;
 
 public class Image : Panel
 {
 	private SKImage? _image;
 	private string? _loadedSrc;
 
-	public ImageObjectFit ObjectFit { get; set; } = ImageObjectFit.Cover;
+	public ObjectFit ObjectFit { get; set; } = ObjectFit.Cover;
 
 	public string? Src
 	{
@@ -112,10 +112,10 @@ public class Image : Panel
 
 		switch ( ObjectFit )
 		{
-			case ImageObjectFit.Fill:
+			case ObjectFit.Fill:
 				return (srcRect, destRect);
 
-			case ImageObjectFit.None:
+			case ObjectFit.None:
 				{
 					var width = MathF.Min( destWidth, imageWidth );
 					var height = MathF.Min( destHeight, imageHeight );
@@ -124,19 +124,19 @@ public class Image : Panel
 						new SKRect( destRect.Left, destRect.Top, destRect.Left + width, destRect.Top + height ));
 				}
 
-			case ImageObjectFit.ScaleDown:
+			case ObjectFit.ScaleDown:
 				{
 					var scale = MathF.Min( 1f, MathF.Min( widthRatio, heightRatio ) );
 					return (srcRect, CenterRect( destRect, imageWidth * scale, imageHeight * scale ));
 				}
 
-			case ImageObjectFit.Contain:
+			case ObjectFit.Contain:
 				{
 					var scale = MathF.Min( widthRatio, heightRatio );
 					return (srcRect, CenterRect( destRect, imageWidth * scale, imageHeight * scale ));
 				}
 
-			case ImageObjectFit.Cover:
+			case ObjectFit.Cover:
 				{
 					var scale = MathF.Max( widthRatio, heightRatio );
 					var coverWidth = imageWidth * scale;
@@ -170,7 +170,7 @@ public class Image : Panel
 
 		DrawBackground( canvas );
 		DrawImage( canvas );
-		DrawText( canvas );
+		// DrawText( canvas );
 
 		ClipOverflow( canvas );
 		DrawChildren( canvas );

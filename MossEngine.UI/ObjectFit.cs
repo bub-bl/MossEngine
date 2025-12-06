@@ -1,6 +1,6 @@
 namespace MossEngine.UI;
 
-public enum ImageObjectFit
+public enum ObjectFit
 {
 	Fill,
 	Contain,
