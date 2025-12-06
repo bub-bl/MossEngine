@@ -43,16 +43,6 @@ public abstract unsafe partial class BaseWindow( string title ) : IDisposable
 		options.API = GraphicsAPI.None;
 
 		Window = Silk.NET.Windowing.Window.Create( options );
-		Window.Initialize();
-
-		InitializeWebGpu();
-		ConfigureSurface();
-		InitializeImGui();
-
-		RootPanel = new RootPanel();
-		RootPanel.Resize( Window.Size.X, Window.Size.Y );
-		
-		_rootPanelRenderer = new RootPanelRenderer( RootPanel );
 
 		Window.Load += OnWindowLoad;
 		Window.Update += OnWindowUpdate;
@@ -63,6 +53,17 @@ public abstract unsafe partial class BaseWindow( string title ) : IDisposable
 		Window.FileDrop += OnWindowFileDrop;
 		Window.Move += OnWindowMove;
 		Window.StateChanged += OnWindowStateChanged;
+
+		Window.Initialize();
+
+		InitializeWebGpu();
+		ConfigureSurface();
+		InitializeImGui();
+
+		RootPanel = new RootPanel();
+		RootPanel.Resize( Window.Size.X, Window.Size.Y );
+
+		_rootPanelRenderer = new RootPanelRenderer( RootPanel );
 
 		OnInitialized();
 		Window.Run();
@@ -80,7 +81,7 @@ public abstract unsafe partial class BaseWindow( string title ) : IDisposable
 	private void InitializeImGui()
 	{
 		_imGuiController =
-			new ImGuiController( Device, Window, Window.CreateInput(), 2, SwapChainFormat, null );
+			new ImGuiController( Device, Window, _input, 2, SwapChainFormat, null );
 
 		var io = ImGui.GetIO();
 		io.ConfigFlags = ImGuiConfigFlags.DockingEnable | ImGuiConfigFlags.ViewportsEnable;
