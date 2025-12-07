@@ -1,4 +1,5 @@
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using MossEngine.UI.Yoga;
 using SkiaSharp;
 
@@ -17,6 +18,11 @@ public partial class Panel
 	// Style-ish properties (very minimal)
 	public SKColor Background { get; set; } = SKColors.Transparent;
 	public SKColor Foreground { get; set; } = SKColors.Black;
+
+	// Propriétés de la bordure
+	public SKColor StrokeColor { get; set; } = SKColors.Transparent;
+	public float StrokeWidth { get; set; } = 0f;
+	public StrokeStyle StrokeStyle { get; set; } = StrokeStyle.Solid;
 	public bool IsHitTestVisible { get; set; } = true;
 	public bool IsFocusable { get; set; } = true;
 
@@ -26,6 +32,11 @@ public partial class Panel
 	public bool IsDirty { get; protected set; } = true;
 
 	public string DebugLabel { get; set; } = null!;
+
+	public Length LayoutLeft => YogaNode.LayoutLeft;
+	public Length LayoutTop => YogaNode.LayoutTop;
+	public Length LayoutRight => YogaNode.LayoutRight;
+	public Length LayoutBottom => YogaNode.LayoutBottom;
 
 	public event EventHandler? Update;
 
@@ -55,7 +66,7 @@ public partial class Panel
 	protected virtual void OnUpdate()
 	{
 		Update?.Invoke( this, EventArgs.Empty );
-		
+
 		foreach ( var child in Children )
 		{
 			child.InternalOnUpdate();
@@ -131,12 +142,70 @@ public partial class Panel
 	{
 		var position = GetFinalPosition();
 
+		// Dessiner le fond
 		new SkiaRectBuilder( canvas )
 			.At( position.X, position.Y )
 			.WithSize( LayoutWidth, LayoutHeight )
 			.WithBorderRadius( BorderRadius.X, BorderRadius.Y )
 			.WithFill( Background )
 			.Draw();
+
+		// Dessiner la bordure si nécessaire
+		if ( StrokeWidth > 0 && StrokeColor.Alpha > 0 )
+		{
+			// Ajuster la position et la taille pour que la bordure soit à l'intérieur du panel
+			var halfStroke = StrokeWidth * 0.5f;
+			var strokeRect = SKRect.Create(
+				position.X + halfStroke,
+				position.Y + halfStroke,
+				Math.Max( 0, LayoutWidth - StrokeWidth ),
+				Math.Max( 0, LayoutHeight - StrokeWidth )
+			);
+
+			using var paint = new SKPaint
+			{
+				Color = StrokeColor, Style = SKPaintStyle.Stroke, StrokeWidth = StrokeWidth, IsAntialias = true
+			};
+
+			// Appliquer le style de bordure
+			switch ( StrokeStyle )
+			{
+				case StrokeStyle.Dashed:
+					paint.PathEffect = SKPathEffect.CreateDash( new[] { StrokeWidth * 3f, StrokeWidth * 2f }, 0 );
+					break;
+
+				case StrokeStyle.Dotted:
+					paint.PathEffect = SKPathEffect.CreateDash( new[] { StrokeWidth, StrokeWidth * 2f }, 0 );
+					break;
+
+				case StrokeStyle.DashedDotted:
+					paint.PathEffect =
+						SKPathEffect.CreateDash(
+							new[] { StrokeWidth * 4f, StrokeWidth * 2f, StrokeWidth, StrokeWidth * 2f }, 0 );
+					break;
+
+				case StrokeStyle.DashedDottedDotted:
+					paint.PathEffect = SKPathEffect.CreateDash(
+						new[]
+						{
+							StrokeWidth * 6f, StrokeWidth * 2f, StrokeWidth, StrokeWidth * 2f, StrokeWidth,
+							StrokeWidth * 2f
+						}, 0 );
+					break;
+			}
+
+			// Dessiner la bordure avec le même rayon d'arrondi que le fond
+			if ( BorderRadius.X > 0 || BorderRadius.Y > 0 )
+			{
+				var radiusX = Math.Max( 0, BorderRadius.X - halfStroke );
+				var radiusY = Math.Max( 0, BorderRadius.Y - halfStroke );
+				canvas.DrawRoundRect( strokeRect, radiusX, radiusY, paint );
+			}
+			else
+			{
+				canvas.DrawRect( strokeRect, paint );
+			}
+		}
 	}
 
 	private IDisposable? PushOverflowClip( SKCanvas canvas )
@@ -179,21 +248,26 @@ public partial class Panel
 
 	protected void DrawChildren( SKCanvas canvas )
 	{
-		foreach ( var c in Children )
+		foreach ( var child in Children )
 		{
-			c.Draw( canvas );
+			if ( child.Display is not YogaDisplay.None )
+			{
+				child.Draw( canvas );
+			}
 		}
 	}
 
-	protected virtual void MarkDirty()
+	public virtual void MarkDirty( [CallerMemberName] string? member = null )
 	{
+		// Console.WriteLine( $"Marking dirty: {member}" );
 		IsDirty = true;
-		Parent?.MarkDirty();
+		// Parent?.MarkDirty();
 	}
 
 	// Called after Yoga layout computed. x,y are absolute positions in root space.
 	public virtual void Draw( SKCanvas canvas )
 	{
+		// if ( !IsDirty ) return;
 		if ( Display is YogaDisplay.None ) return;
 
 		DrawBackground( canvas );
@@ -202,6 +276,7 @@ public partial class Panel
 		ClipOverflow( canvas );
 		DrawChildren( canvas );
 
+		// Console.WriteLine( "Render: " + Id );
 		IsDirty = false;
 	}
 
