@@ -34,7 +34,6 @@ public sealed class Splitter : Panel, IDisposable
 		AddChild( _splitterHandle );
 		AddChild( _secondHost );
 
-		SplitterColor = SKColor.FromHsl( 0, 0, 20f );
 		UpdateChildSizes();
 	}
 
@@ -65,24 +64,29 @@ public sealed class Splitter : Panel, IDisposable
 		get => field;
 		set
 		{
-			_splitterHandle.Background = value;
-			
 			field = value;
 			MarkDirty();
 		}
-	}
-	
-	private Panel CreateContentHost()
+	} = SKColors.Transparent;
+
+	public SKColor SplitterColorHover
 	{
-		return new Panel
+		get => field;
+		set
 		{
-			Flex = 0,
-			FlexGrow = 0,
-			FlexShrink = 0,
-			Background = SKColors.Transparent,
-			IsHitTestVisible = false
-		};
-	}
+			field = value;
+			MarkDirty();
+		}
+	} = SKColors.Transparent;
+
+	private static Panel CreateContentHost() => new()
+	{
+		Flex = 0,
+		FlexGrow = 0,
+		FlexShrink = 0,
+		Background = SKColors.Transparent,
+		IsHitTestVisible = false
+	};
 
 	private Panel CreateHandle()
 	{
@@ -141,15 +145,15 @@ public sealed class Splitter : Panel, IDisposable
 		if ( !_isDragging ) return;
 		_isDragging = false;
 
-		SplitterColor = SKColor.FromHsl( 0, 0, 20f );
+		_splitterHandle.Background = SplitterColor;
 		Cursor.Current = StandardCursor.Arrow;
-		
+
 		e.Handled = true;
 	}
 
 	private void HandleOnPointerEnter( object? sender, PointerEventArgs e )
 	{
-		SplitterColor = SKColor.FromHsl( 0, 0, 40f );
+		_splitterHandle.Background = SplitterColorHover;
 		Cursor.Current = StandardCursor.HResize;
 	}
 
@@ -157,8 +161,8 @@ public sealed class Splitter : Panel, IDisposable
 	{
 		if ( _isDragging ) return;
 		_isDragging = false;
-		
-		SplitterColor = SKColor.FromHsl( 0, 0, 20f );
+
+		_splitterHandle.Background = SplitterColor;
 		Cursor.Current = StandardCursor.Arrow;
 
 		e.Handled = true;
