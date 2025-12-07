@@ -1,4 +1,6 @@
-﻿public enum StrokeStyle
+﻿namespace MossEngine.UI;
+
+public enum StrokeStyle
 {
 	Solid,
 	Dashed,
