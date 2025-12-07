@@ -33,7 +33,7 @@ public unsafe partial class YogaNode
 			}
 		}
 	}
-	
+
 	public Length MaxWidth
 	{
 		get => YG.NodeStyleGetMaxWidth( this );
@@ -61,7 +61,7 @@ public unsafe partial class YogaNode
 			}
 		}
 	}
-	
+
 	public Length Width
 	{
 		get => YG.NodeStyleGetWidth( this );
@@ -90,7 +90,7 @@ public unsafe partial class YogaNode
 			}
 		}
 	}
-	
+
 	public Length MinHeight
 	{
 		get => YG.NodeStyleGetMinHeight( this );
@@ -118,7 +118,7 @@ public unsafe partial class YogaNode
 			}
 		}
 	}
-	
+
 	public Length MaxHeight
 	{
 		get => YG.NodeStyleGetMaxHeight( this );
@@ -356,6 +356,35 @@ public unsafe partial class YogaNode
 	{
 		get => YG.NodeStyleGetFlexShrink( this );
 		set => YG.NodeStyleSetFlexShrink( this, value );
+	}
+
+	public Length FlexBasis
+	{
+		get => YG.NodeStyleGetFlexBasis( this );
+		set
+		{
+			switch ( value.Unit )
+			{
+				case YogaUnit.Point:
+					YG.NodeStyleSetFlexBasis( this, value.Value );
+					break;
+				case YogaUnit.Percent:
+					YG.NodeStyleSetFlexBasisPercent( this, value.Value );
+					break;
+				case YogaUnit.Auto:
+					YG.NodeStyleSetFlexBasisAuto( this );
+					break;
+				case YogaUnit.FitContent:
+					YG.NodeStyleSetFlexBasisFitContent( this );
+					break;
+				case YogaUnit.MaxContent:
+					YG.NodeStyleSetFlexBasisMaxContent( this );
+					break;
+				case YogaUnit.Stretch:
+					YG.NodeStyleSetFlexBasisStretch( this );
+					break;
+			}
+		}
 	}
 
 	public float AspectRatio
