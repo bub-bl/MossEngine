@@ -5,7 +5,7 @@ using SkiaSharp;
 
 namespace MossEngine.UI.Components;
 
-public sealed class SplitterPanel : Panel
+public sealed class SplitterPanel : Panel, IDisposable
 {
 	private readonly Panel _firstHost;
 	private readonly Panel _secondHost;
@@ -19,7 +19,9 @@ public sealed class SplitterPanel : Panel
 	public SplitterPanel( SplitterOrientation orientation = SplitterOrientation.Horizontal )
 	{
 		Orientation = orientation;
-		FlexDirection = orientation is SplitterOrientation.Horizontal ? YogaFlexDirection.Row : YogaFlexDirection.Column;
+		FlexDirection = orientation is SplitterOrientation.Horizontal
+			? YogaFlexDirection.Row
+			: YogaFlexDirection.Column;
 		Gap = 0;
 		IsFocusable = false;
 
@@ -55,7 +57,7 @@ public sealed class SplitterPanel : Panel
 	public float SplitterThickness { get; set; } = 4f;
 	public float MinFirstSize { get; set; } = 120f;
 	public float MinSecondSize { get; set; } = 120f;
-	public SKColor SplitterColor { get; set; } = new( 0xFF, 0xFF, 0xFF, 0x33 );
+	public SKColor SplitterColor { get; set; } = new(0xFF, 0xFF, 0xFF, 0x33);
 
 	private Panel CreateContentHost()
 	{
@@ -71,12 +73,7 @@ public sealed class SplitterPanel : Panel
 
 	private Panel CreateHandle()
 	{
-		var handle = new Panel
-		{
-			Background = SplitterColor,
-			IsFocusable = false,
-			IsHitTestVisible = true
-		};
+		var handle = new Panel { Background = SplitterColor, IsFocusable = false, IsHitTestVisible = true };
 
 		if ( Orientation is SplitterOrientation.Horizontal )
 		{
@@ -89,6 +86,7 @@ public sealed class SplitterPanel : Panel
 			handle.Height = Length.Point( SplitterThickness );
 		}
 
+		handle.PointerEnter += HandleOnPointerEnter;
 		handle.PointerDown += HandleOnPointerDown;
 		handle.PointerMove += HandleOnPointerMove;
 		handle.PointerUp += HandleOnPointerUp;
@@ -133,6 +131,10 @@ public sealed class SplitterPanel : Panel
 		e.Handled = true;
 	}
 
+	private void HandleOnPointerEnter( object? sender, PointerEventArgs e )
+	{
+	}
+
 	private void HandleOnPointerLeave( object? sender, PointerEventArgs e )
 	{
 		if ( _isDragging ) return;
@@ -170,5 +172,14 @@ public sealed class SplitterPanel : Panel
 
 		SplitterColor = color;
 		MarkDirty();
+	}
+
+	public void Dispose()
+	{
+		_splitterHandle.PointerEnter -= HandleOnPointerEnter;
+		_splitterHandle.PointerDown -= HandleOnPointerDown;
+		_splitterHandle.PointerMove -= HandleOnPointerMove;
+		_splitterHandle.PointerUp -= HandleOnPointerUp;
+		_splitterHandle.PointerLeave -= HandleOnPointerLeave;
 	}
 }
