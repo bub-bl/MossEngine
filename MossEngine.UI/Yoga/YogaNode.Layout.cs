@@ -89,6 +89,8 @@ public unsafe partial class YogaNode
 	public float LayoutHeight => YG.NodeLayoutGetHeight( this );
 	public Length LayoutLeft => YG.NodeLayoutGetLeft( this );
 	public Length LayoutTop => YG.NodeLayoutGetTop( this );
+	public Length LayoutRight => YG.NodeLayoutGetRight( this );
+	public Length LayoutBottom => YG.NodeLayoutGetBottom( this );
 
 	public bool AlwaysFormsContainingBlock
 	{
