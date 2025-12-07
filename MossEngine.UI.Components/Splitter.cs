@@ -1,6 +1,7 @@
 using System.Numerics;
 using MossEngine.UI.Yoga;
 using MossEngine.Windowing;
+using Silk.NET.Input;
 using SkiaSharp;
 
 namespace MossEngine.UI.Components;
@@ -33,6 +34,7 @@ public sealed class Splitter : Panel, IDisposable
 		AddChild( _splitterHandle );
 		AddChild( _secondHost );
 
+		SplitterColor = SKColor.FromHsl( 0, 0, 20f );
 		UpdateChildSizes();
 	}
 
@@ -144,12 +146,17 @@ public sealed class Splitter : Panel, IDisposable
 
 	private void HandleOnPointerEnter( object? sender, PointerEventArgs e )
 	{
+		SplitterColor = SKColor.FromHsl( 0, 0, 40f );
+		Cursor.Current = StandardCursor.HResize;
 	}
 
 	private void HandleOnPointerLeave( object? sender, PointerEventArgs e )
 	{
 		if ( _isDragging ) return;
 		_isDragging = false;
+		
+		SplitterColor = SKColor.FromHsl( 0, 0, 20f );
+		Cursor.Current = StandardCursor.Arrow;
 
 		e.Handled = true;
 	}
