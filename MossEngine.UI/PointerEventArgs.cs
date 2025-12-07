@@ -5,6 +5,12 @@ namespace MossEngine.UI;
 
 public sealed class PointerEventArgs : EventArgs
 {
+	public Panel Target { get; }
+	public Vector2 ScreenPosition { get; }
+	public Vector2 LocalPosition { get; }
+	public MouseButton? Button { get; }
+	public bool Handled { get; set; }
+
 	internal PointerEventArgs( Panel target, Vector2 screenPosition, MouseButton? button )
 	{
 		Target = target;
@@ -12,10 +18,4 @@ public sealed class PointerEventArgs : EventArgs
 		LocalPosition = screenPosition - target.GetFinalPosition();
 		Button = button;
 	}
-
-	public Panel Target { get; }
-	public Vector2 ScreenPosition { get; }
-	public Vector2 LocalPosition { get; }
-	public MouseButton? Button { get; }
-	public bool Handled { get; set; }
 }
