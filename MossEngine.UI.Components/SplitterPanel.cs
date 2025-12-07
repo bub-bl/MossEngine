@@ -1,5 +1,6 @@
 using System.Numerics;
 using MossEngine.UI.Yoga;
+using MossEngine.Windowing;
 using SkiaSharp;
 
 namespace MossEngine.UI.Components;
@@ -45,7 +46,7 @@ public sealed class SplitterPanel : Panel
 		{
 			var clamped = Math.Clamp( value, 0.01f, 0.99f );
 			if ( Math.Abs( _split - clamped ) < 0.0001f ) return;
-			
+
 			_split = clamped;
 			UpdateChildSizes();
 		}
@@ -102,14 +103,14 @@ public sealed class SplitterPanel : Panel
 		_dragStartPointer = e.ScreenPosition;
 		_dragStartSplit = _split;
 		_dragAvailableSize = Orientation is SplitterOrientation.Horizontal ? LayoutWidth : LayoutHeight;
-		
+
 		e.Handled = true;
 	}
 
 	private void HandleOnPointerMove( object? sender, PointerEventArgs e )
 	{
 		if ( !_isDragging || _dragAvailableSize <= 0 ) return;
-		
+
 		var delta = Orientation is SplitterOrientation.Horizontal
 			? e.ScreenPosition.X - _dragStartPointer.X
 			: e.ScreenPosition.Y - _dragStartPointer.Y;
@@ -119,7 +120,7 @@ public sealed class SplitterPanel : Panel
 		var minSecond = MinSecondSize;
 		var clampedPixels = Math.Clamp( firstPixels, minFirst, Math.Max( minFirst, _dragAvailableSize - minSecond ) );
 		var ratio = clampedPixels / _dragAvailableSize;
-		
+
 		Split = ratio;
 		e.Handled = true;
 	}
@@ -128,7 +129,7 @@ public sealed class SplitterPanel : Panel
 	{
 		if ( !_isDragging ) return;
 		_isDragging = false;
-		
+
 		e.Handled = true;
 	}
 
@@ -136,7 +137,7 @@ public sealed class SplitterPanel : Panel
 	{
 		if ( _isDragging ) return;
 		_isDragging = false;
-		
+
 		e.Handled = true;
 	}
 
@@ -166,7 +167,7 @@ public sealed class SplitterPanel : Panel
 	public void SetSplitterColor( SKColor color )
 	{
 		_splitterHandle.Background = color;
-		
+
 		SplitterColor = color;
 		MarkDirty();
 	}

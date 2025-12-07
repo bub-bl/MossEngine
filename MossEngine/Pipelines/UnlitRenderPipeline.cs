@@ -1,10 +1,12 @@
 using System.Runtime.InteropServices;
+using MossEngine.WebGpu;
+using MossEngine.WebGpu.Pipelines;
 using MossEngine.Windowing;
 using Silk.NET.WebGPU;
 
 namespace MossEngine.Pipelines;
 
-public class UnlitRenderPipeline( EngineWindow window )
+public class UnlitRenderPipeline( MossWindow window )
 {
 	private unsafe RenderPipeline* _renderPipeline;
 
@@ -60,7 +62,7 @@ public class UnlitRenderPipeline( EngineWindow window )
 				}
 			};
 
-			_renderPipeline = WebGpu.Wgpu.DeviceCreateRenderPipeline( window.Device, in renderPipelineDescriptor );
+			_renderPipeline = WebGpuApi.Wgpu.DeviceCreateRenderPipeline( window.Device, in renderPipelineDescriptor );
 		}
 
 		Console.WriteLine( "Created render pipeline." );
@@ -70,8 +72,8 @@ public class UnlitRenderPipeline( EngineWindow window )
 	{
 		unsafe
 		{
-			WebGpu.Wgpu.RenderPassEncoderSetPipeline( window.RenderPassEncoder, _renderPipeline );
-			WebGpu.Wgpu.RenderPassEncoderDraw( window.RenderPassEncoder, 3, 1, 0, 0 );
+			WebGpuApi.Wgpu.RenderPassEncoderSetPipeline( window.RenderPassEncoder, _renderPipeline );
+			WebGpuApi.Wgpu.RenderPassEncoderDraw( window.RenderPassEncoder, 3, 1, 0, 0 );
 		}
 	}
 }

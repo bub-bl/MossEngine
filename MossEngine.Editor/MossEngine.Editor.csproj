@@ -1,11 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
-    
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
     <PropertyGroup>
-        <OutputType>Exe</OutputType>
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <ItemGroup>
@@ -25,27 +23,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="Shaders\unlit.wgsl">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Shaders\imgui.wgsl">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Shaders\skia_overlay.wgsl">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-    </ItemGroup>
-    
-    <ItemGroup>
-        <Using Include="MossEngine.System.GlobalSystemNamespace" Static="true" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\MossEngine.Editor\MossEngine.Editor.csproj" />
-        <ProjectReference Include="..\MossEngine.Systems\MossEngine.Systems.csproj" />
-        <ProjectReference Include="..\MossEngine.UI\MossEngine.UI.csproj"/>
-        <ProjectReference Include="..\MossEngine.UI.Components\MossEngine.UI.Components.csproj"/>
-        <ProjectReference Include="..\MossEngine.Windowing\MossEngine.Windowing.csproj" />
+      <ProjectReference Include="..\MossEngine.Core\MossEngine.Core.csproj" />
+      <ProjectReference Include="..\MossEngine.UI.Components\MossEngine.UI.Components.csproj" />
+      <ProjectReference Include="..\MossEngine.UI\MossEngine.UI.csproj" />
+      <ProjectReference Include="..\MossEngine.Windowing\MossEngine.Windowing.csproj" />
     </ItemGroup>
 
 </Project>
