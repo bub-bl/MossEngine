@@ -14,9 +14,7 @@ public static class Cursor
 		{
 			field = value;
 
-			Console.WriteLine("Cursor 1: " + (_input is null));
 			if ( _input is null ) return;
-			Console.WriteLine("Cursor 2: " + value);
 
 			foreach ( var mouse in _input.Mice )
 			{
