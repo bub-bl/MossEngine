@@ -141,6 +141,9 @@ public sealed class Splitter : Panel, IDisposable
 		if ( !_isDragging ) return;
 		_isDragging = false;
 
+		SplitterColor = SKColor.FromHsl( 0, 0, 20f );
+		Cursor.Current = StandardCursor.Arrow;
+		
 		e.Handled = true;
 	}
 
