@@ -6,7 +6,7 @@ public readonly record struct FontFamily
 {
 	public readonly string Name;
 	public readonly SKTypeface Typeface;
-	
+
 	private FontFamily( string name, SKTypeface typeface )
 	{
 		Name = name;

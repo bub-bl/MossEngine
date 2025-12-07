@@ -21,18 +21,18 @@ public class YogaNodeList : ICollection
 
 	public bool IsSynchronized => false;
 	public object SyncRoot => this;
-	
+
 	internal YogaNodeList( YogaNode node )
 	{
 		_node = node;
 	}
 
-	public YogaNode this[ int index ]
+	public YogaNode this[int index]
 	{
 		get => Get( index );
 		set => Swap( index, value );
 	}
-	
+
 	internal YogaNode Get( int index )
 	{
 		return _array[index];
@@ -47,7 +47,7 @@ public class YogaNodeList : ICollection
 	{
 		_node.SetParent( node );
 		_array.Insert( index, node );
-		
+
 		unsafe
 		{
 			YG.NodeInsertChild( _node, node, (nuint)index );
@@ -101,7 +101,7 @@ public class YogaNodeList : ICollection
 			YG.NodeSwapChild( _node, node, (nuint)index );
 		}
 	}
-	
+
 	public IEnumerator<YogaNode> GetEnumerator()
 	{
 		return new YogaNodeListEnumerator( this );

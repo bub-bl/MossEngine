@@ -37,7 +37,7 @@ internal unsafe class NativeMemoryBlock : IDisposable
 		Pointer = NativeMemory.Alloc( (uint)initialSize );
 		Size = initialSize;
 	}
-	
+
 	/// <summary>
 	/// Finalizer ensures native memory is freed even if Dispose is not called.
 	/// </summary>
@@ -62,10 +62,10 @@ internal unsafe class NativeMemoryBlock : IDisposable
 
 		pooled._inPool = false;
 		pooled.Grow( initialSize );
-			
+
 		return pooled;
 	}
-	
+
 	/// <summary>
 	/// Disposes the block, either returning it to the pool or freeing the memory.
 	/// Small blocks (&lt;64KB) are pooled for reuse. Larger blocks are freed immediately.
@@ -81,7 +81,7 @@ internal unsafe class NativeMemoryBlock : IDisposable
 		{
 			SharedPool.Enqueue( this );
 			_inPool = true;
-			
+
 			return;
 		}
 
@@ -116,7 +116,7 @@ internal unsafe class NativeMemoryBlock : IDisposable
 		}
 		else
 		{
-			throw new ObjectDisposedException( nameof(NativeMemoryBlock) );
+			throw new ObjectDisposedException( nameof( NativeMemoryBlock ) );
 		}
 	}
 

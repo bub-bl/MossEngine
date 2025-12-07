@@ -7,10 +7,10 @@ public static class HashCodeExtensions
 		public static HashCode Combine( params object[] values )
 		{
 			var hash = new HashCode();
-			
+
 			foreach ( var value in values )
 				hash.Add( value );
-			
+
 			return hash;
 		}
 	}

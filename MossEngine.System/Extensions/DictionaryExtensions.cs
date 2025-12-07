@@ -8,7 +8,7 @@ namespace MossEngine.System.Extensions;
 /// </summary>
 internal static class DictionaryExtensions
 {
-	extension<TKey, TValue>(IReadOnlyDictionary<TKey, TValue> dict) where TKey : IEquatable<TKey>
+	extension<TKey, TValue>( IReadOnlyDictionary<TKey, TValue> dict ) where TKey : IEquatable<TKey>
 	{
 		/// <summary>
 		/// Returns a new dictionary with the specified key-value pair added or updated.
@@ -44,7 +44,7 @@ internal static class DictionaryExtensions
 			return builder.ToImmutable();
 		}
 	}
-	
+
 	/// <summary>
 	/// If the key doesn't exist it is created and returned
 	/// </summary>
@@ -55,7 +55,7 @@ internal static class DictionaryExtensions
 
 		val = new TValue();
 		dict.Add( key, val );
-		
+
 		return val;
 	}
 

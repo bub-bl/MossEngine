@@ -102,7 +102,7 @@ public unsafe partial class YogaNode
 		get => YG.NodeGetHasNewLayout( this ) is not 0;
 		set => YG.NodeSetHasNewLayout( this, (byte)(value ? 1 : 0) );
 	}
-	
+
 	public void SetDirtiedEvent()
 	{
 		_dirtiedFunctionUnmanaged = ( void* node ) =>
@@ -112,7 +112,7 @@ public unsafe partial class YogaNode
 
 		DirtiedFunc = _dirtiedFunctionUnmanaged;
 	}
-	
+
 	public void CalculateLayout()
 	{
 		YG.NodeCalculateLayout( this, YG.YGUndefined, YG.YGUndefined, (YGDirection)Direction );

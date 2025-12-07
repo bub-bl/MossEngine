@@ -30,7 +30,7 @@ public static class DateTimeExtensions
 		return Epoch.AddSeconds( seconds );
 	}
 
-	extension(DateTime dateTime)
+	extension( DateTime dateTime )
 	{
 		public string ToRelativeTimeString()
 		{

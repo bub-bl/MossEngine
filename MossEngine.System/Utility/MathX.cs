@@ -13,13 +13,13 @@ public static partial class MathX
 	private const float ToDegrees = 1.0f / ToRadians;
 	private const float ToGradiansDegrees = 0.9f;
 	private const float ToGradiansRadians = 0.01570796326f;
-	
+
 	internal const float ToMeters = 0.0254f;
 	internal const float ToInches = 1.0f / ToMeters;
 	internal const float ToMillimeters = 25.4f;
 
 	/// <param name="deg">A value in degrees to convert.</param>
-	extension(float deg)
+	extension( float deg )
 	{
 		/// <summary>
 		/// Convert degrees to radians.
@@ -54,7 +54,7 @@ public static partial class MathX
 		public float GradiansToRadians() => deg * ToGradiansRadians;
 	}
 
-	extension(float meters)
+	extension( float meters )
 	{
 		/// <summary>
 		/// Convert meters to inches.
@@ -96,7 +96,7 @@ public static partial class MathX
 		return (f / gridSize) * gridSize;
 	}
 
-	extension(float f)
+	extension( float f )
 	{
 		/// <summary>
 		/// Remove the fractional part and return the float as an integer.
@@ -234,7 +234,7 @@ public static partial class MathX
 	}
 
 	/// <param name="from">The value relative to <paramref name="from1"/> and <paramref name="to"/>.</param>
-	extension(float from)
+	extension( float from )
 	{
 		/// <inheritdoc cref="LerpRadians"/>
 		public float LerpRadiansTo( float to, float frac, bool clamp = true )

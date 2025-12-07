@@ -57,7 +57,7 @@ public struct RealTimeUntil : IEquatable<RealTimeUntil>
 	public static bool operator ==( RealTimeUntil left, RealTimeUntil right ) => left.Equals( right );
 	public static bool operator !=( RealTimeUntil left, RealTimeUntil right ) => !(left == right);
 	public readonly override bool Equals( object? obj ) => obj is RealTimeUntil o && Equals( o );
-	public readonly bool Equals( RealTimeUntil o ) => global::System.Math.Abs(Absolute - o.Absolute) < 0.0001f;
+	public readonly bool Equals( RealTimeUntil o ) => global::System.Math.Abs( Absolute - o.Absolute ) < 0.0001f;
 	public readonly override int GetHashCode() => HashCode.Combine( Absolute );
 
 	#endregion

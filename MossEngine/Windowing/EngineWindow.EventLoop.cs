@@ -85,7 +85,8 @@ public abstract unsafe partial class EngineWindow
 
 		var renderPassDescriptor = new RenderPassDescriptor
 		{
-			ColorAttachments = colorAttachments, ColorAttachmentCount = 1
+			ColorAttachments = colorAttachments,
+			ColorAttachmentCount = 1
 		};
 
 		RenderPassEncoder = WebGpu.Wgpu.CommandEncoderBeginRenderPass( _commandEncoder, renderPassDescriptor );

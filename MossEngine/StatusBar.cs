@@ -6,19 +6,19 @@ public class StatusBar
 {
 	private readonly Lock _syncRoot = new();
 	private readonly List<StatusBarItem> _items = [];
-	private readonly Dictionary<string, StatusBarItem> _itemsByKey = new(StringComparer.OrdinalIgnoreCase);
+	private readonly Dictionary<string, StatusBarItem> _itemsByKey = new( StringComparer.OrdinalIgnoreCase );
 
 	public event Action? ItemsChanged;
 
 	public StatusBar()
 	{
 		SetStatusMessage( "Ready" );
-		
+
 		RegisterDynamic( "status.fps", () =>
 		{
 			var fps = Time.Delta <= 0 ? 0 : 1f / Time.Delta;
 			var ms = Time.Delta * 1000f;
-			
+
 			return $"{fps:F0} FPS ({ms:F0} ms)";
 		}, StatusBarSection.Right, "Current frame time" );
 	}
@@ -33,21 +33,21 @@ public class StatusBar
 				existing.SetText( text );
 				existing.Tooltip = tooltip;
 				existing.Section = section;
-				
+
 				OnItemsChanged();
 				return existing;
 			}
 
 			var item = new StatusBarItem( key, text, section, tooltip, null );
-		
+
 			_items.Add( item );
 			_itemsByKey[key] = item;
-			
+
 			OnItemsChanged();
 			return item;
 		}
 	}
-	
+
 	public StatusBarItem RegisterDynamic( string key, Func<string> valueProvider,
 		StatusBarSection section = StatusBarSection.Left, string? tooltip = null )
 	{
@@ -61,7 +61,7 @@ public class StatusBar
 				existing.Tooltip = tooltip;
 				existing.Section = section;
 				existing.ValueProvider = valueProvider;
-				
+
 				OnItemsChanged();
 				return existing;
 			}
@@ -182,10 +182,10 @@ public class StatusBar
 		internal bool TryRefresh()
 		{
 			if ( ValueProvider is null ) return false;
-			
+
 			var latest = ValueProvider();
 			if ( latest == Text ) return false;
-			
+
 			Text = latest;
 			return true;
 		}

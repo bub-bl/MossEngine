@@ -119,7 +119,7 @@ public class Image : Panel
 				{
 					var width = MathF.Min( destWidth, imageWidth );
 					var height = MathF.Min( destHeight, imageHeight );
-					
+
 					return (srcRect,
 						new SKRect( destRect.Left, destRect.Top, destRect.Left + width, destRect.Top + height ));
 				}

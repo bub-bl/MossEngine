@@ -10,25 +10,25 @@ public partial class Panel
 		get => YogaNode.MinWidth;
 		set => YogaNode.MinWidth = value;
 	}
-	
+
 	public Length MaxWidth
 	{
 		get => YogaNode.MaxWidth;
 		set => YogaNode.MaxWidth = value;
 	}
-	
+
 	public Length Width
 	{
 		get => YogaNode.Width;
 		set => YogaNode.Width = value;
 	}
-	
+
 	public Length MinHeight
 	{
 		get => YogaNode.MinHeight;
 		set => YogaNode.MinHeight = value;
 	}
-	
+
 	public Length MaxHeight
 	{
 		get => YogaNode.MaxHeight;
@@ -52,19 +52,19 @@ public partial class Panel
 		get => YogaNode.Padding;
 		set => YogaNode.Padding = value;
 	}
-	
+
 	public Length Gap
 	{
 		get => YogaNode.Gap;
 		set => YogaNode.Gap = value;
 	}
-	
+
 	public Length GapRow
 	{
 		get => YogaNode.GapRow;
 		set => YogaNode.GapRow = value;
 	}
-	
+
 	public Length GapColumn
 	{
 		get => YogaNode.GapColumn;
@@ -82,7 +82,7 @@ public partial class Panel
 		get => YogaNode.FlexDirection;
 		set => YogaNode.FlexDirection = value;
 	}
-	
+
 	public Length FlexBasis
 	{
 		get => YogaNode.FlexBasis;

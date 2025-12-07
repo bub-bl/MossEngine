@@ -26,7 +26,10 @@ public sealed class StatusBarPanel : Panel
 
 		_left = new Panel
 		{
-			Flex = 1, FlexDirection = YogaFlexDirection.Row, GapColumn = 8, AlignItems = YogaAlign.Center
+			Flex = 1,
+			FlexDirection = YogaFlexDirection.Row,
+			GapColumn = 8,
+			AlignItems = YogaAlign.Center
 		};
 		_right = new Panel
 		{

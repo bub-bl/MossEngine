@@ -162,35 +162,35 @@ public partial class Panel
 				Math.Max( 0, LayoutHeight - StrokeWidth )
 			);
 
-			using var paint = new SKPaint
-			{
-				Color = StrokeColor, Style = SKPaintStyle.Stroke, StrokeWidth = StrokeWidth, IsAntialias = true
-			};
+			using var paint = new SKPaint();
+			paint.Color = StrokeColor;
+			paint.Style = SKPaintStyle.Stroke;
+			paint.StrokeWidth = StrokeWidth;
+			paint.IsAntialias = true;
 
 			// Appliquer le style de bordure
 			switch ( StrokeStyle )
 			{
 				case StrokeStyle.Dashed:
-					paint.PathEffect = SKPathEffect.CreateDash( new[] { StrokeWidth * 3f, StrokeWidth * 2f }, 0 );
+					paint.PathEffect = SKPathEffect.CreateDash( [StrokeWidth * 3f, StrokeWidth * 2f], 0 );
 					break;
 
 				case StrokeStyle.Dotted:
-					paint.PathEffect = SKPathEffect.CreateDash( new[] { StrokeWidth, StrokeWidth * 2f }, 0 );
+					paint.PathEffect = SKPathEffect.CreateDash( [StrokeWidth, StrokeWidth * 2f], 0 );
 					break;
 
 				case StrokeStyle.DashedDotted:
 					paint.PathEffect =
-						SKPathEffect.CreateDash(
-							new[] { StrokeWidth * 4f, StrokeWidth * 2f, StrokeWidth, StrokeWidth * 2f }, 0 );
+						SKPathEffect.CreateDash( [
+							StrokeWidth * 4f, StrokeWidth * 2f, StrokeWidth, StrokeWidth * 2f
+						], 0 );
 					break;
 
 				case StrokeStyle.DashedDottedDotted:
-					paint.PathEffect = SKPathEffect.CreateDash(
-						new[]
-						{
-							StrokeWidth * 6f, StrokeWidth * 2f, StrokeWidth, StrokeWidth * 2f, StrokeWidth,
-							StrokeWidth * 2f
-						}, 0 );
+					paint.PathEffect = SKPathEffect.CreateDash( [
+						StrokeWidth * 6f, StrokeWidth * 2f, StrokeWidth, StrokeWidth * 2f, StrokeWidth,
+						StrokeWidth * 2f
+					], 0 );
 					break;
 			}
 
@@ -199,6 +199,7 @@ public partial class Panel
 			{
 				var radiusX = Math.Max( 0, BorderRadius.X - halfStroke );
 				var radiusY = Math.Max( 0, BorderRadius.Y - halfStroke );
+
 				canvas.DrawRoundRect( strokeRect, radiusX, radiusY, paint );
 			}
 			else

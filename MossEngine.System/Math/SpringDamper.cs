@@ -14,7 +14,7 @@ internal readonly struct SpringDamper
 	/// <param name="frequency">How many times the spring oscillates per second.</param>
 	/// <param name="damping">How much damping to apply each oscillation, as with the legacy <see cref="Vector3.SpringDamp(in Vector3, in Vector3, ref Vector3, float, float, float)"/>.</param>
 	public static SpringDamper FromDamping( float frequency = 2f, float damping = 0.5f ) =>
-		new(frequency, damping * frequency * MathF.PI * 2f);
+		new( frequency, damping * frequency * MathF.PI * 2f );
 
 	/// <summary>
 	/// Create a critically damped model with a given <paramref name="smoothingTime"/>, for movement that doesn't oscillate but smoothly

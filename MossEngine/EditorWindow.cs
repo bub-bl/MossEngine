@@ -103,7 +103,7 @@ public sealed class EditorWindow() : BaseEditorWindow( "Editor" )
 
 		// TreeNode retourne true si le nœud est ouvert
 		const ImGuiTreeNodeFlags flag = ImGuiTreeNodeFlags.DefaultOpen;
-		
+
 		if ( ImGui.TreeNodeEx( label, flag ) )
 		{
 			// Affiche les enfants dans le nœud ouvert

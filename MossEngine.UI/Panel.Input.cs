@@ -13,7 +13,7 @@ public partial class Panel
 	public event EventHandler<PointerEventArgs>? PointerClick;
 	public event EventHandler<KeyEventArgs>? KeyDown;
 	public event EventHandler<KeyEventArgs>? KeyUp;
-	
+
 	internal bool ContainsPoint( Vector2 point )
 	{
 		if ( !IsHitTestVisible || Display is YogaDisplay.None )

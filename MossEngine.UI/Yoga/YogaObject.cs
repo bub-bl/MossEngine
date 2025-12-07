@@ -25,7 +25,7 @@ public abstract unsafe class YogaObject<T> where T : YogaObject<T>, new()
 
 		return type.Pointer == Pointer;
 	}
-	
+
 	public static implicit operator void*( YogaObject<T> o ) => o.Pointer;
 	public static implicit operator nint( YogaObject<T> o ) => (nint)o.Pointer;
 
@@ -33,5 +33,10 @@ public abstract unsafe class YogaObject<T> where T : YogaObject<T>, new()
 	{
 		get => ContextCache.GetValueOrDefault( this );
 		set => ContextCache[this] = value;
+	}
+
+	public override int GetHashCode()
+	{
+		throw new NotImplementedException();
 	}
 }

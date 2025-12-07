@@ -17,7 +17,7 @@ public static class NumberExtensions
 				int ii => (ulong)global::System.Math.Max( 0, ii ),
 				long l => (ulong)global::System.Math.Max( 0, l ),
 				double d => (ulong)global::System.Math.Max( 0, d ),
-				_ => (ulong)Convert.ChangeType( input, typeof(ulong) )
+				_ => (ulong)Convert.ChangeType( input, typeof( ulong ) )
 			};
 
 			double readable;
@@ -298,16 +298,16 @@ public static class NumberExtensions
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		public bool Contains( T flag )
 		{
-			if ( Unsafe.SizeOf<T>() == sizeof(int) )
+			if ( Unsafe.SizeOf<T>() == sizeof( int ) )
 			{
 				return (Unsafe.As<T, int>( ref value ) & Unsafe.As<T, int>( ref flag )) ==
-				       Unsafe.As<T, int>( ref flag );
+					   Unsafe.As<T, int>( ref flag );
 			}
 
-			if ( Unsafe.SizeOf<T>() == sizeof(long) )
+			if ( Unsafe.SizeOf<T>() == sizeof( long ) )
 			{
 				return (Unsafe.As<T, long>( ref value ) & Unsafe.As<T, long>( ref flag )) ==
-				       Unsafe.As<T, long>( ref flag );
+					   Unsafe.As<T, long>( ref flag );
 			}
 
 			throw new ArgumentException( "Unsupported enum type" );
@@ -316,7 +316,7 @@ public static class NumberExtensions
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		public unsafe T WithFlag( T flag, bool set )
 		{
-			switch ( sizeof(T) )
+			switch ( sizeof( T ) )
 			{
 				case 1:
 					{
@@ -351,17 +351,17 @@ public static class NumberExtensions
 						return *(T*)&result;
 					}
 				default:
-					throw new NotSupportedException( $"Unsupported enum underlying type size {sizeof(T)}" );
+					throw new NotSupportedException( $"Unsupported enum underlying type size {sizeof( T )}" );
 			}
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		public int AsInt()
 		{
-			if ( Unsafe.SizeOf<T>() == sizeof(int) ) return Unsafe.As<T, int>( ref value );
-			if ( Unsafe.SizeOf<T>() == sizeof(byte) ) return Unsafe.As<T, byte>( ref value );
-			if ( Unsafe.SizeOf<T>() == sizeof(short) ) return Unsafe.As<T, short>( ref value );
-			if ( Unsafe.SizeOf<T>() == sizeof(long) ) return (int)Unsafe.As<T, long>( ref value );
+			if ( Unsafe.SizeOf<T>() == sizeof( int ) ) return Unsafe.As<T, int>( ref value );
+			if ( Unsafe.SizeOf<T>() == sizeof( byte ) ) return Unsafe.As<T, byte>( ref value );
+			if ( Unsafe.SizeOf<T>() == sizeof( short ) ) return Unsafe.As<T, short>( ref value );
+			if ( Unsafe.SizeOf<T>() == sizeof( long ) ) return (int)Unsafe.As<T, long>( ref value );
 
 			return 0;
 		}

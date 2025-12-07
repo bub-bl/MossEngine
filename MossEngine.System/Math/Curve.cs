@@ -10,7 +10,7 @@ namespace MossEngine.System.Math;
 /// <summary>
 /// Describes a curve, which can have multiple key frames.
 /// </summary>
-[JsonConverter( typeof(JsonConverter) )]
+[JsonConverter( typeof( JsonConverter ) )]
 public struct Curve
 {
 	/// <summary>
@@ -28,7 +28,7 @@ public struct Curve
 	/// <summary>
 	/// A curve that linearly interpolates from 0 to 1
 	/// </summary>
-	public static readonly Curve Linear = new(new List<Frame> { new Frame( 0, 0, -1, 1 ), new Frame( 1, 1, -1, 1 ) });
+	public static readonly Curve Linear = new( new List<Frame> { new Frame( 0, 0, -1, 1 ), new Frame( 1, 1, -1, 1 ) } );
 
 	/// <summary>
 	/// A curve that eases from 0 to 1
@@ -76,7 +76,7 @@ public struct Curve
 	public readonly Curve WithFrames( ImmutableList<Frame> frames )
 	{
 		var c = this;
-		c.Frames = [..frames];
+		c.Frames = [.. frames];
 		return c;
 	}
 
@@ -96,7 +96,7 @@ public struct Curve
 	public readonly Curve WithFrames( IEnumerable<Frame> frames )
 	{
 		var c = this;
-		c.Frames = [..frames];
+		c.Frames = [.. frames];
 		return c;
 	}
 
@@ -116,7 +116,7 @@ public struct Curve
 			frames.Add( new Frame( frameTime, frameVal, frameIn, frameOut ) );
 		}
 
-		c.Frames = [..frames];
+		c.Frames = [.. frames];
 		return c;
 	}
 
@@ -244,7 +244,7 @@ public struct Curve
 		get => Frames.IsDefaultOrEmpty ? 0 : Frames.Length;
 	}
 
-	public Frame this[ int index ]
+	public Frame this[int index]
 	{
 		readonly get => Frames[index];
 		set
@@ -409,7 +409,7 @@ public struct Curve
 					if ( frameB.Mode == HandleMode.Flat ) it = 0;
 
 					return p0 + t * (t * (t * ((it + ot) * dx - 2.0f * dy) + (-it - 2.0f * ot) * dx + 3.0f * dy) +
-					                 ot * dx);
+									 ot * dx);
 				}
 		}
 	}

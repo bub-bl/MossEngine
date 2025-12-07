@@ -10,7 +10,7 @@ internal static class Logging
 	private static readonly Dictionary<int, bool> RuleCache = new();
 
 	private static bool _initialized;
-	
+
 	internal static void InitializeConfig()
 	{
 		if ( _initialized ) return;
@@ -25,7 +25,7 @@ internal static class Logging
 			{
 				var frames = logEvent.StackTrace.GetFrames().Skip( 1 ).Take( 10 ).Where( x => x.GetMethod()?.DeclaringType?.Name != "Logger" );
 				var stack = string.Join( "\n", frames.Select( x => $"\t\t{x.GetMethod()?.DeclaringType?.Name}.{x.GetMethod()?.Name} - {x.GetFileName()}:{x.GetFileLineNumber()}" ) );
-				
+
 				return stack.StartsWith( "\t\tEngineLoop.Print - " ) ? "" : $"\n{stack}\n";
 			} );
 		} );
@@ -81,7 +81,7 @@ internal static class Logging
 
 	public static LogLevel GetDefaultLevel()
 	{
-		return Rules.GetValueOrDefault("*", LogLevel.Info);
+		return Rules.GetValueOrDefault( "*", LogLevel.Info );
 	}
 
 	public static void SetRule( string wildcard, LogLevel minimumLevel )
@@ -98,7 +98,7 @@ internal static class Logging
 		lock ( RuleCache )
 		{
 			var hash = HashCode.Combine( loggerName, level );
-			
+
 			if ( RuleCache.TryGetValue( hash, out var should ) )
 				return should;
 
@@ -174,7 +174,7 @@ internal static class Logging
 
 		var frame = new StackFrame( 1, false );
 		var method = frame.GetMethod();
-			
+
 		name = method?.DeclaringType?.Name;
 		return new Logger( name );
 	}

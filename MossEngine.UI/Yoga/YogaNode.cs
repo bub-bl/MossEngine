@@ -46,7 +46,7 @@ public unsafe partial class YogaNode : YogaObject<YogaNode>, IDisposable
 		set
 		{
 			_config = value;
-			
+
 			//FIXME: if we null config what should we do?
 			if ( value is not null )
 				YG.NodeSetConfig( this, value );

@@ -36,10 +36,10 @@ public static class TimeSpanExtensions
 
 			if ( span.TotalDays >= 1 )
 				return $"{span.Days} day{(span.Days > 1 ? "s" : "")} remaining";
-			
+
 			if ( span.TotalHours >= 1 )
 				return $"{span.Hours} hour{(span.Hours > 1 ? "s" : "")} remaining";
-			
+
 			if ( span.TotalMinutes >= 1 )
 				return $"{span.Minutes} minute{(span.Minutes > 1 ? "s" : "")} remaining";
 
