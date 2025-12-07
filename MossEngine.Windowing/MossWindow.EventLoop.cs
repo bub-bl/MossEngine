@@ -45,13 +45,12 @@ public abstract unsafe partial class MossWindow
 		// If the window is minimized, don't render to avoid errors.
 		if ( Window.WindowState is WindowState.Minimized ) return;
 
-		// using var _ = Time.Scope( RealTime.Now, deltaTime );
-
-		Time.Update( RealTime.Now, deltaTime );
-
-		OnBeforeRender( deltaTime );
-		OnRender( deltaTime );
-		OnAfterRender( deltaTime );
+		using ( var _ = Time.Scope( RealTime.Now, deltaTime ) )
+		{
+			OnBeforeRender( deltaTime );
+			OnRender( deltaTime );
+			OnAfterRender( deltaTime );
+		}
 	}
 
 	protected virtual void OnBeforeRender( double deltaTime )
