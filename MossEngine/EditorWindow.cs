@@ -1,6 +1,7 @@
 using System.Numerics;
 using ImGuiNET;
 using MossEngine.UI;
+using MossEngine.UI.Components;
 using MossEngine.UI.Yoga;
 using MossEngine.Utility;
 using SkiaSharp;
@@ -27,18 +28,41 @@ public sealed class EditorWindow() : BaseEditorWindow( "Editor" )
 			Background = SKColor.FromHsl( 0, 0, .2f ),
 			Flex = 1,
 			FlexGrow = 1,
-			GapColumn = 8
+			FlexShrink = 0
 		};
 		mainLayout.AddChild( main );
 
+		var horizontalSplitter = new SplitterPanel( SplitterOrientation.Horizontal )
+		{
+			Width = Length.Percent( 100 ),
+			Height = Length.Percent( 100 ),
+			GapColumn = 4,
+			Split = 0.25f,
+			MinFirstSize = 220f,
+			MinSecondSize = 220f,
+			SplitterThickness = 6f
+		};
+		main.AddChild( horizontalSplitter );
+
 		var left = new Panel
 		{
-			Width = Length.Point( 340 ),
+			Width = Length.Percent( 100 ),
 			Height = Length.Percent( 100 ),
 			Background = SKColor.FromHsl( 0, 0, 10 ),
 			BorderRadius = new Vector2( 8 )
 		};
-		main.AddChild( left );
+		horizontalSplitter.First.AddChild( left );
+
+		var rightContainer = new Panel
+		{
+			Width = Length.Percent( 100 ),
+			Height = Length.Percent( 100 ),
+			Flex = 1,
+			FlexGrow = 1,
+			FlexDirection = YogaFlexDirection.Row,
+			GapColumn = 8
+		};
+		horizontalSplitter.Second.AddChild( rightContainer );
 
 		var center = new Panel
 		{
@@ -50,7 +74,7 @@ public sealed class EditorWindow() : BaseEditorWindow( "Editor" )
 			FlexGrow = 1,
 			FlexShrink = 0
 		};
-		main.AddChild( center );
+		rightContainer.AddChild( center );
 
 		var right = new Panel
 		{
@@ -59,7 +83,7 @@ public sealed class EditorWindow() : BaseEditorWindow( "Editor" )
 			Background = SKColor.FromHsl( 0, 0, 10 ),
 			BorderRadius = new Vector2( 8 )
 		};
-		main.AddChild( right );
+		rightContainer.AddChild( right );
 
 		var bottom = new Panel { Width = Length.Percent( 100 ), Height = Length.Point( 32 ) };
 		mainLayout.AddChild( bottom );
