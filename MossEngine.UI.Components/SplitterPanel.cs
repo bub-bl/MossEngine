@@ -57,8 +57,19 @@ public sealed class SplitterPanel : Panel, IDisposable
 	public float SplitterThickness { get; set; } = 4f;
 	public float MinFirstSize { get; set; } = 120f;
 	public float MinSecondSize { get; set; } = 120f;
-	public SKColor SplitterColor { get; set; } = new(0xFF, 0xFF, 0xFF, 0x33);
 
+	public SKColor SplitterColor
+	{
+		get => field;
+		set
+		{
+			_splitterHandle.Background = value;
+			
+			field = value;
+			MarkDirty();
+		}
+	}
+	
 	private Panel CreateContentHost()
 	{
 		return new Panel
@@ -163,14 +174,6 @@ public sealed class SplitterPanel : Panel, IDisposable
 			_secondHost.Width = Length.Percent( 100 );
 		}
 
-		MarkDirty();
-	}
-
-	public void SetSplitterColor( SKColor color )
-	{
-		_splitterHandle.Background = color;
-
-		SplitterColor = color;
 		MarkDirty();
 	}
 
