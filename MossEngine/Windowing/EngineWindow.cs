@@ -1,6 +1,7 @@
 using ImGuiNET;
 using MossEngine.Pipelines;
 using MossEngine.UI;
+using Silk.NET.Input;
 using Silk.NET.Maths;
 using Silk.NET.WebGPU;
 using Silk.NET.Windowing;
@@ -66,6 +67,22 @@ public abstract unsafe partial class EngineWindow( string title, int width, int 
 
 		OnInitialized();
 		Window.Run();
+	}
+
+	public void SetCursor( StandardCursor cursor )
+	{
+		foreach ( var mice in _input.Mice )
+		{
+			mice.Cursor.StandardCursor = cursor;
+		}
+	}
+	
+	public void SetCursorVisibility( CursorMode mode )
+	{
+		foreach ( var mice in _input.Mice )
+		{
+			mice.Cursor.CursorMode = mode;
+		}
 	}
 
 	private void InitializeWebGpu()
