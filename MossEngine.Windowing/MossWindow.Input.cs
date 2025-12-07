@@ -56,42 +56,34 @@ public abstract partial class MossWindow
 	private void InternalOnMouseMove( IMouse arg1, Vector2 arg2 )
 	{
 		OnMouseMove( arg2 );
-		// RootPanel.ProcessPointerMove( arg2 );
 	}
 
 	private void InternalOnMouseUp( IMouse arg1, MouseButton arg2 )
 	{
 		var e = new MouseEventArgs { Button = arg2, Position = arg1.Position };
-
 		OnMouseUp( e );
-		// RootPanel.ProcessPointerUp( e );
 	}
 
 	private void InternalOnMouseDown( IMouse arg1, MouseButton arg2 )
 	{
 		var e = new MouseEventArgs { Button = arg2, Position = arg1.Position };
-
 		OnMouseDown( e );
-		// RootPanel.ProcessPointerDown( e );
 	}
 
 	private void InternalOnDoubleClick( IMouse arg1, MouseButton arg2, Vector2 arg3 )
 	{
 		var e = new MouseEventArgs { Button = arg2, Position = arg3 };
-
 		OnMouseDoubleClick( e );
 	}
 
 	private void InternalOnKeyUp( IKeyboard arg1, Key arg2, int arg3 )
 	{
 		OnKeyUp( arg2 );
-		// RootPanel.ProcessKeyUp( arg2 );
 	}
 
 	private void InternalOnKeyDown( IKeyboard arg1, Key arg2, int arg3 )
 	{
 		OnKeyDown( arg2 );
-		// RootPanel.ProcessKeyDown( arg2 );
 	}
 
 	protected virtual void OnKeyUp( Key key )
