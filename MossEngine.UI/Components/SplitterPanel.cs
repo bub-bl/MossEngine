@@ -109,7 +109,7 @@ public sealed class SplitterPanel : Panel
 	private void HandleOnPointerMove( object? sender, PointerEventArgs e )
 	{
 		if ( !_isDragging || _dragAvailableSize <= 0 ) return;
-
+		
 		var delta = Orientation is SplitterOrientation.Horizontal
 			? e.ScreenPosition.X - _dragStartPointer.X
 			: e.ScreenPosition.Y - _dragStartPointer.Y;
@@ -134,7 +134,7 @@ public sealed class SplitterPanel : Panel
 
 	private void HandleOnPointerLeave( object? sender, PointerEventArgs e )
 	{
-		if ( !_isDragging ) return;
+		if ( _isDragging ) return;
 		_isDragging = false;
 	}
 
