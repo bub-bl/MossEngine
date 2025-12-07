@@ -82,6 +82,12 @@ public partial class Panel
 		get => YogaNode.FlexDirection;
 		set => YogaNode.FlexDirection = value;
 	}
+	
+	public Length FlexBasis
+	{
+		get => YogaNode.FlexBasis;
+		set => YogaNode.FlexBasis = value;
+	}
 
 	public YogaAlign AlignItems
 	{
