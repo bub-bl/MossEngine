@@ -149,7 +149,7 @@ public class Text : Panel
 		};
 	}
 
-	protected override void OnAddChild( Panel child )
+	protected override void OnChildrenAdded( Panel child )
 	{
 		UpdateMeasurement();
 	}

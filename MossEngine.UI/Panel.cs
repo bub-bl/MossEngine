@@ -86,7 +86,7 @@ public partial class Panel
 		YogaNode.InsertChildAt( child.YogaNode, idx );
 
 		// UpdateMeasurement();
-		OnAddChild( child );
+		OnChildrenAdded( child );
 		MarkDirty();
 	}
 
@@ -115,15 +115,15 @@ public partial class Panel
 
 		child.Parent = null;
 
-		OnRemoveChild( child );
+		OnChildrenRemoved( child );
 		MarkDirty();
 	}
 
-	protected virtual void OnAddChild( Panel child )
+	protected virtual void OnChildrenAdded( Panel child )
 	{
 	}
 
-	protected virtual void OnRemoveChild( Panel child )
+	protected virtual void OnChildrenRemoved( Panel child )
 	{
 	}
 
