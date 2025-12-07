@@ -85,8 +85,7 @@ public abstract unsafe partial class MossWindow
 
 		var renderPassDescriptor = new RenderPassDescriptor
 		{
-			ColorAttachments = colorAttachments,
-			ColorAttachmentCount = 1
+			ColorAttachments = colorAttachments, ColorAttachmentCount = 1
 		};
 
 		RenderPassEncoder = WebGpuApi.Wgpu.CommandEncoderBeginRenderPass( _commandEncoder, renderPassDescriptor );

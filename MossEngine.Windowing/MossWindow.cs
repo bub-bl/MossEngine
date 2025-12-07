@@ -60,30 +60,12 @@ public abstract unsafe partial class MossWindow( string title, int width, int he
 		ConfigureSurface();
 		InitializeImGui();
 
-		// RootPanel = new RootPanel();
-		// RootPanel.Resize( Window.Size.X, Window.Size.Y );
-		//
-		// _rootPanelRenderer = new RootPanelRenderer( RootPanel );
-
-		OnInitialized();
-		Window.Run();
+		using ( var _ = Cursor.Scope( _input ) )
+		{
+			OnInitialized();
+			Window.Run();
+		}
 	}
-
-	// public void SetCursor( StandardCursor cursor )
-	// {
-	// 	foreach ( var mice in _input.Mice )
-	// 	{
-	// 		mice.Cursor.StandardCursor = cursor;
-	// 	}
-	// }
-	//
-	// public void SetCursorVisibility( CursorMode mode )
-	// {
-	// 	foreach ( var mice in _input.Mice )
-	// 	{
-	// 		mice.Cursor.CursorMode = mode;
-	// 	}
-	// }
 
 	private void InitializeWebGpu()
 	{
@@ -143,9 +125,6 @@ public abstract unsafe partial class MossWindow( string title, int width, int he
 
 	private void InternalOnSkiaDraw( SKCanvas canvas, Vector2D<int> size )
 	{
-		// RootPanel.Resize( size.X, size.Y );
-		// _rootPanelRenderer.Render( canvas );
-
 		OnDraw( canvas, size );
 	}
 
