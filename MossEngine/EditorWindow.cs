@@ -1,7 +1,6 @@
 using System.Numerics;
 using ImGuiNET;
 using MossEngine.UI;
-using MossEngine.UI.Components;
 using MossEngine.UI.Yoga;
 using MossEngine.Utility;
 using SkiaSharp;
@@ -97,12 +96,14 @@ public sealed class EditorWindow() : BaseEditorWindow( "Editor" )
 
 	private static void DrawPanelNode( Panel panel )
 	{
+		ImGui.PushID( panel.Id.ToString() );
+
 		// Nom affiché (fallback)
 		var label = panel.GetType().Name;
 
 		// TreeNode retourne true si le nœud est ouvert
 		const ImGuiTreeNodeFlags flag = ImGuiTreeNodeFlags.DefaultOpen;
-
+		
 		if ( ImGui.TreeNodeEx( label, flag ) )
 		{
 			// Affiche les enfants dans le nœud ouvert
@@ -111,102 +112,7 @@ public sealed class EditorWindow() : BaseEditorWindow( "Editor" )
 
 			ImGui.TreePop();
 		}
-	}
-}
 
-public static class StatusBar
-{
-	public static List<Item> Items { get; } = [];
-	
-	public static void AddItem( Item item )
-	{
-		Items.Add( item );
-	}
-	
-	public struct Item
-	{
-		
-	}
-}
-
-public sealed class StatusBarPanel : Panel
-{
-	public StatusBarPanel()
-	{
-		Width = Length.Percent( 100 );
-		Height = Length.Point( 32 );
-		Flex = 1;
-		FlexShrink = 0;
-		Padding = new Padding { Horizontal = Length.Point( 8 ) };
-		AlignItems = YogaAlign.Center;
-
-		var fps = 1f / Time.Delta;
-		var ms = Time.Delta * 1000f;
-		var fpsText = $"{fps:F0} FPS ({ms:F0} ms)";
-
-		var text = new Text
-		{
-			Value = fpsText,
-			FontSize = 12,
-			Foreground = SKColors.White,
-			// Width = Length.Percent( 100 ),
-			// Height = Length.Point( 40 ),
-			Position = YogaPositionType.Relative,
-		};
-		text.Update += ( sender, args ) =>
-		{
-			var fps = 1f / Time.Delta;
-			var ms = Time.Delta * 1000f;
-			var fpsText = $"{fps:F0} FPS ({ms:F0} ms)";
-
-			text.Value = fpsText;
-		};
-		AddChild( text );
-	}
-}
-
-public sealed class ConsolePanel : Panel
-{
-	public ConsolePanel()
-	{
-		Width = Length.Percent( 100 );
-		Height = Length.Percent( 100 );
-		Background = SKColors.Black;
-		Flex = 1;
-		FlexGrow = 1;
-		FlexShrink = 0;
-		FlexDirection = YogaFlexDirection.Column;
-		GapRow = Length.Point( 10 );
-
-		ConsoleInterceptor.OnWrite += ConsoleInterceptorOnOnWrite;
-	}
-
-	private void ConsoleInterceptorOnOnWrite( string text )
-	{
-		var logText = new Text
-		{
-			Value = text,
-			FontSize = 12,
-			Foreground = SKColors.White,
-			Background = SKColors.Red,
-			Width = Length.Percent( 100 ),
-			Height = Length.Point( 60 ),
-			Position = YogaPositionType.Relative,
-		};
-
-		logText.PointerEnter += ( sender, args ) =>
-		{
-			if ( sender is not Panel panel ) return;
-			panel.Background = SKColors.Gray;
-		};
-
-		logText.PointerLeave += ( sender, args ) =>
-		{
-			if ( sender is not Panel panel ) return;
-			panel.Background = SKColors.Black;
-		};
-
-		AddChild( logText );
-		// Console.WriteLine( "Added child to console panel" );
+		ImGui.PopID();
 	}
 }
