@@ -41,7 +41,7 @@ public sealed class EditorWindow() : EngineWindow( "Editor" )
 		{
 			Width = Length.Percent( 100 ),
 			Height = Length.Percent( 100 ),
-			GapColumn = 4,
+			GapColumn = 2,
 			Split = 0.25f,
 			MinFirstSize = 220f,
 			MinSecondSize = 220f,
