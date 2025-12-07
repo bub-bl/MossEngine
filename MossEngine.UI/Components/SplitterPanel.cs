@@ -136,6 +136,8 @@ public sealed class SplitterPanel : Panel
 	{
 		if ( _isDragging ) return;
 		_isDragging = false;
+		
+		e.Handled = true;
 	}
 
 	private void UpdateChildSizes()
