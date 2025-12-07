@@ -44,17 +44,19 @@ public sealed class SkiaRenderPipeline : IDisposable
 	}
 
 	private static bool IsQueueValid( WebGpuQueue queue ) => queue.IsValid();
-
+	
 	private unsafe bool RenderToTexture( WebGpuDevice device, WebGpuQueue queue, Vector2D<int> size,
 		Action<SKCanvas, Vector2D<int>> draw )
 	{
+		// TODO - Find a way to avoid useless rendering
+		
 		if ( size.X <= 0 || size.Y <= 0 ) return false;
 
 		EnsureSurface( size );
 		EnsureTexture( device, size );
 
 		if ( _texture is null ) return false;
-
+		
 		_canvas!.Clear( SKColors.Transparent );
 		draw( _canvas, size );
 		_canvas.Flush();
