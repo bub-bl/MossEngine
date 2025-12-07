@@ -37,7 +37,7 @@ public sealed class EditorWindow() : EngineWindow( "Editor" )
 		};
 		mainLayout.AddChild( main );
 
-		var horizontalSplitter = new SplitterPanel( SplitterOrientation.Horizontal )
+		var horizontalSplitter = new Splitter( SplitterOrientation.Horizontal )
 		{
 			Width = Length.Percent( 100 ),
 			Height = Length.Percent( 100 ),

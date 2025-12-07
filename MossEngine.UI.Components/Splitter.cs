@@ -5,7 +5,7 @@ using SkiaSharp;
 
 namespace MossEngine.UI.Components;
 
-public sealed class SplitterPanel : Panel, IDisposable
+public sealed class Splitter : Panel, IDisposable
 {
 	private readonly Panel _firstHost;
 	private readonly Panel _secondHost;
@@ -16,7 +16,7 @@ public sealed class SplitterPanel : Panel, IDisposable
 	private bool _isDragging;
 	private float _split = 0.5f;
 
-	public SplitterPanel( SplitterOrientation orientation = SplitterOrientation.Horizontal )
+	public Splitter( SplitterOrientation orientation = SplitterOrientation.Horizontal )
 	{
 		Orientation = orientation;
 		FlexDirection = orientation is SplitterOrientation.Horizontal
