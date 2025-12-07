@@ -1,6 +1,7 @@
 <Solution>
     <Folder Name="/Engine/">
         <Project Path="MossEngine.System/MossEngine.System.csproj" />
+        <Project Path="MossEngine.UI.Components/MossEngine.UI.Components.csproj" />
         <Project Path="MossEngine.UI/MossEngine.UI.csproj" />
         <Project Path="MossEngine/MossEngine.csproj" />
     </Folder>
