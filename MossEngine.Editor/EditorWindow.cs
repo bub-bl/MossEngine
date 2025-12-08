@@ -13,15 +13,14 @@ public sealed class EditorWindow() : EngineWindow( "Editor" )
 	protected override void OnReady()
 	{
 		RootPanel.DebugLabel = "RootPanel";
-		RootPanel.Width = Length.Percent( 90 );
-		RootPanel.Height = Length.Percent( 90 );
+		// RootPanel.Width = Length.Percent( 90 );
+		// RootPanel.Height = Length.Percent( 90 );
 		RootPanel.Background = SKColors.Black;
 
 		var mainLayout = new Panel
 		{
 			Width = Length.Percent( 100 ),
 			Height = Length.Percent( 100 ),
-			Flex = 1,
 			FlexDirection = YogaFlexDirection.Column
 		};
 		RootPanel.AddChild( mainLayout );
@@ -29,10 +28,9 @@ public sealed class EditorWindow() : EngineWindow( "Editor" )
 		var main = new Panel
 		{
 			Width = Length.Percent( 100 ),
+			Height = Length.Percent( 100 ),
 			Padding = new Padding { Top = Length.Point( 8 ), Left = Length.Point( 8 ), Right = Length.Point( 8 ) },
-			Background = SKColor.FromHsl( 0, 0, .2f ),
 			Flex = 1,
-			FlexGrow = 1,
 			FlexShrink = 0
 		};
 		mainLayout.AddChild( main );
@@ -43,23 +41,29 @@ public sealed class EditorWindow() : EngineWindow( "Editor" )
 			Height = Length.Percent( 100 ),
 			GapColumn = 2,
 			Split = 0.25f,
-			MinFirstSize = 220f,
-			MinSecondSize = 220f,
+			MinFirstSize = 100f,
+			// MaxFirstSize = 400f,
+			MinSecondSize = 500f,
+			// MaxSecondSize = 500f,
 			SplitterThickness = 6f
 		};
 		main.AddChild( horizontalSplitter );
 
 		var left = new Panel
 		{
+			// MinWidth = Length.Point( 220 ),
 			Width = Length.Percent( 100 ),
 			Height = Length.Percent( 100 ),
-			Background = SKColor.FromHsl( 0, 0, 10 ),
+			Background = SKColor.FromHsl( 0, 0, 30 ),
 			BorderRadius = new Vector2( 8 )
 		};
+		// horizontalSplitter.First.MinWidth = Length.Point( 220 );
+		// horizontalSplitter.First.MaxWidth = Length.Percent( 40 );
 		horizontalSplitter.First.AddChild( left );
 
 		var rightContainer = new Panel
 		{
+			// MinWidth = Length.Point( 220 ),
 			Width = Length.Percent( 100 ),
 			Height = Length.Percent( 100 ),
 			Flex = 1,
@@ -67,6 +71,8 @@ public sealed class EditorWindow() : EngineWindow( "Editor" )
 			FlexDirection = YogaFlexDirection.Row,
 			GapColumn = 8
 		};
+		// horizontalSplitter.Second.MinWidth = Length.Point( 220 );
+		// horizontalSplitter.Second.MaxWidth = Length.Point( 400 );
 		horizontalSplitter.Second.AddChild( rightContainer );
 
 		var center = new Panel
@@ -85,7 +91,7 @@ public sealed class EditorWindow() : EngineWindow( "Editor" )
 		{
 			Width = Length.Point( 340 ),
 			Height = Length.Percent( 100 ),
-			Background = SKColor.FromHsl( 0, 0, 10 ),
+			Background = SKColor.FromHsl( 0, 0, 40 ),
 			BorderRadius = new Vector2( 8 )
 		};
 		rightContainer.AddChild( right );
