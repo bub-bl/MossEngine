@@ -13,15 +13,11 @@ public sealed class EditorWindow() : EngineWindow( "Editor" )
 	protected override void OnReady()
 	{
 		RootPanel.DebugLabel = "RootPanel";
-		// RootPanel.Width = Length.Percent( 90 );
-		// RootPanel.Height = Length.Percent( 90 );
 		RootPanel.Background = SKColors.Black;
 
 		var mainLayout = new Panel
 		{
-			Width = Length.Percent( 100 ),
-			Height = Length.Percent( 100 ),
-			FlexDirection = YogaFlexDirection.Column
+			Width = Length.Percent( 100 ), Height = Length.Percent( 100 ), FlexDirection = YogaFlexDirection.Column
 		};
 		RootPanel.AddChild( mainLayout );
 
@@ -35,46 +31,34 @@ public sealed class EditorWindow() : EngineWindow( "Editor" )
 		};
 		mainLayout.AddChild( main );
 
-		var horizontalSplitter = new Splitter( SplitterOrientation.Horizontal )
+		// ═══════════════════════════════════════════════════════════════
+		// LAYOUT PRINCIPAL avec ResizablePanel
+		// ═══════════════════════════════════════════════════════════════
+		var mainContainer = new Panel
 		{
 			Width = Length.Percent( 100 ),
 			Height = Length.Percent( 100 ),
-			GapColumn = 2,
-			Split = 0.25f,
-			MinFirstSize = 100f,
-			// MaxFirstSize = 400f,
-			MinSecondSize = 500f,
-			// MaxSecondSize = 500f,
-			SplitterThickness = 6f
-		};
-		main.AddChild( horizontalSplitter );
-
-		var left = new Panel
-		{
-			// MinWidth = Length.Point( 220 ),
-			Width = Length.Percent( 100 ),
-			Height = Length.Percent( 100 ),
-			Background = SKColor.FromHsl( 0, 0, 30 ),
-			BorderRadius = new Vector2( 8 )
-		};
-		// horizontalSplitter.First.MinWidth = Length.Point( 220 );
-		// horizontalSplitter.First.MaxWidth = Length.Percent( 40 );
-		horizontalSplitter.First.AddChild( left );
-
-		var rightContainer = new Panel
-		{
-			// MinWidth = Length.Point( 220 ),
-			Width = Length.Percent( 100 ),
-			Height = Length.Percent( 100 ),
-			Flex = 1,
-			FlexGrow = 1,
 			FlexDirection = YogaFlexDirection.Row,
-			GapColumn = 8
+			// Gap = 8
 		};
-		// horizontalSplitter.Second.MinWidth = Length.Point( 220 );
-		// horizontalSplitter.Second.MaxWidth = Length.Point( 400 );
-		horizontalSplitter.Second.AddChild( rightContainer );
+		main.AddChild( mainContainer );
 
+		// Panel LEFT (redimensionnable à droite)
+		var left = new ResizablePanel( ResizeEdges.Right )
+		{
+			Width = Length.Point( 300 ),
+			Height = Length.Percent( 100 ),
+			MinWidth = 240,
+			MaxWidth = 340,
+			GripThickness = 8,
+			// GripColor = SKColor.FromHsl( 0, 0, 20 ),
+			// GripHoverColor = SKColor.FromHsl( 0, 0, 40 )
+		};
+		left.Content.Background = SKColor.FromHsl( 0, 0, 30 );
+		left.Content.BorderRadius = new Vector2( 8 );
+		mainContainer.AddChild( left );
+
+		// Panel CENTER (flexible, prend l'espace restant)
 		var center = new Panel
 		{
 			Width = Length.Stretch,
@@ -83,27 +67,33 @@ public sealed class EditorWindow() : EngineWindow( "Editor" )
 			BorderRadius = new Vector2( 8 ),
 			Flex = 1,
 			FlexGrow = 1,
-			FlexShrink = 0
+			FlexShrink = 1
 		};
-		rightContainer.AddChild( center );
+		mainContainer.AddChild( center );
 
-		var right = new Panel
+		// Panel RIGHT (redimensionnable à gauche)
+		var right = new ResizablePanel( ResizeEdges.Left )
 		{
 			Width = Length.Point( 340 ),
 			Height = Length.Percent( 100 ),
-			Background = SKColor.FromHsl( 0, 0, 40 ),
-			BorderRadius = new Vector2( 8 )
+			MinWidth = 240,
+			MaxWidth = 340,
+			GripThickness = 8,
+			// GripColor = SKColor.FromHsl( 0, 0, 20 ),
+			// GripHoverColor = SKColor.FromHsl( 0, 0, 40 )
 		};
-		rightContainer.AddChild( right );
+		right.Content.Background = SKColor.FromHsl( 0, 0, 40 );
+		right.Content.BorderRadius = new Vector2( 8 );
+		mainContainer.AddChild( right );
 
+		// ═══════════════════════════════════════════════════════════════
+		// BOTTOM BAR
+		// ═══════════════════════════════════════════════════════════════
 		var bottom = new Panel { Width = Length.Percent( 100 ), Height = Length.Point( 32 ) };
 		mainLayout.AddChild( bottom );
 
 		var statusBar = new StatusBarPanel();
 		bottom.AddChild( statusBar );
-
-		// var consolePanel = new ConsolePanel();
-		// bottom.AddChild( consolePanel );
 
 		Console.WriteLine( $"RootPanel children count: {RootPanel.Children.Count}" );
 	}
@@ -128,15 +118,11 @@ public sealed class EditorWindow() : EngineWindow( "Editor" )
 	{
 		ImGui.PushID( panel.Id.ToString() );
 
-		// Nom affiché (fallback)
 		var label = panel.GetType().Name;
-
-		// TreeNode retourne true si le nœud est ouvert
 		const ImGuiTreeNodeFlags flag = ImGuiTreeNodeFlags.DefaultOpen;
 
 		if ( ImGui.TreeNodeEx( label, flag ) )
 		{
-			// Affiche les enfants dans le nœud ouvert
 			foreach ( var child in panel.Children )
 				DrawPanelNode( child );
 
