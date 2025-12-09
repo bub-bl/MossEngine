@@ -36,12 +36,26 @@ public class Text : Panel
 
 	public float FontSize
 	{
-		get => MeasurementPaint.TextSize;
+		get => field;
 		set
 		{
-			if ( MeasurementPaint.TextSize == value ) return;
+			if ( field == value ) return;
+			field = value;
+			
 			MeasurementPaint.TextSize = value;
-
+			MarkDirty();
+		}
+	}
+	
+	public SKColor Foreground
+	{
+		get => field;
+		set
+		{
+			if ( field == value ) return;
+			field = value;
+			
+			MeasurementPaint.Color = value;
 			MarkDirty();
 		}
 	}
@@ -112,6 +126,7 @@ public class Text : Panel
 			.WithFill( Background )
 			.Draw();
 
+		MeasurementPaint.TextSize = FontSize;
 		canvas.DrawText( Value, textX, baseline, MeasurementPaint );
 	}
 
