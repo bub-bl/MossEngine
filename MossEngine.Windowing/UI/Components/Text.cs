@@ -6,7 +6,7 @@ namespace MossEngine.Windowing.UI.Components;
 
 public class Text : Panel
 {
-	private static readonly SKPaint MeasurementPaint = new() { IsAntialias = true, TextSize = 20 };
+	private readonly SKPaint _measurementPaint = new() { IsAntialias = true, TextSize = 20 };
 
 	public string Value
 	{
@@ -29,7 +29,7 @@ public class Text : Panel
 			if ( field == value ) return;
 			field = value;
 
-			MeasurementPaint.Typeface = value.Typeface;
+			_measurementPaint.Typeface = value.Typeface;
 			MarkDirty();
 		}
 	}
@@ -42,7 +42,7 @@ public class Text : Panel
 			if ( field == value ) return;
 			field = value;
 			
-			MeasurementPaint.TextSize = value;
+			_measurementPaint.TextSize = value;
 			MarkDirty();
 		}
 	}
@@ -55,7 +55,7 @@ public class Text : Panel
 			if ( field == value ) return;
 			field = value;
 			
-			MeasurementPaint.Color = value;
+			_measurementPaint.Color = value;
 			MarkDirty();
 		}
 	}
@@ -68,11 +68,11 @@ public class Text : Panel
 	private void DrawText( SKCanvas canvas )
 	{
 		var position = GetFinalPosition();
-		MeasurementPaint.Color = Foreground;
+		_measurementPaint.Color = Foreground;
 
 		var bounds = new SKRect();
-		MeasurementPaint.MeasureText( Value, ref bounds );
-		var metrics = MeasurementPaint.FontMetrics;
+		_measurementPaint.MeasureText( Value, ref bounds );
+		var metrics = _measurementPaint.FontMetrics;
 
 		float textX;
 
@@ -126,8 +126,8 @@ public class Text : Panel
 			.WithFill( Background )
 			.Draw();
 
-		MeasurementPaint.TextSize = FontSize;
-		canvas.DrawText( Value, textX, baseline, MeasurementPaint );
+		_measurementPaint.TextSize = FontSize;
+		canvas.DrawText( Value, textX, baseline, _measurementPaint );
 	}
 
 	private void UpdateMeasurement()
@@ -144,11 +144,11 @@ public class Text : Panel
 		YogaMeasureMode heightMode )
 	{
 		var bounds = new SKRect();
-		MeasurementPaint.MeasureText( Value, ref bounds );
+		_measurementPaint.MeasureText( Value, ref bounds );
 
 		// Utiliser la largeur calculée à partir des bords
 		var measuredWidth = bounds.Right - bounds.Left;
-		var metrics = MeasurementPaint.FontMetrics;
+		var metrics = _measurementPaint.FontMetrics;
 		var measuredHeight = (metrics.Descent - metrics.Ascent) + metrics.Leading;
 
 		return new SizeF(
