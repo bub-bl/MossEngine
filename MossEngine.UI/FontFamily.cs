@@ -13,9 +13,15 @@ public readonly record struct FontFamily
 		Typeface = typeface;
 	}
 
-	public static FontFamily Load( string name, string path )
+	public static FontFamily FromFile( string name, string path )
 	{
 		var typeface = SKTypeface.FromFile( path );
+		return new FontFamily( name, typeface );
+	}
+	
+	public static FontFamily FromFontName( string name )
+	{
+		var typeface = SKTypeface.FromFamilyName( name );
 		return new FontFamily( name, typeface );
 	}
 }
