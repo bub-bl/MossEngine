@@ -252,25 +252,25 @@ public sealed class ResizablePanel : Panel, IDisposable
 			case ResizeEdges.Right:
 				newSize = _sizeAtDragStart + delta.X;
 				newSize = Math.Clamp( newSize, MinWidth, MaxWidth );
-				YogaNode.Width = Length.Point( newSize );
+				Width = Length.Point( newSize );
 				break;
 
 			case ResizeEdges.Left:
 				newSize = _sizeAtDragStart - delta.X;
 				newSize = Math.Clamp( newSize, MinWidth, MaxWidth );
-				YogaNode.Width = Length.Point( newSize );
+				Width = Length.Point( newSize );
 				break;
 
 			case ResizeEdges.Bottom:
 				newSize = _sizeAtDragStart + delta.Y;
 				newSize = Math.Clamp( newSize, MinHeight, MaxHeight );
-				YogaNode.Height = Length.Point( newSize );
+				Height = Length.Point( newSize );
 				break;
 
 			case ResizeEdges.Top:
 				newSize = _sizeAtDragStart - delta.Y;
 				newSize = Math.Clamp( newSize, MinHeight, MaxHeight );
-				YogaNode.Height = Length.Point( newSize );
+				Height = Length.Point( newSize );
 				break;
 		}
 

@@ -1,5 +1,4 @@
 using ImGuiNET;
-using MossEngine.Core.Utility;
 using MossEngine.WebGpu;
 using MossEngine.WebGpu.ImGui;
 using MossEngine.WebGpu.Skia;
@@ -33,15 +32,14 @@ public abstract unsafe partial class MossWindow( string title, int width, int he
 
 	public void Run()
 	{
-		//Create a window.
-		var options = WindowOptions.Default;
+		var options = WindowOptions.DefaultVulkan;
 		options.Size = new Vector2D<int>( width, height );
 		options.ShouldSwapAutomatically = false;
 		options.IsContextControlDisabled = true;
 		options.Title = title;
 		options.VSync = true;
-		options.FramesPerSecond = 60;
-		options.API = GraphicsAPI.None;
+		// options.FramesPerSecond = 60;
+		// options.API = GraphicsAPI.None;
 
 		Window = Silk.NET.Windowing.Window.Create( options );
 
@@ -56,6 +54,11 @@ public abstract unsafe partial class MossWindow( string title, int width, int he
 		Window.StateChanged += OnWindowStateChanged;
 
 		Window.Initialize();
+
+		// --- activate custom titlebar: keep animations, draw your own
+		// var hwnd = Window.Native!.Win32!.Value.Hwnd;
+		// var hwnd = window.Native!.Win32!.Handle;
+		// CustomWindowFrame.ApplyCustomFrame(hwnd);
 
 		InitializeWebGpu();
 		ConfigureSurface();
@@ -127,14 +130,31 @@ public abstract unsafe partial class MossWindow( string title, int width, int he
 	private void InternalOnSkiaDraw( SKCanvas canvas, Vector2D<int> size )
 	{
 		OnDraw( canvas, size );
+		OnTitleBarDraw( canvas, size );
 	}
 
 	protected virtual void OnDraw( SKCanvas canvas, Vector2D<int> size )
 	{
 	}
+	
+	protected virtual void OnTitleBarDraw( SKCanvas canvas, Vector2D<int> size )
+	{
+		// var paint = new SKPaint
+		// {
+		// 	Color = SKColors.Red,
+		// 	Style = SKPaintStyle.Fill,
+		// 	IsAntialias = true,
+		// 	StrokeWidth = 1,
+		// };
+		//
+		// // canvas.DrawColor( SKColors.Black );
+		// canvas.DrawRect(0, 0, size.X, 32, paint);
+	}
 
 	public void Dispose()
 	{
+		// WindowsTitlebarHelper.DisableCustomTitlebar(); // restore if possible
+
 		_skiaRenderPipeline.Dispose();
 		_imGuiController.Dispose();
 

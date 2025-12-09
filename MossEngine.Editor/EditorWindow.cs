@@ -12,14 +12,22 @@ public sealed class EditorWindow() : EngineWindow( "Editor" )
 {
 	protected override void OnReady()
 	{
-		RootPanel.DebugLabel = "RootPanel";
-		RootPanel.Background = SKColors.Black;
-
 		var mainLayout = new Panel
 		{
-			Width = Length.Percent( 100 ), Height = Length.Percent( 100 ), FlexDirection = YogaFlexDirection.Column
+			Width = Length.Percent( 100 ),
+			Height = Length.Percent( 100 ),
+			FlexDirection = YogaFlexDirection.Column
 		};
-		RootPanel.AddChild( mainLayout );
+		FrameContent.AddChild( mainLayout );
+
+		var toolbar = new Panel
+		{
+			Width = Length.Percent( 100 ),
+			Height = Length.Point( 48 ),
+			Background = SKColors.Black,
+			Padding = new Padding { Top = Length.Point( 8 ), Left = Length.Point( 8 ), Right = Length.Point( 8 ) }
+		};
+		mainLayout.AddChild( toolbar );
 
 		var main = new Panel
 		{
@@ -38,7 +46,7 @@ public sealed class EditorWindow() : EngineWindow( "Editor" )
 		{
 			Width = Length.Percent( 100 ),
 			Height = Length.Percent( 100 ),
-			FlexDirection = YogaFlexDirection.Row,
+			FlexDirection = YogaFlexDirection.Row
 			// Gap = 8
 		};
 		main.AddChild( mainContainer );
@@ -94,8 +102,6 @@ public sealed class EditorWindow() : EngineWindow( "Editor" )
 
 		var statusBar = new StatusBarPanel();
 		bottom.AddChild( statusBar );
-
-		Console.WriteLine( $"RootPanel children count: {RootPanel.Children.Count}" );
 	}
 
 	protected override void OnImGuiDraw()

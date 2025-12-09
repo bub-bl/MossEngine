@@ -47,7 +47,7 @@ public static class Cursor
 		{
 			Current = StandardCursor.Arrow;
 			Visibility = CursorMode.Normal;
-			
+
 			_input = null!;
 		} );
 	}

@@ -12,6 +12,14 @@ public abstract unsafe partial class MossWindow
 	{
 		OnWindowLoad();
 		InitializeInput();
+
+		var hwnd = Window.Native!.Win32!.Value.Hwnd;
+		CustomWindowFrame.ApplyCustomFrame( hwnd, 40 );
+
+		var attribute = CustomWindowFrame.WindowAttribute.WindowCornerPreference;
+		var preference = CustomWindowFrame.WindowCornerPreference.Round;
+		
+		CustomWindowFrame.DwmSetWindowAttribute( hwnd, attribute, ref preference, sizeof(uint) );
 	}
 
 	private void InternalOnWindowUpdate( double deltaTime )
@@ -120,6 +128,8 @@ public abstract unsafe partial class MossWindow
 		// if ( _surface is null || Device is null || _adapter is null ) return;
 		if ( Window.WindowState is WindowState.Minimized ) return;
 		if ( newSize.X <= 0 || newSize.Y <= 0 ) return;
+
+		if ( Device is null ) return;
 
 		var surfaceConfiguration = new SurfaceConfiguration
 		{
