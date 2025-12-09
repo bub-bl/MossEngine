@@ -1,6 +1,6 @@
-﻿using MossEngine.UI;
-using MossEngine.UI.Components;
-using MossEngine.UI.Yoga;
+﻿using MossEngine.Windowing.UI;
+using MossEngine.Windowing.UI.Components;
+using MossEngine.Windowing.UI.Yoga;
 using SkiaSharp;
 
 namespace MossEngine.Editor;

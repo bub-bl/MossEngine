@@ -18,10 +18,6 @@ public static class CustomWindowFrame
 
 	private const int WS_CAPTION = 0x00C00000;
 	private const int WS_THICKFRAME = 0x00040000;
-	private const int WS_SIZEBOX = 0x00040000;
-	private const int WS_MINIMIZEBOX = 0x00020000;
-	private const int WS_MAXIMIZEBOX = 0x00010000;
-	private const int WS_SYSMENU = 0x00080000;
 	private const int WS_BORDER = 0x00800000;
 
 	private const int SWP_NOMOVE = 0x0002;
@@ -44,15 +40,18 @@ public static class CustomWindowFrame
 	private static extern IntPtr SetWindowLongPtr( IntPtr hWnd, int nIndex, IntPtr value );
 
 	[DllImport( "user32.dll" )]
-	private static extern bool SetWindowPos(
-		IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags );
+	private static extern bool SetWindowPos( IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy,
+		uint uFlags );
 
 	[DllImport( "user32.dll" )]
 	private static extern bool GetWindowRect( IntPtr hWnd, out Rect rect );
 
 	[DllImport( "user32.dll" )]
-	private static extern IntPtr CallWindowProc(
-		IntPtr lpPrevWndFunc, IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam );
+	private static extern IntPtr CallWindowProc( IntPtr lpPrevWndFunc, IntPtr hWnd, uint msg, IntPtr wParam,
+		IntPtr lParam );
+
+	[DllImport( "dwmapi.dll", PreserveSig = true )]
+	private static extern int DwmExtendFrameIntoClientArea( IntPtr hWnd, ref MARGINS margins );
 
 	[StructLayout( LayoutKind.Sequential )]
 	private struct Rect
@@ -60,22 +59,59 @@ public static class CustomWindowFrame
 		public int Left, Top, Right, Bottom;
 	}
 
-	public static void ApplyCustomFrame( IntPtr hwnd, int titlebarHeight )
+	[StructLayout( LayoutKind.Sequential )]
+	private struct MARGINS
 	{
-		// Supprimer WS_CAPTION pour masquer la titlebar native§
-		var style = GetWindowLongPtr( hwnd, GWL_STYLE ).ToInt64();
-		// style &= ~WS_CAPTION; // <- important
-		// style |= WS_THICKFRAME;
-		style &= ~(WS_CAPTION | WS_THICKFRAME | WS_SYSMENU);
+		public int Left, Right, Top, Bottom;
+	}
+
+	// ------------------------------------------------------------
+	// 🔥 Supprime définitivement la bordure blanche du haut
+	// ------------------------------------------------------------
+	private static void RemoveTopWhiteBorder( IntPtr hwnd )
+	{
+		// var m = new MARGINS
+		// {
+		// 	Left = 0,
+		// 	Right = 0,
+		// 	Top = -1,      // ← élimine totalement la bordure Windows
+		// 	Bottom = 0
+		// };
+		//
+		// DwmExtendFrameIntoClientArea(hwnd, ref m);
+	}
+
+	public static void ApplyCustomFrame( IntPtr hwnd, int titlebarHeight, Func<bool> shouldHit )
+	{
+		// ------------------------------------------------------------
+		// 🔧 Nettoyage du style : borderless mais redimensionnable
+		// ------------------------------------------------------------
+		long style = GetWindowLongPtr( hwnd, GWL_STYLE ).ToInt64();
+
+		// style &= ~WS_CAPTION;
+		// style &= ~WS_BORDER;
+
+		// garder WS_THICKFRAME → resize natif mais plus de bordure visuelle
+		style |= WS_THICKFRAME;
 
 		SetWindowLongPtr( hwnd, GWL_STYLE, new IntPtr( style ) );
 
+		// Supprime la bordure visuelle du haut (fix Windows 11)
+		RemoveTopWhiteBorder( hwnd );
+
+		// ------------------------------------------------------------
+		// WndProc custom
+		// ------------------------------------------------------------
 		_customWndProc = ( hWnd, msg, wParam, lParam ) =>
 		{
 			switch ( msg )
 			{
+				// Indispensable : supprime totalement la zone non-client
+				case WM_NCCALCSIZE:
+					return IntPtr.Zero;
+
 				case WM_NCHITTEST:
-					return HitTestCustom( hWnd, lParam, titlebarHeight );
+					return HitTestCustom( hWnd, lParam, titlebarHeight, shouldHit );
 			}
 
 			return CallWindowProc( _originalWndProc, hWnd, msg, wParam, lParam );
@@ -84,36 +120,22 @@ public static class CustomWindowFrame
 		_originalWndProc = GetWindowLongPtr( hwnd, GWLP_WNDPROC );
 		SetWindowLongPtr( hwnd, GWLP_WNDPROC, Marshal.GetFunctionPointerForDelegate( _customWndProc ) );
 
-		SetWindowPos( hwnd, IntPtr.Zero, 0, 0, 0, 0,
-			SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE );
+		SetWindowPos( hwnd, IntPtr.Zero, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE );
 	}
 
-	private static IntPtr HitTestCustom(IntPtr hWnd, IntPtr lParam, int titlebarHeight)
+	private static IntPtr HitTestCustom( IntPtr hWnd, IntPtr lParam, int titlebarHeight, Func<bool> shouldHit )
 	{
-		// Récupérer la position du curseur
 		int x = (short)(lParam.ToInt32() & 0xFFFF);
 		int y = (short)((lParam.ToInt32() >> 16) & 0xFFFF);
 
-		// Obtenir les dimensions de la fenêtre
-		GetWindowRect(hWnd, out var rect);
+		GetWindowRect( hWnd, out var rect );
 
-		// Convertir les coordonnées d'écran en coordonnées client
-		int windowX = x - rect.Left;
-		int windowY = y - rect.Top;
-
-		// // Vérifier si le curseur est dans la zone de la barre de titre personnalisée
-		// if (windowY < titlebarHeight && windowX < (rect.Right - rect.Left) - 100) // Laisser de l'espace pour les boutons
-		// {
-		// 	return (IntPtr)2; // HTCAPTION - Permet le déplacement de la fenêtre
-		// }
-
-		// Gestion du redimensionnement (8px de bordure)
 		const int border = 8;
 
-		var left = x >= rect.Left && x < rect.Left + border;
-		var right = x <= rect.Right && x > rect.Right - border;
-		var top = y >= rect.Top && y < rect.Top + border;
-		var bottom = y <= rect.Bottom && y > rect.Bottom - border;
+		bool left = x >= rect.Left && x < rect.Left + border;
+		bool right = x <= rect.Right && x > rect.Right - border;
+		bool top = y >= rect.Top && y < rect.Top + border;
+		bool bottom = y <= rect.Bottom && y > rect.Bottom - border;
 
 		if ( left && top ) return (IntPtr)HTTOPLEFT;
 		if ( right && top ) return (IntPtr)HTTOPRIGHT;
@@ -124,35 +146,19 @@ public static class CustomWindowFrame
 		if ( left ) return (IntPtr)HTLEFT;
 		if ( right ) return (IntPtr)HTRIGHT;
 
-		// // Zone draggable de la titlebar custom
-		// if ( y - rect.Top < titlebarHeight )
-		// 	return (IntPtr)2; // HTCAPTION → Windows va dragger la fenêtre
+		// Zone draggable
+		if ( !shouldHit() && y - rect.Top < titlebarHeight )
+			return (IntPtr)2; // HTCAPTION
 
-		return (IntPtr)1; // HTCLIENT → reste client normal
+		return (IntPtr)1; // HTCLIENT
 	}
 
-	// The enum flag for DwmSetWindowAttribute's second parameter, which tells the function what attribute to set.
-	// Copied from dwmapi.h
-	public enum WindowAttribute
-	{
-		WindowCornerPreference = 33
-	}
+	// Dwm attributes (inchangés)
+	public enum WindowAttribute { WindowCornerPreference = 33 }
 
-	// The DWM_WINDOW_CORNER_PREFERENCE enum for DwmSetWindowAttribute's third parameter, which tells the function
-	// what value of the enum to set.
-	// Copied from dwmapi.h
-	public enum WindowCornerPreference
-	{
-		Default = 0,
-		DoNotRound = 1,
-		Round = 2,
-		RoundSmall = 3
-	}
+	public enum WindowCornerPreference { Default = 0, DoNotRound = 1, Round = 2, RoundSmall = 3 }
 
-	// Import dwmapi.dll and define DwmSetWindowAttribute in C# corresponding to the native function.
 	[DllImport( "dwmapi.dll", CharSet = CharSet.Unicode, PreserveSig = false )]
-	internal static extern void DwmSetWindowAttribute( IntPtr hwnd,
-		WindowAttribute attribute,
-		ref WindowCornerPreference pvAttribute,
-		uint cbAttribute );
+	internal static extern void DwmSetWindowAttribute(
+		IntPtr hwnd, WindowAttribute attribute, ref WindowCornerPreference pvAttribute, uint cbAttribute );
 }

@@ -10,6 +10,17 @@
     <ItemGroup>
         <PackageReference Include="NLog" Version="5.3.4"/>
         <PackageReference Include="Humanizer.Core" Version="2.14.1"/>
+        <PackageReference Include="Silk.NET.Input.Common" Version="2.22.0" />
+        <PackageReference Include="SkiaSharp" Version="3.119.1" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="ThirdParty\" />
+      <Folder Include="Windowing\" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\Documents\GitHub\Yoga-CS\Yoga-CS\Yoga-CS.csproj" />
     </ItemGroup>
 
 </Project>

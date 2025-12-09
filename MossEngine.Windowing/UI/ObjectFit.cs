@@ -1,0 +1,10 @@
+namespace MossEngine.Windowing.UI;
+
+public enum ObjectFit
+{
+	Fill,
+	Contain,
+	Cover,
+	ScaleDown,
+	None
+}

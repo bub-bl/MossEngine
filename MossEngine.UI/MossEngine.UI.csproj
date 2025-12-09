@@ -9,7 +9,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\..\Documents\GitHub\Yoga-CS\Yoga-CS\Yoga-CS.csproj"/>
-        <ProjectReference Include="..\MossEngine.Windowing\MossEngine.Windowing.csproj" />
+        <ProjectReference Include="..\MossEngine.Core\MossEngine.Core.csproj" />
     </ItemGroup>
 
     <ItemGroup>

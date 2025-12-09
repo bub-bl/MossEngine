@@ -14,12 +14,14 @@ public abstract unsafe partial class MossWindow
 		InitializeInput();
 
 		var hwnd = Window.Native!.Win32!.Value.Hwnd;
-		CustomWindowFrame.ApplyCustomFrame( hwnd, 40 );
 
-		var attribute = CustomWindowFrame.WindowAttribute.WindowCornerPreference;
-		var preference = CustomWindowFrame.WindowCornerPreference.Round;
-		
-		CustomWindowFrame.DwmSetWindowAttribute( hwnd, attribute, ref preference, sizeof(uint) );
+		CustomWindowFrame.ApplyCustomFrame( hwnd, (int)TitleBar.Height.Value, () => TitleBar.ShouldHit() );
+		DwmExtensions.RemoveTopBorder( hwnd );
+
+		// var attribute = CustomWindowFrame.WindowAttribute.WindowCornerPreference;
+		// var preference = CustomWindowFrame.WindowCornerPreference.Round;
+		//
+		// CustomWindowFrame.DwmSetWindowAttribute( hwnd, attribute, ref preference, sizeof(uint) );
 	}
 
 	private void InternalOnWindowUpdate( double deltaTime )

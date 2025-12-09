@@ -2,6 +2,8 @@ using ImGuiNET;
 using MossEngine.WebGpu;
 using MossEngine.WebGpu.ImGui;
 using MossEngine.WebGpu.Skia;
+using MossEngine.Windowing.UI;
+using MossEngine.Windowing.UI.Yoga;
 using Silk.NET.Maths;
 using Silk.NET.WebGPU;
 using Silk.NET.Windowing;
@@ -19,6 +21,7 @@ public abstract unsafe partial class MossWindow( string title, int width, int he
 	private TextureView* _surfaceTextureView;
 	private ImGuiController _imGuiController = null!;
 	private readonly SkiaRenderPipeline _skiaRenderPipeline = new();
+	private RootPanelRenderer _rootPanelRenderer = null!;
 
 	// private RootPanelRenderer _rootPanelRenderer = null!;
 	//
@@ -27,6 +30,10 @@ public abstract unsafe partial class MossWindow( string title, int width, int he
 	public RenderPassEncoder* RenderPassEncoder { get; private set; }
 	public WebGpuDevice Device { get; private set; } = null!;
 	public IWindow Window { get; private set; } = null!;
+
+	public RootPanel RootPanel { get; private set; } = new();
+	public TitleBar TitleBar { get; private set; } = new();
+	public Panel FrameContent { get; private set; } = new();
 
 	public TextureFormat SwapChainFormat { get; private set; }
 
@@ -109,6 +116,28 @@ public abstract unsafe partial class MossWindow( string title, int width, int he
 
 	protected virtual void OnInitialized()
 	{
+		RootPanel.Flex = 1;
+		RootPanel.FlexDirection = YogaFlexDirection.Column;
+		RootPanel.Background = SKColors.Black;
+		RootPanel.Resize( Window.Size.X, Window.Size.Y );
+
+		_rootPanelRenderer = new RootPanelRenderer( Window, RootPanel );
+
+		// TitleBar = new TitleBar();
+		RootPanel.AddChild( TitleBar );
+
+		FrameContent.Width = Length.Percent( 100 );
+		FrameContent.Height = Length.Percent( 100 );
+		FrameContent.Flex = 1;
+		FrameContent.FlexGrow = 1;
+		FrameContent.Background = SKColors.Black;
+		RootPanel.AddChild( FrameContent );
+
+		OnReady();
+	}
+
+	protected virtual void OnReady()
+	{
 	}
 
 	protected virtual void OnRender( double deltaTime )
@@ -135,8 +164,10 @@ public abstract unsafe partial class MossWindow( string title, int width, int he
 
 	protected virtual void OnDraw( SKCanvas canvas, Vector2D<int> size )
 	{
+		RootPanel.Resize( size.X, size.Y );
+		_rootPanelRenderer.Render( canvas );
 	}
-	
+
 	protected virtual void OnTitleBarDraw( SKCanvas canvas, Vector2D<int> size )
 	{
 		// var paint = new SKPaint

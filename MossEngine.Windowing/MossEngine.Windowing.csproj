@@ -23,9 +23,9 @@
 
     <ItemGroup>
         <ProjectReference Include="..\MossEngine.Core\MossEngine.Core.csproj" />
+        <ProjectReference Include="..\MossEngine.WebGpu\MossEngine.WebGpu.csproj"/>
         <ProjectReference Include="..\MossEngine.WebGpu.ImGui\MossEngine.WebGpu.ImGui.csproj" />
         <ProjectReference Include="..\MossEngine.WebGpu.Skia\MossEngine.WebGpu.Skia.csproj" />
-        <ProjectReference Include="..\MossEngine.WebGpu\MossEngine.WebGpu.csproj"/>
     </ItemGroup>
 
 </Project>

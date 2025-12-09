@@ -1,3 +1,4 @@
+using System.Numerics;
 using MossEngine.Core.Utility;
 using Silk.NET.Input;
 
@@ -6,6 +7,17 @@ namespace MossEngine.Windowing;
 public static class Cursor
 {
 	private static IInputContext? _input;
+
+	public static Vector2 MousePosition
+	{
+		get
+		{
+			if ( _input is null || _input.Mice.Count is 0 ) 
+				return Vector2.Zero;
+
+			return _input.Mice[0].Position;
+		}
+	}
 
 	public static StandardCursor Current
 	{
