@@ -50,35 +50,10 @@ public static class CustomWindowFrame
 	private static extern IntPtr CallWindowProc( IntPtr lpPrevWndFunc, IntPtr hWnd, uint msg, IntPtr wParam,
 		IntPtr lParam );
 
-	[DllImport( "dwmapi.dll", PreserveSig = true )]
-	private static extern int DwmExtendFrameIntoClientArea( IntPtr hWnd, ref MARGINS margins );
-
 	[StructLayout( LayoutKind.Sequential )]
 	private struct Rect
 	{
 		public int Left, Top, Right, Bottom;
-	}
-
-	[StructLayout( LayoutKind.Sequential )]
-	private struct MARGINS
-	{
-		public int Left, Right, Top, Bottom;
-	}
-
-	// ------------------------------------------------------------
-	// 🔥 Supprime définitivement la bordure blanche du haut
-	// ------------------------------------------------------------
-	private static void RemoveTopWhiteBorder( IntPtr hwnd )
-	{
-		// var m = new MARGINS
-		// {
-		// 	Left = 0,
-		// 	Right = 0,
-		// 	Top = -1,      // ← élimine totalement la bordure Windows
-		// 	Bottom = 0
-		// };
-		//
-		// DwmExtendFrameIntoClientArea(hwnd, ref m);
 	}
 
 	public static void ApplyCustomFrame( IntPtr hwnd, int titlebarHeight, Func<bool> shouldHit )
@@ -95,9 +70,6 @@ public static class CustomWindowFrame
 		style |= WS_THICKFRAME;
 
 		SetWindowLongPtr( hwnd, GWL_STYLE, new IntPtr( style ) );
-
-		// Supprime la bordure visuelle du haut (fix Windows 11)
-		RemoveTopWhiteBorder( hwnd );
 
 		// ------------------------------------------------------------
 		// WndProc custom

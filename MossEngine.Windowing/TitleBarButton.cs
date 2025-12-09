@@ -8,6 +8,7 @@ namespace MossEngine.Windowing;
 public sealed class TitleBarButton : Panel
 {
 	private readonly Text _text;
+	private readonly SKColor _hoverColor;
 
 	public char Icon
 	{
@@ -21,8 +22,10 @@ public sealed class TitleBarButton : Panel
 		}
 	}
 
-	public TitleBarButton( char icon )
+	public TitleBarButton( char icon, SKColor hoverColor )
 	{
+		_hoverColor = hoverColor;
+		
 		Width = Length.Point( 48 );
 		Height = Length.Point( 40 );
 		Background = SKColors.Black;
@@ -45,6 +48,6 @@ public sealed class TitleBarButton : Panel
 
 	protected override void OnUpdate()
 	{
-		Background = SKColor.FromHsl( 0, 0, IsInside() ? 10 : 0 );
+		Background = IsInside() ? _hoverColor : SKColors.Black;
 	}
 }

@@ -62,11 +62,6 @@ public abstract unsafe partial class MossWindow( string title, int width, int he
 
 		Window.Initialize();
 
-		// --- activate custom titlebar: keep animations, draw your own
-		// var hwnd = Window.Native!.Win32!.Value.Hwnd;
-		// var hwnd = window.Native!.Win32!.Handle;
-		// CustomWindowFrame.ApplyCustomFrame(hwnd);
-
 		InitializeWebGpu();
 		ConfigureSurface();
 		InitializeImGui();

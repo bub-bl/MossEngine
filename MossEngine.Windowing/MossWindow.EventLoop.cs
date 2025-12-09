@@ -17,11 +17,6 @@ public abstract unsafe partial class MossWindow
 
 		CustomWindowFrame.ApplyCustomFrame( hwnd, (int)TitleBar.Height.Value, () => TitleBar.ShouldHit() );
 		DwmExtensions.RemoveTopBorder( hwnd );
-
-		// var attribute = CustomWindowFrame.WindowAttribute.WindowCornerPreference;
-		// var preference = CustomWindowFrame.WindowCornerPreference.Round;
-		//
-		// CustomWindowFrame.DwmSetWindowAttribute( hwnd, attribute, ref preference, sizeof(uint) );
 	}
 
 	private void InternalOnWindowUpdate( double deltaTime )

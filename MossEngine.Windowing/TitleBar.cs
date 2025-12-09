@@ -8,7 +8,7 @@ namespace MossEngine.Windowing;
 
 public sealed class TitleBar : Panel
 {
-	private Panel _buttons = new();
+	private readonly Panel _buttons;
 	
 	public string Title { get; set; } = "Engine";
 
@@ -31,14 +31,14 @@ public sealed class TitleBar : Panel
 		_buttons = new Panel { AlignItems = YogaAlign.Center };
 		AddChild( _buttons );
 
-		var minimizeButton = new TitleBarButton( '\uE921' );
+		var minimizeButton = new TitleBarButton( '\uE921', SKColor.FromHsl( 0, 0, 10f ) );
 		minimizeButton.PointerUp += ( sender, args ) =>
 		{
 			ParentWindow?.WindowState = WindowState.Minimized;
 		};
 		_buttons.AddChild( minimizeButton );
 
-		var maximizeButton = new TitleBarButton( '\uE922' );
+		var maximizeButton = new TitleBarButton( '\uE922', SKColor.FromHsl( 0, 0, 10f ) );
 		maximizeButton.PointerUp += ( sender, args ) =>
 		{
 			switch ( ParentWindow?.WindowState )
@@ -55,7 +55,7 @@ public sealed class TitleBar : Panel
 		};
 		_buttons.AddChild( maximizeButton );
 
-		var closeButton = new TitleBarButton( '\uE8bb' );
+		var closeButton = new TitleBarButton( '\uE8bb', SKColor.FromHsl( 0, 50, 40 ) );
 		closeButton.PointerUp += ( sender, args ) =>
 		{
 			ParentWindow?.Close();
@@ -67,45 +67,4 @@ public sealed class TitleBar : Panel
 	{
 		return _buttons.ContainsPoint( Cursor.MousePosition );
 	}
-
-	// protected override void OnPointerDown( PointerEventArgs args )
-	// {
-	// 	var window = Editor.MainWindow;
-	//
-	// 	if ( args.Button is not MouseButton.Left ) return;
-	//
-	// 	window.BeginMoveDrag();
-	// 	args.Handled = true;
-	// }
-	//
-	// protected override void OnPointerMove( PointerEventArgs args )
-	// {
-	// 	var window = Editor.MainWindow;
-	//
-	// 	if ( window.IsDragging )
-	// 	{
-	// 		var currentMousePosition = window.MousePosition;
-	// 		var delta = currentMousePosition - window.DragStartPosition;
-	//
-	// 		if ( delta != Vector2.Zero )
-	// 		{
-	// 			window.Window.Position = new Vector2D<int>(
-	// 				(int)(window.Window.Position.X + delta.X),
-	// 				(int)(window.Window.Position.Y + delta.Y)
-	// 			);
-	// 		}
-	//
-	// 		args.Handled = true;
-	// 	}
-	// }
-	//
-	// protected override void OnPointerUp( PointerEventArgs args )
-	// {
-	// 	var window = Editor.MainWindow;
-	// 	
-	// 	if ( !window.IsDragging || args.Button is not MouseButton.Left ) return;
-	//
-	// 	window.EndMoveDrag();
-	// 	args.Handled = true;
-	// }
 }
