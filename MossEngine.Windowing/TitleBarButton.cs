@@ -37,7 +37,7 @@ public sealed class TitleBarButton : Panel
 		{
 			Foreground = SKColors.White,
 			FontSize = 10,
-			FontFamily = FontFamily.FromFile( "Segoe Fluent Icons", @"C:\Windows\Fonts\SegoeIcons.ttf" ),
+			FontFamily = FontFamily.FromFontName( "Segoe Fluent Icons" ),
 			Value = Icon.ToString(),
 			IsHitTestVisible = false
 		};
