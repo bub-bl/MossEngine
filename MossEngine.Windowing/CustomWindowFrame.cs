@@ -88,14 +88,26 @@ public static class CustomWindowFrame
 			SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE );
 	}
 
-	private static IntPtr HitTestCustom( IntPtr hWnd, IntPtr lParam, int titlebarHeight )
+	private static IntPtr HitTestCustom(IntPtr hWnd, IntPtr lParam, int titlebarHeight)
 	{
+		// Récupérer la position du curseur
 		int x = (short)(lParam.ToInt32() & 0xFFFF);
 		int y = (short)((lParam.ToInt32() >> 16) & 0xFFFF);
 
-		GetWindowRect( hWnd, out var rect );
+		// Obtenir les dimensions de la fenêtre
+		GetWindowRect(hWnd, out var rect);
 
-		// Redimensionnement (8px border)
+		// Convertir les coordonnées d'écran en coordonnées client
+		int windowX = x - rect.Left;
+		int windowY = y - rect.Top;
+
+		// // Vérifier si le curseur est dans la zone de la barre de titre personnalisée
+		// if (windowY < titlebarHeight && windowX < (rect.Right - rect.Left) - 100) // Laisser de l'espace pour les boutons
+		// {
+		// 	return (IntPtr)2; // HTCAPTION - Permet le déplacement de la fenêtre
+		// }
+
+		// Gestion du redimensionnement (8px de bordure)
 		const int border = 8;
 
 		var left = x >= rect.Left && x < rect.Left + border;
@@ -112,9 +124,9 @@ public static class CustomWindowFrame
 		if ( left ) return (IntPtr)HTLEFT;
 		if ( right ) return (IntPtr)HTRIGHT;
 
-		// Zone draggable de la titlebar custom
-		if ( y - rect.Top < titlebarHeight )
-			return (IntPtr)2; // HTCAPTION → Windows va dragger la fenêtre
+		// // Zone draggable de la titlebar custom
+		// if ( y - rect.Top < titlebarHeight )
+		// 	return (IntPtr)2; // HTCAPTION → Windows va dragger la fenêtre
 
 		return (IntPtr)1; // HTCLIENT → reste client normal
 	}
