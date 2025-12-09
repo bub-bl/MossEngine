@@ -43,8 +43,6 @@
     <ItemGroup>
         <ProjectReference Include="..\MossEngine.Editor\MossEngine.Editor.csproj" />
         <ProjectReference Include="..\MossEngine.Systems\MossEngine.Systems.csproj" />
-        <ProjectReference Include="..\MossEngine.UI\MossEngine.UI.csproj"/>
-        <ProjectReference Include="..\MossEngine.UI.Components\MossEngine.UI.Components.csproj"/>
         <ProjectReference Include="..\MossEngine.Windowing\MossEngine.Windowing.csproj" />
     </ItemGroup>
 

@@ -15,11 +15,6 @@
     </ItemGroup>
     
     <ItemGroup>
-      <Folder Include="ThirdParty\" />
-      <Folder Include="Windowing\" />
-    </ItemGroup>
-    
-    <ItemGroup>
       <ProjectReference Include="..\..\..\Documents\GitHub\Yoga-CS\Yoga-CS\Yoga-CS.csproj" />
     </ItemGroup>
 

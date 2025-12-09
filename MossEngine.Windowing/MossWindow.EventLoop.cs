@@ -16,7 +16,7 @@ public abstract unsafe partial class MossWindow
 		var hwnd = Window.Native!.Win32!.Value.Hwnd;
 
 		CustomWindowFrame.ApplyCustomFrame( hwnd, (int)TitleBar.Height.Value, () => TitleBar.ShouldHit() );
-		DwmExtensions.RemoveTopBorder( hwnd );
+		CustomWindowFrame.RemoveTopBorder( hwnd );
 	}
 
 	private void InternalOnWindowUpdate( double deltaTime )

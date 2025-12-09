@@ -50,38 +50,40 @@ public static class CustomWindowFrame
 	private static extern IntPtr CallWindowProc( IntPtr lpPrevWndFunc, IntPtr hWnd, uint msg, IntPtr wParam,
 		IntPtr lParam );
 
+	[DllImport( "dwmapi.dll", PreserveSig = true )]
+	private static extern int DwmExtendFrameIntoClientArea( IntPtr hwnd, ref Margins margins );
+	
+	[StructLayout( LayoutKind.Sequential )]
+	private struct Margins
+	{
+		public int Left;
+		public int Right;
+		public int Top;
+		public int Bottom;
+	}
+	
 	[StructLayout( LayoutKind.Sequential )]
 	private struct Rect
 	{
 		public int Left, Top, Right, Bottom;
 	}
-
+	
 	public static void ApplyCustomFrame( IntPtr hwnd, int titlebarHeight, Func<bool> shouldHit )
 	{
-		// ------------------------------------------------------------
-		// 🔧 Nettoyage du style : borderless mais redimensionnable
-		// ------------------------------------------------------------
-		long style = GetWindowLongPtr( hwnd, GWL_STYLE ).ToInt64();
-
-		// style &= ~WS_CAPTION;
-		// style &= ~WS_BORDER;
-
-		// garder WS_THICKFRAME → resize natif mais plus de bordure visuelle
+		var style = GetWindowLongPtr( hwnd, GWL_STYLE ).ToInt64();
 		style |= WS_THICKFRAME;
 
 		SetWindowLongPtr( hwnd, GWL_STYLE, new IntPtr( style ) );
 
-		// ------------------------------------------------------------
-		// WndProc custom
-		// ------------------------------------------------------------
 		_customWndProc = ( hWnd, msg, wParam, lParam ) =>
 		{
 			switch ( msg )
 			{
-				// Indispensable : supprime totalement la zone non-client
+				// Remove the non-client area
 				case WM_NCCALCSIZE:
 					return IntPtr.Zero;
 
+				// Handle hit testing
 				case WM_NCHITTEST:
 					return HitTestCustom( hWnd, lParam, titlebarHeight, shouldHit );
 			}
@@ -90,9 +92,22 @@ public static class CustomWindowFrame
 		};
 
 		_originalWndProc = GetWindowLongPtr( hwnd, GWLP_WNDPROC );
+		
 		SetWindowLongPtr( hwnd, GWLP_WNDPROC, Marshal.GetFunctionPointerForDelegate( _customWndProc ) );
-
 		SetWindowPos( hwnd, IntPtr.Zero, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE );
+	}
+	
+	public static void RemoveTopBorder( IntPtr hwnd )
+	{
+		var margins = new Margins
+		{
+			Left = 0,
+			Right = 0,
+			Top = -1, // <- Remove the white border
+			Bottom = 0
+		};
+
+		DwmExtendFrameIntoClientArea( hwnd, ref margins );
 	}
 
 	private static IntPtr HitTestCustom( IntPtr hWnd, IntPtr lParam, int titlebarHeight, Func<bool> shouldHit )
@@ -104,33 +119,24 @@ public static class CustomWindowFrame
 
 		const int border = 8;
 
-		bool left = x >= rect.Left && x < rect.Left + border;
-		bool right = x <= rect.Right && x > rect.Right - border;
-		bool top = y >= rect.Top && y < rect.Top + border;
-		bool bottom = y <= rect.Bottom && y > rect.Bottom - border;
+		var left = x >= rect.Left && x < rect.Left + border;
+		var right = x <= rect.Right && x > rect.Right - border;
+		var top = y >= rect.Top && y < rect.Top + border;
+		var bottom = y <= rect.Bottom && y > rect.Bottom - border;
 
-		if ( left && top ) return (IntPtr)HTTOPLEFT;
-		if ( right && top ) return (IntPtr)HTTOPRIGHT;
-		if ( left && bottom ) return (IntPtr)HTBOTTOMLEFT;
-		if ( right && bottom ) return (IntPtr)HTBOTTOMRIGHT;
-		if ( top ) return (IntPtr)HTTOP;
-		if ( bottom ) return (IntPtr)HTBOTTOM;
-		if ( left ) return (IntPtr)HTLEFT;
-		if ( right ) return (IntPtr)HTRIGHT;
+		if ( left && top ) return HTTOPLEFT;
+		if ( right && top ) return HTTOPRIGHT;
+		if ( left && bottom ) return HTBOTTOMLEFT;
+		if ( right && bottom ) return HTBOTTOMRIGHT;
+		if ( top ) return HTTOP;
+		if ( bottom ) return HTBOTTOM;
+		if ( left ) return HTLEFT;
+		if ( right ) return HTRIGHT;
 
-		// Zone draggable
+		// Draggable zone
 		if ( !shouldHit() && y - rect.Top < titlebarHeight )
-			return (IntPtr)2; // HTCAPTION
+			return 2; // HTCAPTION
 
-		return (IntPtr)1; // HTCLIENT
+		return 1; // HTCLIENT
 	}
-
-	// Dwm attributes (inchangés)
-	public enum WindowAttribute { WindowCornerPreference = 33 }
-
-	public enum WindowCornerPreference { Default = 0, DoNotRound = 1, Round = 2, RoundSmall = 3 }
-
-	[DllImport( "dwmapi.dll", CharSet = CharSet.Unicode, PreserveSig = false )]
-	internal static extern void DwmSetWindowAttribute(
-		IntPtr hwnd, WindowAttribute attribute, ref WindowCornerPreference pvAttribute, uint cbAttribute );
 }

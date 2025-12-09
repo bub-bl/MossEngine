@@ -3,8 +3,6 @@
         <Project Path="MossEngine.Core/MossEngine.Core.csproj" />
         <Project Path="MossEngine.Editor/MossEngine.Editor.csproj" />
         <Project Path="MossEngine.Systems/MossEngine.Systems.csproj" />
-        <Project Path="MossEngine.UI.Components/MossEngine.UI.Components.csproj" />
-        <Project Path="MossEngine.UI/MossEngine.UI.csproj" />
         <Project Path="MossEngine.WebGpu.ImGui/MossEngine.WebGpu.ImGui.csproj" />
         <Project Path="MossEngine.WebGpu.Skia/MossEngine.WebGpu.Skia.csproj" />
         <Project Path="MossEngine.WebGpu/MossEngine.WebGpu.csproj" />
