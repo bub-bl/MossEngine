@@ -9,7 +9,7 @@ namespace MossEngine.Windowing;
 public sealed class TitleBar : Panel
 {
 	private readonly Panel _buttons;
-	
+
 	public string Title { get; set; } = "Engine";
 
 	public TitleBar()
@@ -24,7 +24,10 @@ public sealed class TitleBar : Panel
 
 		var title = new Text
 		{
-			Foreground = SKColors.White, FontFamily = FontFamily.FromFontName( "Segoe UI" ), Value = Title
+			Foreground = SKColors.White,
+			FontSize = 12,
+			FontFamily = FontFamily.FromFontName( "Segoe UI" ),
+			Value = Title
 		};
 		AddChild( title );
 

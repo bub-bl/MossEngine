@@ -41,12 +41,12 @@ public class Text : Panel
 		{
 			if ( field == value ) return;
 			field = value;
-			
+
 			_measurementPaint.TextSize = value;
 			MarkDirty();
 		}
-	}
-	
+	} = 12;
+
 	public SKColor Foreground
 	{
 		get => field;
@@ -54,11 +54,11 @@ public class Text : Panel
 		{
 			if ( field == value ) return;
 			field = value;
-			
+
 			_measurementPaint.Color = value;
 			MarkDirty();
 		}
-	}
+	} = SKColors.White;
 
 	public Text()
 	{
