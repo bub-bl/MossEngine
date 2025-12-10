@@ -1,6 +1,7 @@
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using MossEngine.Windowing.UI.Yoga;
+using NLog.Fluent;
 using Silk.NET.Input;
 using SkiaSharp;
 
@@ -16,19 +17,21 @@ public class TextField : Panel
 	private bool _isFocused;
 	private DateTime _lastCursorBlink = DateTime.Now;
 	private bool _cursorVisible = true;
+	private bool _isInitialDelete = true;
 	private const double CursorBlinkInterval = 0.5;
 
 	// Gestion de la suppression continue
 	private bool _deleteKeyDown;
-	private DateTime _lastDeleteTime = DateTime.MinValue;
-	private const double DeleteInitialDelay = 0.5; // Délai initial avant la répétition (en secondes)
-	private const double DeleteRepeatDelay = 0.05; // Délai entre chaque suppression (en secondes)
+	private DateTime _deleteStartTime = DateTime.MinValue;
+	private DateTime _nextDeleteTime = DateTime.MinValue;
+	private const double DeleteInitialDelay = 0.4; // Délai initial avant la répétition (en secondes)
+	private const double DeleteRepeatDelay = 0.025; // Délai entre chaque suppression (en secondes)
 
 	public SKColor TextColor { get; set; } = SKColors.Black;
-	public SKColor PlaceholderColor { get; set; } = new SKColor( 128, 128, 128 );
-	public SKColor SelectionColor { get; set; } = new SKColor( 0, 120, 215, 100 );
+	public SKColor PlaceholderColor { get; set; } = new( 128, 128, 128 );
+	public SKColor SelectionColor { get; set; } = new( 0, 120, 215, 100 );
 	public SKColor CursorColor { get; set; } = SKColors.Black;
-	public SKColor FocusBorderColor { get; set; } = new SKColor( 0, 120, 215 );
+	public SKColor FocusBorderColor { get; set; } = new( 0, 120, 215 );
 	public string Placeholder { get; set; } = string.Empty;
 	public float FontSize { get; set; } = 14f;
 	public string FontFamily { get; set; } = "Arial";
@@ -121,28 +124,25 @@ public class TextField : Panel
 		};
 	}
 
+	
 	protected override void OnUpdate()
 	{
-		// Gestion du clignotement du curseur
-		if ( _isFocused && (DateTime.Now - _lastCursorBlink).TotalSeconds >= CursorBlinkInterval )
+		// Curseur
+		if (_isFocused && (DateTime.Now - _lastCursorBlink).TotalSeconds >= CursorBlinkInterval)
 		{
 			_cursorVisible = !_cursorVisible;
 			_lastCursorBlink = DateTime.Now;
-
 			MarkDirty();
 		}
-		
-		// Gestion de la suppression continue
-		if ( _deleteKeyDown && _isFocused )
+
+		// Suppression continue
+		if (_deleteKeyDown && _isFocused)
 		{
 			var now = DateTime.Now;
-			var timeSinceLastDelete = (now - _lastDeleteTime).TotalSeconds;
-			var delay = _lastDeleteTime == DateTime.MinValue ? DeleteInitialDelay : DeleteRepeatDelay;
-
-			if ( timeSinceLastDelete >= delay )
+			if (now >= _nextDeleteTime)
 			{
-				HandleDelete( false );
-				_lastDeleteTime = now;
+				HandleDelete(false);
+				_nextDeleteTime = now + TimeSpan.FromSeconds(DeleteRepeatDelay);
 				MarkDirty();
 			}
 		}
@@ -330,15 +330,15 @@ public class TextField : Panel
 		return _text;
 	}
 
-	protected override void OnPointerClick( PointerEventArgs args )
+	protected override void OnPointerClick( PointerEventArgs args ) 
 	{
 		base.OnPointerClick( args );
 		IsFocused = true;
 
 		// Position cursor at click location
 		var clickX = args.ScreenPosition.X - GetFinalPosition().X - Padding.Left + _scrollX;
-		_cursorPosition = GetCharacterIndexAtX( clickX );
 
+		_cursorPosition = GetCharacterIndexAtX( clickX );
 		_cursorVisible = true;
 		_lastCursorBlink = DateTime.Now;
 
@@ -380,45 +380,40 @@ public class TextField : Panel
 		}
 	}
 
-	protected override void OnKeyDown( KeyEventArgs args )
+	protected override void OnKeyDown(KeyEventArgs args)
 	{
-		base.OnKeyDown( args );
+		base.OnKeyDown(args);
 
-		var shift = args.Modifiers.HasFlag( KeyModifiers.Shift );
-		var ctrl = args.Modifiers.HasFlag( KeyModifiers.Control );
+		var shift = args.Modifiers.HasFlag(KeyModifiers.Shift);
+		var ctrl = args.Modifiers.HasFlag(KeyModifiers.Control);
 
-		switch ( args.Key )
+		switch (args.Key)
 		{
+			case Key.Backspace:
+				if (!_deleteKeyDown)
+				{
+					_deleteKeyDown = true;
+					_deleteStartTime = DateTime.Now;
+					_nextDeleteTime = _deleteStartTime + TimeSpan.FromSeconds(DeleteInitialDelay);
+				}
+				break;
+
 			case Key.Left:
-				MoveCursor( -1, shift );
+				MoveCursor(-1, shift);
 				break;
 
 			case Key.Right:
-				MoveCursor( 1, shift );
+				MoveCursor(1, shift);
 				break;
 
 			case Key.Home:
 				_cursorPosition = 0;
-
-				if ( !shift ) ClearSelection();
-				else UpdateSelection();
-
+				if (!shift) ClearSelection(); else UpdateSelection();
 				break;
 
 			case Key.End:
 				_cursorPosition = _text.Length;
-
-				if ( !shift ) ClearSelection();
-				else UpdateSelection();
-
-				break;
-
-			case Key.Backspace:
-				_deleteKeyDown = true;
-				_lastDeleteTime = DateTime.Now;
-
-				// HandleBackspace();
-				HandleDelete( true );
+				if (!shift) ClearSelection(); else UpdateSelection();
 				break;
 
 			case Key.A when ctrl:
@@ -436,18 +431,22 @@ public class TextField : Panel
 			case Key.V when ctrl:
 				PasteFromClipboard();
 				break;
-
-			case Key.Enter:
-				// Could trigger a "Submit" event here
-				break;
 		}
 
 		EnsureCursorVisible();
-
 		_cursorVisible = true;
 		_lastCursorBlink = DateTime.Now;
-
 		MarkDirty();
+	}
+
+	protected override void OnKeyUp(KeyEventArgs args)
+	{
+		base.OnKeyUp(args);
+
+		if (args.Key == Key.Backspace)
+		{
+			_deleteKeyDown = false;
+		}
 	}
 
 	protected override void OnKeyChar( KeyEventArgs args )
@@ -457,18 +456,7 @@ public class TextField : Panel
 		if ( !_isFocused || IsReadOnly || args.Character is null ) return;
 		HandleCharacterInput( args.Character.Value );
 	}
-
-	protected override void OnKeyUp( KeyEventArgs args )
-	{
-		base.OnKeyUp( args );
-
-		if ( args.Key == Key.Backspace )
-		{
-			_deleteKeyDown = false;
-			_lastDeleteTime = DateTime.MinValue;
-		}
-	}
-
+	
 	private void MoveCursor( int delta, bool selecting )
 	{
 		var newPos = Math.Clamp( _cursorPosition + delta, 0, _text.Length );
@@ -528,7 +516,8 @@ public class TextField : Panel
 
 		if ( resetTimer )
 		{
-			_lastDeleteTime = DateTime.MinValue;
+			_deleteStartTime = DateTime.MinValue;
+			_nextDeleteTime = DateTime.MinValue;
 		}
 	}
 
