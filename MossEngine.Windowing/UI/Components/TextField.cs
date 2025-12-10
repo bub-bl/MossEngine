@@ -466,6 +466,9 @@ public class TextField : Panel
 
 				break;
 
+			case Key.Escape:
+				IsFocused = false;
+				break;
 			case Key.Up:
 				_cursorPosition = 0;
 				break;
