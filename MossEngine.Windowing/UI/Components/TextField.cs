@@ -8,14 +8,20 @@ namespace MossEngine.Windowing.UI.Components;
 public class TextField : Panel
 {
 	private string _text = string.Empty;
-	private int _cursorPosition = 0;
+	private int _cursorPosition;
 	private int _selectionStart = -1;
 	private int _selectionEnd = -1;
-	private float _scrollX = 0f;
-	private bool _isFocused = false;
+	private float _scrollX;
+	private bool _isFocused;
 	private DateTime _lastCursorBlink = DateTime.Now;
 	private bool _cursorVisible = true;
 	private const double CursorBlinkInterval = 0.5;
+
+	// Gestion de la suppression continue
+	private bool _deleteKeyDown;
+	private DateTime _lastDeleteTime = DateTime.MinValue;
+	private const double DeleteInitialDelay = 0.5; // Délai initial avant la répétition (en secondes)
+	private const double DeleteRepeatDelay = 0.05; // Délai entre chaque suppression (en secondes)
 
 	public SKColor TextColor { get; set; } = SKColors.Black;
 	public SKColor PlaceholderColor { get; set; } = new SKColor( 128, 128, 128 );
@@ -45,10 +51,10 @@ public class TextField : Panel
 			{
 				_text = value;
 				_cursorPosition = Math.Clamp( _cursorPosition, 0, _text.Length );
-				
+
 				ClearSelection();
 				MarkDirty();
-				
+
 				TextChanged?.Invoke( this, new TextChangedEventArgs( _text ) );
 			}
 		}
@@ -62,12 +68,12 @@ public class TextField : Panel
 			if ( _isFocused != value )
 			{
 				_isFocused = value;
-				
+
 				if ( _isFocused )
 				{
 					_cursorVisible = true;
 					_lastCursorBlink = DateTime.Now;
-					
+
 					FocusGained?.Invoke( this, EventArgs.Empty );
 				}
 				else
@@ -116,18 +122,29 @@ public class TextField : Panel
 
 	protected override void OnUpdate()
 	{
-		base.OnUpdate();
+		// Gestion du clignotement du curseur
+		if ( _isFocused && (DateTime.Now - _lastCursorBlink).TotalSeconds >= CursorBlinkInterval )
+		{
+			_cursorVisible = !_cursorVisible;
+			_lastCursorBlink = DateTime.Now;
 
-		// Cursor blink animation
-		if ( !_isFocused ) return;
+			MarkDirty();
+		}
+		
+		// Gestion de la suppression continue
+		if ( _deleteKeyDown && _isFocused )
+		{
+			var now = DateTime.Now;
+			var timeSinceLastDelete = (now - _lastDeleteTime).TotalSeconds;
+			var delay = _lastDeleteTime == DateTime.MinValue ? DeleteInitialDelay : DeleteRepeatDelay;
 
-		var elapsed = (DateTime.Now - _lastCursorBlink).TotalSeconds;
-		if ( !(elapsed >= CursorBlinkInterval) ) return;
-
-		_cursorVisible = !_cursorVisible;
-		_lastCursorBlink = DateTime.Now;
-
-		MarkDirty();
+			if ( timeSinceLastDelete >= delay )
+			{
+				HandleDelete( false );
+				_lastDeleteTime = now;
+				MarkDirty();
+			}
+		}
 	}
 
 	public override void Draw( SKCanvas canvas )
@@ -381,6 +398,8 @@ public class TextField : Panel
 		var shift = args.Modifiers.HasFlag( KeyModifiers.Shift );
 		var ctrl = args.Modifiers.HasFlag( KeyModifiers.Control );
 
+		Console.WriteLine( "Keydown: " + args.Key );
+
 		switch ( args.Key )
 		{
 			case Key.Left:
@@ -408,11 +427,11 @@ public class TextField : Panel
 				break;
 
 			case Key.Backspace:
-				HandleBackspace();
-				break;
+				_deleteKeyDown = true;
+				_lastDeleteTime = DateTime.Now;
 
-			case Key.Delete:
-				HandleDelete();
+				// HandleBackspace();
+				HandleDelete( true );
 				break;
 
 			case Key.A when ctrl:
@@ -450,6 +469,17 @@ public class TextField : Panel
 
 		if ( !_isFocused || IsReadOnly || args.Character is null ) return;
 		HandleCharacterInput( args.Character.Value );
+	}
+
+	protected override void OnKeyUp( KeyEventArgs args )
+	{
+		base.OnKeyUp( args );
+
+		if ( args.Key == Key.Backspace )
+		{
+			_deleteKeyDown = false;
+			_lastDeleteTime = DateTime.MinValue;
+		}
 	}
 
 	private void MoveCursor( int delta, bool selecting )
@@ -495,7 +525,7 @@ public class TextField : Panel
 		TextChanged?.Invoke( this, new TextChangedEventArgs( _text ) );
 	}
 
-	private void HandleBackspace()
+	private void HandleDelete( bool resetTimer = true )
 	{
 		if ( HasSelection() )
 		{
@@ -505,21 +535,13 @@ public class TextField : Panel
 		{
 			_text = _text.Remove( _cursorPosition - 1, 1 );
 			_cursorPosition--;
-
+			
 			TextChanged?.Invoke( this, new TextChangedEventArgs( _text ) );
 		}
-	}
 
-	private void HandleDelete()
-	{
-		if ( HasSelection() )
+		if ( resetTimer )
 		{
-			DeleteSelection();
-		}
-		else if ( _cursorPosition < _text.Length )
-		{
-			_text = _text.Remove( _cursorPosition, 1 );
-			TextChanged?.Invoke( this, new TextChangedEventArgs( _text ) );
+			_lastDeleteTime = DateTime.MinValue;
 		}
 	}
 
