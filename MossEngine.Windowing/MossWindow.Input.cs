@@ -22,12 +22,14 @@ public abstract partial class MossWindow
 	{
 		keyboard.KeyDown += InternalOnKeyDown;
 		keyboard.KeyUp += InternalOnKeyUp;
+		keyboard.KeyChar += InternalOnKeyChar;
 	}
 
 	private void UnregisterKeyboardEvents( IKeyboard keyboard )
 	{
 		keyboard.KeyDown -= InternalOnKeyDown;
 		keyboard.KeyUp -= InternalOnKeyUp;
+		keyboard.KeyChar -= InternalOnKeyChar;
 	}
 
 	private void RegisterMouseEvents( IMouse mouse )
@@ -78,19 +80,28 @@ public abstract partial class MossWindow
 
 	private void InternalOnKeyUp( IKeyboard arg1, Key arg2, int arg3 )
 	{
-		OnKeyUp( arg2 );
+		OnKeyUp( arg1, arg2 );
 	}
 
 	private void InternalOnKeyDown( IKeyboard arg1, Key arg2, int arg3 )
 	{
-		OnKeyDown( arg2 );
+		OnKeyDown( arg1, arg2 );
+	}
+	
+	private void InternalOnKeyChar( IKeyboard arg1, char arg2 )
+	{
+		OnKeyChar( arg1, arg2 );
 	}
 
-	protected virtual void OnKeyUp( Key key )
+	protected virtual void OnKeyUp( IKeyboard keyboard, Key key )
 	{
 	}
 
-	protected virtual void OnKeyDown( Key key )
+	protected virtual void OnKeyDown( IKeyboard keyboard, Key key )
+	{
+	}
+	
+	protected virtual void OnKeyChar( IKeyboard keyboard, char key )
 	{
 	}
 
