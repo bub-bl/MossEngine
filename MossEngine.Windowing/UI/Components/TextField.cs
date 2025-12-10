@@ -1,7 +1,5 @@
 using System.Numerics;
-using System.Runtime.CompilerServices;
 using MossEngine.Windowing.UI.Yoga;
-using NLog.Fluent;
 using Silk.NET.Input;
 using SkiaSharp;
 
@@ -307,18 +305,18 @@ public class TextField : Panel
 		}
 	}
 
-	private void DrawSelection( SKCanvas canvas, float x, float y, float height )
+	private void DrawSelection(SKCanvas canvas, float x, float y, float height)
 	{
-		if ( _textPaint is null ) return;
+		if (_textPaint is null) return;
 
 		var displayText = GetDisplayText();
 		var (start, end) = GetOrderedSelection();
 
 		var textBeforeSelection = displayText[..start];
-		var selectedText = displayText.Substring( start, end - start );
+		var selectedText = displayText.Substring(start, end - start);
 
-		var startX = x - _scrollX + _textPaint.MeasureText( textBeforeSelection );
-		var selectionWidth = _textPaint.MeasureText( selectedText );
+		var startX = x - _scrollX + _textPaint.MeasureText(textBeforeSelection);
+		var selectionWidth = _textPaint.MeasureText(selectedText);
 
 		using var selectionPaint = new SKPaint();
 		selectionPaint.Color = SelectionColor;
@@ -326,9 +324,11 @@ public class TextField : Panel
 
 		var metrics = _textPaint.FontMetrics;
 		var textHeight = metrics.Descent - metrics.Ascent;
-		var selectionY = y + (height - textHeight) / 2 + metrics.Ascent;
 
-		canvas.DrawRect( startX, selectionY, selectionWidth, textHeight, selectionPaint );
+		// Aligner le rectangle sur le haut du texte
+		var selectionY = y + (height - textHeight) / 2;
+
+		canvas.DrawRect(startX, selectionY, selectionWidth, textHeight, selectionPaint);
 	}
 
 	private void DrawText( SKCanvas canvas, float x, float y, float height )
