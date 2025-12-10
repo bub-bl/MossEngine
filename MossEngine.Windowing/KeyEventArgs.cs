@@ -9,6 +9,5 @@ public sealed class KeyEventArgs( object target, IKeyboard keyboard ) : EventArg
 	public object Target { get; } = target;
 	public Key? Key { get; set; }
 	public char? Character { get; set; }
-	public KeyModifiers Modifiers { get; set; }
 	public bool Handled { get; set; }
 }

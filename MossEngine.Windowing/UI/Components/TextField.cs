@@ -1,5 +1,6 @@
 using System.Numerics;
 using MossEngine.Windowing.UI.Yoga;
+using NLog.Fluent;
 using Silk.NET.Input;
 using SkiaSharp;
 
@@ -446,8 +447,8 @@ public class TextField : Panel
 	{
 		base.OnKeyDown( args );
 
-		var shift = args.Modifiers.HasFlag( KeyModifiers.Shift );
-		var ctrl = args.Modifiers.HasFlag( KeyModifiers.Control );
+		var shift = args.Keyboard.IsKeyPressed( Key.ShiftLeft );
+		var ctrl = args.Keyboard.IsKeyPressed( Key.ControlLeft );
 
 		switch ( args.Key )
 		{
@@ -456,12 +457,9 @@ public class TextField : Panel
 				{
 					_deleteKeyDown = true;
 					_deleteStartTime = DateTime.Now;
-					// suppression immédiate
 					HandleDelete( false );
-					// planifier la prochaine suppression après le délai initial
 					_nextDeleteTime = _deleteStartTime + TimeSpan.FromSeconds( DeleteInitialDelay );
 
-					// during deletion hold, make cursor visible and reset blink timestamp
 					_cursorVisible = true;
 					_lastCursorBlink = DateTime.Now;
 				}
@@ -472,7 +470,6 @@ public class TextField : Panel
 			case Key.Right:
 			case Key.Home:
 			case Key.End:
-				// start arrow repeating if not already
 				if ( !_arrowKeyDown )
 				{
 					_arrowKeyDown = true;
@@ -480,10 +477,7 @@ public class TextField : Panel
 					_arrowSelecting = shift;
 					_arrowStartTime = DateTime.Now;
 
-					// action immédiate
 					PerformArrowAction( _currentArrowKey, _arrowSelecting );
-
-					// planifier la prochaine action après délai initial
 					_nextArrowTime = _arrowStartTime + TimeSpan.FromSeconds( ArrowInitialDelay );
 
 					_cursorVisible = true;
@@ -492,8 +486,11 @@ public class TextField : Panel
 
 				break;
 
-			case Key.A when ctrl:
+			case Key.Q when ctrl:
 				SelectAll();
+				_cursorVisible = true;
+				_lastCursorBlink = DateTime.Now;
+				MarkDirty();
 				break;
 
 			case Key.C when ctrl:
@@ -510,9 +507,6 @@ public class TextField : Panel
 		}
 
 		EnsureCursorVisible();
-		_cursorVisible = true;
-		_lastCursorBlink = DateTime.Now;
-		MarkDirty();
 	}
 
 	protected override void OnKeyUp( KeyEventArgs args )
