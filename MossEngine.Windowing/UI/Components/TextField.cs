@@ -466,6 +466,12 @@ public class TextField : Panel
 
 				break;
 
+			case Key.Up:
+				_cursorPosition = 0;
+				break;
+			case Key.Down:
+				_cursorPosition = _text.Length;
+				break;
 			case Key.Left:
 			case Key.Right:
 			case Key.Home:
