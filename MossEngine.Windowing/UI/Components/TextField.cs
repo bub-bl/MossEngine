@@ -17,21 +17,29 @@ public class TextField : Panel
 	private bool _isFocused;
 	private DateTime _lastCursorBlink = DateTime.Now;
 	private bool _cursorVisible = true;
-	private bool _isInitialDelete = true;
 	private const double CursorBlinkInterval = 0.5;
 
-	// Gestion de la suppression continue
+	// Suppression continue (Backspace)
 	private bool _deleteKeyDown;
 	private DateTime _deleteStartTime = DateTime.MinValue;
 	private DateTime _nextDeleteTime = DateTime.MinValue;
-	private const double DeleteInitialDelay = 0.4; // Délai initial avant la répétition (en secondes)
-	private const double DeleteRepeatDelay = 0.025; // Délai entre chaque suppression (en secondes)
+	private const double DeleteInitialDelay = 0.4; // délai initial avant répétition
+	private const double DeleteRepeatDelay = 0.025; // délai entre répétitions
+
+	// Déplacement curseur répétitif (flèches, Home, End)
+	private bool _arrowKeyDown;
+	private Key _currentArrowKey;
+	private bool _arrowSelecting; // si Shift était pressé lors du keydown
+	private DateTime _arrowStartTime = DateTime.MinValue;
+	private DateTime _nextArrowTime = DateTime.MinValue;
+	private const double ArrowInitialDelay = DeleteInitialDelay;
+	private const double ArrowRepeatDelay = DeleteRepeatDelay;
 
 	public SKColor TextColor { get; set; } = SKColors.Black;
-	public SKColor PlaceholderColor { get; set; } = new( 128, 128, 128 );
-	public SKColor SelectionColor { get; set; } = new( 0, 120, 215, 100 );
+	public SKColor PlaceholderColor { get; set; } = new(128, 128, 128);
+	public SKColor SelectionColor { get; set; } = new(0, 120, 215, 100);
 	public SKColor CursorColor { get; set; } = SKColors.Black;
-	public SKColor FocusBorderColor { get; set; } = new( 0, 120, 215 );
+	public SKColor FocusBorderColor { get; set; } = new(0, 120, 215);
 	public string Placeholder { get; set; } = string.Empty;
 	public float FontSize { get; set; } = 14f;
 	public string FontFamily { get; set; } = "Arial";
@@ -124,35 +132,79 @@ public class TextField : Panel
 		};
 	}
 
-	
 	protected override void OnUpdate()
 	{
-		// Curseur
-		if (_isFocused && (DateTime.Now - _lastCursorBlink).TotalSeconds >= CursorBlinkInterval)
+		// Curseur : ne pas clignoter quand on maintient une flèche (ou potentiellement une suppression)
+		if ( _isFocused && !_arrowKeyDown && (DateTime.Now - _lastCursorBlink).TotalSeconds >= CursorBlinkInterval )
 		{
 			_cursorVisible = !_cursorVisible;
 			_lastCursorBlink = DateTime.Now;
 			MarkDirty();
 		}
 
-		// Suppression continue
-		if (_deleteKeyDown && _isFocused)
+		var now = DateTime.Now;
+
+		// Suppression continue (Backspace): initial immediate handled in OnKeyDown, puis répétitions après delay
+		if ( _deleteKeyDown && _isFocused )
 		{
-			var now = DateTime.Now;
-			if (now >= _nextDeleteTime)
+			if ( now >= _nextDeleteTime )
 			{
-				HandleDelete(false);
-				_nextDeleteTime = now + TimeSpan.FromSeconds(DeleteRepeatDelay);
+				HandleDelete( false );
+				_nextDeleteTime = now + TimeSpan.FromSeconds( DeleteRepeatDelay );
+				// pendant suppression continue, garder curseur visible et reset blink timestamp
+				_cursorVisible = true;
+				_lastCursorBlink = DateTime.Now;
 				MarkDirty();
 			}
 		}
+
+		// Déplacement curseur répétitif (flèches, Home, End)
+		if ( _arrowKeyDown && _isFocused )
+		{
+			if ( now >= _nextArrowTime )
+			{
+				PerformArrowAction( _currentArrowKey, _arrowSelecting );
+				_nextArrowTime = now + TimeSpan.FromSeconds( ArrowRepeatDelay );
+
+				// pendant déplacement continu, curseur visible et ne doit pas clignoter
+				_cursorVisible = true;
+				_lastCursorBlink = DateTime.Now;
+				MarkDirty();
+			}
+		}
+	}
+
+	// Effectue l'action pour une touche flèche/Home/End (appui immédiat ou répétition)
+	private void PerformArrowAction( Key key, bool selecting )
+	{
+		switch ( key )
+		{
+			case Key.Left:
+				MoveCursor( -1, selecting );
+				break;
+			case Key.Right:
+				MoveCursor( 1, selecting );
+				break;
+			case Key.Home:
+				_cursorPosition = 0;
+				if ( !selecting ) ClearSelection();
+				else UpdateSelection();
+				break;
+			case Key.End:
+				_cursorPosition = _text.Length;
+				if ( !selecting ) ClearSelection();
+				else UpdateSelection();
+				break;
+		}
+
+		EnsureCursorVisible();
 	}
 
 	public override void Draw( SKCanvas canvas )
 	{
 		if ( Display is YogaDisplay.None ) return;
 
-		// Update paint colors in case they changed
+		// Update paints
 		if ( _textPaint is not null )
 		{
 			_textPaint.Color = TextColor;
@@ -182,14 +234,14 @@ public class TextField : Panel
 
 		canvas.Save();
 		canvas.ClipRect( new SKRect( contentX, contentY, contentX + contentWidth, contentY + contentHeight ) );
-		
-		// Draw selection
+
+		// Selection
 		if ( HasSelection() && _isFocused )
 		{
 			DrawSelection( canvas, contentX, contentY, contentHeight );
 		}
 
-		// Draw text or placeholder
+		// Text / Placeholder
 		if ( string.IsNullOrEmpty( _text ) && !string.IsNullOrEmpty( Placeholder ) && !_isFocused )
 		{
 			DrawPlaceholder( canvas, contentX, contentY, contentHeight );
@@ -199,7 +251,7 @@ public class TextField : Panel
 			DrawText( canvas, contentX, contentY, contentHeight );
 		}
 
-		// Draw cursor
+		// Cursor
 		if ( _isFocused && _cursorVisible && !HasSelection() )
 		{
 			DrawCursor( canvas, contentX, contentY, contentHeight );
@@ -330,7 +382,7 @@ public class TextField : Panel
 		return _text;
 	}
 
-	protected override void OnPointerClick( PointerEventArgs args ) 
+	protected override void OnPointerClick( PointerEventArgs args )
 	{
 		base.OnPointerClick( args );
 		IsFocused = true;
@@ -380,40 +432,54 @@ public class TextField : Panel
 		}
 	}
 
-	protected override void OnKeyDown(KeyEventArgs args)
+	protected override void OnKeyDown( KeyEventArgs args )
 	{
-		base.OnKeyDown(args);
+		base.OnKeyDown( args );
 
-		var shift = args.Modifiers.HasFlag(KeyModifiers.Shift);
-		var ctrl = args.Modifiers.HasFlag(KeyModifiers.Control);
+		var shift = args.Modifiers.HasFlag( KeyModifiers.Shift );
+		var ctrl = args.Modifiers.HasFlag( KeyModifiers.Control );
 
-		switch (args.Key)
+		switch ( args.Key )
 		{
 			case Key.Backspace:
-				if (!_deleteKeyDown)
+				if ( !_deleteKeyDown )
 				{
 					_deleteKeyDown = true;
 					_deleteStartTime = DateTime.Now;
-					_nextDeleteTime = _deleteStartTime + TimeSpan.FromSeconds(DeleteInitialDelay);
+					// suppression immédiate
+					HandleDelete( false );
+					// planifier la prochaine suppression après le délai initial
+					_nextDeleteTime = _deleteStartTime + TimeSpan.FromSeconds( DeleteInitialDelay );
+
+					// during deletion hold, make cursor visible and reset blink timestamp
+					_cursorVisible = true;
+					_lastCursorBlink = DateTime.Now;
 				}
+
 				break;
 
 			case Key.Left:
-				MoveCursor(-1, shift);
-				break;
-
 			case Key.Right:
-				MoveCursor(1, shift);
-				break;
-
 			case Key.Home:
-				_cursorPosition = 0;
-				if (!shift) ClearSelection(); else UpdateSelection();
-				break;
-
 			case Key.End:
-				_cursorPosition = _text.Length;
-				if (!shift) ClearSelection(); else UpdateSelection();
+				// start arrow repeating if not already
+				if ( !_arrowKeyDown )
+				{
+					_arrowKeyDown = true;
+					_currentArrowKey = args.Key.Value;
+					_arrowSelecting = shift;
+					_arrowStartTime = DateTime.Now;
+
+					// action immédiate
+					PerformArrowAction( _currentArrowKey, _arrowSelecting );
+
+					// planifier la prochaine action après délai initial
+					_nextArrowTime = _arrowStartTime + TimeSpan.FromSeconds( ArrowInitialDelay );
+
+					_cursorVisible = true;
+					_lastCursorBlink = DateTime.Now;
+				}
+
 				break;
 
 			case Key.A when ctrl:
@@ -439,13 +505,25 @@ public class TextField : Panel
 		MarkDirty();
 	}
 
-	protected override void OnKeyUp(KeyEventArgs args)
+	protected override void OnKeyUp( KeyEventArgs args )
 	{
-		base.OnKeyUp(args);
+		base.OnKeyUp( args );
 
-		if (args.Key == Key.Backspace)
+		// Backspace released
+		if ( args.Key == Key.Backspace )
 		{
 			_deleteKeyDown = false;
+			_deleteStartTime = DateTime.MinValue;
+			_nextDeleteTime = DateTime.MinValue;
+		}
+
+		// Arrow/Home/End released
+		if ( args.Key == _currentArrowKey &&
+		     (args.Key == Key.Left || args.Key == Key.Right || args.Key == Key.Home || args.Key == Key.End) )
+		{
+			_arrowKeyDown = false;
+			_arrowStartTime = DateTime.MinValue;
+			_nextArrowTime = DateTime.MinValue;
 		}
 	}
 
@@ -456,7 +534,7 @@ public class TextField : Panel
 		if ( !_isFocused || IsReadOnly || args.Character is null ) return;
 		HandleCharacterInput( args.Character.Value );
 	}
-	
+
 	private void MoveCursor( int delta, bool selecting )
 	{
 		var newPos = Math.Clamp( _cursorPosition + delta, 0, _text.Length );
@@ -510,7 +588,7 @@ public class TextField : Panel
 		{
 			_text = _text.Remove( _cursorPosition - 1, 1 );
 			_cursorPosition--;
-			
+
 			TextChanged?.Invoke( this, new TextChangedEventArgs( _text ) );
 		}
 
