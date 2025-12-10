@@ -24,15 +24,21 @@ public partial class EngineWindow
 		RootPanel.ProcessPointerDown( e );
 	}
 
-	protected override void OnKeyUp( Key key )
+	protected override void OnKeyUp( IKeyboard keyboard, Key key )
 	{
-		base.OnKeyUp( key );
-		RootPanel.ProcessKeyUp( key );
+		base.OnKeyUp( keyboard, key );
+		RootPanel.ProcessKeyUp( keyboard, key );
 	}
 
-	protected override void OnKeyDown( Key key )
+	protected override void OnKeyDown( IKeyboard keyboard, Key key )
 	{
-		base.OnKeyDown( key );
-		RootPanel.ProcessKeyDown( key );
+		base.OnKeyDown( keyboard, key );
+		RootPanel.ProcessKeyDown( keyboard, key );
+	}
+	
+	protected override void OnKeyChar( IKeyboard keyboard, char key )
+	{
+		base.OnKeyChar( keyboard, key );
+		RootPanel.ProcessKeyChar( keyboard, key );
 	}
 }

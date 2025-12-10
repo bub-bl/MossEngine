@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using MossEngine.Windowing.UI.Yoga;
+using Silk.NET.Input;
 
 namespace MossEngine.Windowing.UI;
 
@@ -13,6 +14,7 @@ public partial class Panel
 	public event EventHandler<PointerEventArgs>? PointerClick;
 	public event EventHandler<KeyEventArgs>? KeyDown;
 	public event EventHandler<KeyEventArgs>? KeyUp;
+	public event EventHandler<KeyEventArgs>? KeyChar;
 
 	public bool IsInside()
 	{
@@ -94,6 +96,12 @@ public partial class Panel
 		KeyUp?.Invoke( this, args );
 		OnKeyUp( args );
 	}
+	
+	internal void RaiseKeyChar( KeyEventArgs args )
+	{
+		KeyChar?.Invoke( this, args );
+		OnKeyChar( args );
+	}
 
 	protected virtual void OnPointerEnter( PointerEventArgs args )
 	{
@@ -124,6 +132,10 @@ public partial class Panel
 	}
 
 	protected virtual void OnKeyUp( KeyEventArgs args )
+	{
+	}
+	
+	protected virtual void OnKeyChar( KeyEventArgs args )
 	{
 	}
 }

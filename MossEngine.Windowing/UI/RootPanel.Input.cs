@@ -67,19 +67,27 @@ public partial class RootPanel
 		_activeButton = null;
 	}
 
-	public void ProcessKeyDown( Key key )
+	public void ProcessKeyDown( IKeyboard keyboard, Key key )
 	{
 		if ( _focusedPanel is null ) return;
 
-		var args = new KeyEventArgs( _focusedPanel, key );
+		var args = new KeyEventArgs( _focusedPanel, keyboard ) { Key = key };
 		_focusedPanel.RaiseKeyDown( args );
 	}
 
-	public void ProcessKeyUp( Key key )
+	public void ProcessKeyUp( IKeyboard keyboard, Key key )
 	{
 		if ( _focusedPanel is null ) return;
 
-		var args = new KeyEventArgs( _focusedPanel, key );
+		var args = new KeyEventArgs( _focusedPanel, keyboard ) { Key = key };
 		_focusedPanel.RaiseKeyUp( args );
+	}
+
+	public void ProcessKeyChar( IKeyboard keyboard, char key )
+	{
+		if ( _focusedPanel is null ) return;
+
+		var args = new KeyEventArgs( _focusedPanel, keyboard ) { Character = key };
+		_focusedPanel.RaiseKeyChar( args );
 	}
 }
