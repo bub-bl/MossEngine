@@ -250,9 +250,18 @@ public class TextField : Panel
 		}
 
 		// Cursor
-		if ( _isFocused && _cursorVisible && !HasSelection() )
+		if ( _isFocused && _cursorVisible )
 		{
-			DrawCursor( canvas, contentX, contentY, contentHeight );
+			float cursorPos = _cursorPosition;
+
+			// Si une sélection est active, placer curseur à la fin de la sélection
+			if ( HasSelection() )
+			{
+				var (_, end) = GetOrderedSelection();
+				cursorPos = end;
+			}
+
+			DrawCursor( canvas, contentX, contentY, contentHeight, cursorPos );
 		}
 
 		canvas.Restore();
@@ -305,18 +314,18 @@ public class TextField : Panel
 		}
 	}
 
-	private void DrawSelection(SKCanvas canvas, float x, float y, float height)
+	private void DrawSelection( SKCanvas canvas, float x, float y, float height )
 	{
-		if (_textPaint is null) return;
+		if ( _textPaint is null ) return;
 
 		var displayText = GetDisplayText();
 		var (start, end) = GetOrderedSelection();
 
 		var textBeforeSelection = displayText[..start];
-		var selectedText = displayText.Substring(start, end - start);
+		var selectedText = displayText.Substring( start, end - start );
 
-		var startX = x - _scrollX + _textPaint.MeasureText(textBeforeSelection);
-		var selectionWidth = _textPaint.MeasureText(selectedText);
+		var startX = x - _scrollX + _textPaint.MeasureText( textBeforeSelection );
+		var selectionWidth = _textPaint.MeasureText( selectedText );
 
 		using var selectionPaint = new SKPaint();
 		selectionPaint.Color = SelectionColor;
@@ -328,7 +337,7 @@ public class TextField : Panel
 		// Aligner le rectangle sur le haut du texte
 		var selectionY = y + (height - textHeight) / 2;
 
-		canvas.DrawRect(startX, selectionY, selectionWidth, textHeight, selectionPaint);
+		canvas.DrawRect( startX, selectionY, selectionWidth, textHeight, selectionPaint );
 	}
 
 	private void DrawText( SKCanvas canvas, float x, float y, float height )
@@ -354,12 +363,12 @@ public class TextField : Panel
 		canvas.DrawText( Placeholder, x, textY, _placeholderPaint );
 	}
 
-	private void DrawCursor( SKCanvas canvas, float x, float y, float height )
+	private void DrawCursor( SKCanvas canvas, float x, float y, float height, float cursorPosition )
 	{
 		if ( _textPaint is null ) return;
 
 		var displayText = GetDisplayText();
-		var textBeforeCursor = displayText[.._cursorPosition];
+		var textBeforeCursor = displayText[..(int)cursorPosition];
 		var cursorX = x - _scrollX + _textPaint.MeasureText( textBeforeCursor );
 
 		using var cursorPaint = new SKPaint();
@@ -373,6 +382,7 @@ public class TextField : Panel
 
 		canvas.DrawLine( cursorX, cursorY, cursorX, cursorY + textHeight, cursorPaint );
 	}
+
 
 	private string GetDisplayText()
 	{
