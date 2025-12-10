@@ -1,4 +1,5 @@
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using MossEngine.Windowing.UI.Yoga;
 using Silk.NET.Input;
 using SkiaSharp;
@@ -181,7 +182,7 @@ public class TextField : Panel
 
 		canvas.Save();
 		canvas.ClipRect( new SKRect( contentX, contentY, contentX + contentWidth, contentY + contentHeight ) );
-
+		
 		// Draw selection
 		if ( HasSelection() && _isFocused )
 		{
@@ -338,8 +339,6 @@ public class TextField : Panel
 		var clickX = args.ScreenPosition.X - GetFinalPosition().X - Padding.Left + _scrollX;
 		_cursorPosition = GetCharacterIndexAtX( clickX );
 
-		ClearSelection();
-
 		_cursorVisible = true;
 		_lastCursorBlink = DateTime.Now;
 
@@ -381,24 +380,12 @@ public class TextField : Panel
 		}
 	}
 
-	protected override void OnPointerUp( PointerEventArgs args )
-	{
-		base.OnPointerUp( args );
-
-		if ( _selectionStart >= 0 && _selectionEnd >= 0 && _selectionStart == _selectionEnd )
-		{
-			ClearSelection();
-		}
-	}
-
 	protected override void OnKeyDown( KeyEventArgs args )
 	{
 		base.OnKeyDown( args );
 
 		var shift = args.Modifiers.HasFlag( KeyModifiers.Shift );
 		var ctrl = args.Modifiers.HasFlag( KeyModifiers.Control );
-
-		Console.WriteLine( "Keydown: " + args.Key );
 
 		switch ( args.Key )
 		{
