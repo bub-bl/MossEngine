@@ -58,7 +58,7 @@ public sealed class TitleBar : Panel
 		};
 		_buttons.AddChild( maximizeButton );
 
-		var closeButton = new TitleBarButton( '\uE8bb', SKColor.FromHsl( 0, 50, 40 ) );
+		var closeButton = new TitleBarButton( '\uE8bb', SKColor.FromHsl( 0, 100, 40 ) );
 		closeButton.PointerUp += ( sender, args ) =>
 		{
 			ParentWindow?.Close();

@@ -38,9 +38,7 @@ public sealed class ResizablePanel : Panel, IDisposable
 			Height = Length.Percent( 100 ),
 			Flex = 1,
 			FlexGrow = 1,
-			FlexShrink = 1,
-			Background = SKColors.Red,
-			IsHitTestVisible = false
+			FlexShrink = 1
 		};
 
 		ResizableEdges = resizableEdges;

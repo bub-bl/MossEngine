@@ -15,7 +15,4 @@ using MossEngine.WebGpu;
 WebGpuApi.Initialize();
 
 var window = new EditorWindow();
-
-Editor.MainWindow = window;
-
 window.Run();
