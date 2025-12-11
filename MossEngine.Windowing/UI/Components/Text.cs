@@ -76,20 +76,6 @@ public class Text : Panel
 
 		float textX;
 
-		// Calcul de la position X en fonction de l'alignement
-		// var textX = position.X;
-
-		// // Ajustement pour le texte aligné à droite
-		// if ( YogaNode.AlignSelf == YogaAlign.FlexEnd ||
-		//      (YogaNode.Parent?.JustifyContent == YogaJustify.FlexEnd && YogaNode.AlignSelf == YogaAlign.Auto) )
-		// {
-		// 	textX = position.X + LayoutWidth - bounds.Width - bounds.Left;
-		// }
-		// else
-		// {
-		// 	textX = position.X - bounds.Left;
-		// }
-
 		// Ajustement pour le texte aligné à droite
 		// TODO - Nous ne devrions pas avoir besoin de ce code
 		if ( Parent?.JustifyContent is YogaJustify.FlexEnd )
@@ -103,21 +89,6 @@ public class Text : Panel
 
 		var containerCenter = position.Y + LayoutHeight / 2f;
 		var baseline = containerCenter - (metrics.Ascent + metrics.Descent) / 2f;
-
-		// // Dessiner le fond avec la largeur réelle du texte
-		// using ( var paint = new SKPaint() )
-		// {
-		// 	paint.Color = Background;
-		// 	canvas.DrawRect(
-		// 		new SKRect(
-		// 			textX + bounds.Left,
-		// 			position.Y,
-		// 			textX + bounds.Width + bounds.Left,
-		// 			position.Y + LayoutHeight
-		// 		),
-		// 		paint
-		// 	);
-		// }
 
 		new SkiaRectBuilder( canvas )
 			.WithRect( new SKRect( textX + bounds.Left, position.Y, textX + bounds.Width + bounds.Left,

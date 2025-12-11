@@ -19,7 +19,6 @@ public partial class Panel
 
 	// Style-ish properties (very minimal)
 	public SKColor Background { get; set; } = SKColors.Transparent;
-	public SKColor Foreground { get; set; } = SKColors.Black;
 
 	// Propriétés de la bordure
 	public SKColor StrokeColor { get; set; } = SKColors.Transparent;
@@ -133,7 +132,7 @@ public partial class Panel
 	{
 	}
 
-	protected internal Vector2 GetFinalPosition()
+	protected Vector2 GetFinalPosition()
 	{
 		var local = new Vector2( YogaNode.LayoutLeft, YogaNode.LayoutTop );
 
