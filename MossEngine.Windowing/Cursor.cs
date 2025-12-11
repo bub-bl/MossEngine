@@ -7,7 +7,7 @@ namespace MossEngine.Windowing;
 public static class Cursor
 {
 	private static IInputContext? _input;
-
+	
 	public static Vector2 MousePosition
 	{
 		get

@@ -23,10 +23,6 @@ public abstract unsafe partial class MossWindow( string title, int width, int he
 	private readonly SkiaRenderPipeline _skiaRenderPipeline = new();
 	private RootPanelRenderer _rootPanelRenderer = null!;
 
-	// private RootPanelRenderer _rootPanelRenderer = null!;
-	//
-	// public RootPanel RootPanel { get; private set; } = null!;
-
 	public RenderPassEncoder* RenderPassEncoder { get; private set; }
 	public WebGpuDevice Device { get; private set; } = null!;
 	public IWindow Window { get; private set; } = null!;
@@ -111,14 +107,12 @@ public abstract unsafe partial class MossWindow( string title, int width, int he
 
 	protected virtual void OnInitialized()
 	{
+		_rootPanelRenderer = new RootPanelRenderer( Window, RootPanel );
+		
 		RootPanel.Flex = 1;
 		RootPanel.FlexDirection = YogaFlexDirection.Column;
 		RootPanel.Background = SKColors.Black;
 		RootPanel.Resize( Window.Size.X, Window.Size.Y );
-
-		_rootPanelRenderer = new RootPanelRenderer( Window, RootPanel );
-
-		// TitleBar = new TitleBar();
 		RootPanel.AddChild( TitleBar );
 
 		FrameContent.Width = Length.Percent( 100 );
@@ -154,7 +148,6 @@ public abstract unsafe partial class MossWindow( string title, int width, int he
 	private void InternalOnSkiaDraw( SKCanvas canvas, Vector2D<int> size )
 	{
 		OnDraw( canvas, size );
-		OnTitleBarDraw( canvas, size );
 	}
 
 	protected virtual void OnDraw( SKCanvas canvas, Vector2D<int> size )
@@ -163,24 +156,8 @@ public abstract unsafe partial class MossWindow( string title, int width, int he
 		_rootPanelRenderer.Render( canvas );
 	}
 
-	protected virtual void OnTitleBarDraw( SKCanvas canvas, Vector2D<int> size )
-	{
-		// var paint = new SKPaint
-		// {
-		// 	Color = SKColors.Red,
-		// 	Style = SKPaintStyle.Fill,
-		// 	IsAntialias = true,
-		// 	StrokeWidth = 1,
-		// };
-		//
-		// // canvas.DrawColor( SKColors.Black );
-		// canvas.DrawRect(0, 0, size.X, 32, paint);
-	}
-
 	public void Dispose()
 	{
-		// WindowsTitlebarHelper.DisableCustomTitlebar(); // restore if possible
-
 		_skiaRenderPipeline.Dispose();
 		_imGuiController.Dispose();
 

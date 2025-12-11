@@ -14,9 +14,7 @@ public sealed class EditorWindow() : EngineWindow( "Editor" )
 	{
 		var mainLayout = new Panel
 		{
-			Width = Length.Percent( 100 ),
-			Height = Length.Percent( 100 ),
-			FlexDirection = YogaFlexDirection.Column
+			Width = Length.Percent( 100 ), Height = Length.Percent( 100 ), FlexDirection = YogaFlexDirection.Column
 		};
 		FrameContent.AddChild( mainLayout );
 
@@ -44,14 +42,11 @@ public sealed class EditorWindow() : EngineWindow( "Editor" )
 		// ═══════════════════════════════════════════════════════════════
 		var mainContainer = new Panel
 		{
-			Width = Length.Percent( 100 ),
-			Height = Length.Percent( 100 ),
-			FlexDirection = YogaFlexDirection.Row
+			Width = Length.Percent( 100 ), Height = Length.Percent( 100 ), FlexDirection = YogaFlexDirection.Row
 			// Gap = 8
 		};
 		main.AddChild( mainContainer );
 
-		// Panel LEFT (redimensionnable à droite)
 		var left = new ResizablePanel( ResizeEdges.Right )
 		{
 			Width = Length.Point( 300 ),
@@ -59,14 +54,15 @@ public sealed class EditorWindow() : EngineWindow( "Editor" )
 			MinWidth = 240,
 			MaxWidth = 340,
 			GripThickness = 8,
-			// GripColor = SKColor.FromHsl( 0, 0, 20 ),
-			// GripHoverColor = SKColor.FromHsl( 0, 0, 40 )
 		};
 		left.Content.Background = SKColor.FromHsl( 0, 0, 30 );
 		left.Content.BorderRadius = new Vector2( 8 );
+		left.Content.Padding = new Padding( 8 );
 		mainContainer.AddChild( left );
 
-		// Panel CENTER (flexible, prend l'espace restant)
+		var textField = new TextField { Width = Length.Percent( 100 ), Height = Length.Point( 32f ) };
+		left.Content.AddChild( textField );
+
 		var center = new Panel
 		{
 			Width = Length.Stretch,
@@ -79,7 +75,6 @@ public sealed class EditorWindow() : EngineWindow( "Editor" )
 		};
 		mainContainer.AddChild( center );
 
-		// Panel RIGHT (redimensionnable à gauche)
 		var right = new ResizablePanel( ResizeEdges.Left )
 		{
 			Width = Length.Point( 340 ),
@@ -87,8 +82,6 @@ public sealed class EditorWindow() : EngineWindow( "Editor" )
 			MinWidth = 240,
 			MaxWidth = 340,
 			GripThickness = 8,
-			// GripColor = SKColor.FromHsl( 0, 0, 20 ),
-			// GripHoverColor = SKColor.FromHsl( 0, 0, 40 )
 		};
 		right.Content.Background = SKColor.FromHsl( 0, 0, 40 );
 		right.Content.BorderRadius = new Vector2( 8 );
@@ -97,11 +90,8 @@ public sealed class EditorWindow() : EngineWindow( "Editor" )
 		// ═══════════════════════════════════════════════════════════════
 		// BOTTOM BAR
 		// ═══════════════════════════════════════════════════════════════
-		var bottom = new Panel { Width = Length.Percent( 100 ), Height = Length.Point( 32 ) };
-		mainLayout.AddChild( bottom );
-
 		var statusBar = new StatusBarPanel();
-		bottom.AddChild( statusBar );
+		mainLayout.AddChild( statusBar );
 	}
 
 	protected override void OnImGuiDraw()
